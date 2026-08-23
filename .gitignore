@@ -1,0 +1,15 @@
+# Cache de respostas HTTP — reconstruível, não versionar
+.cache/
+
+# Documentos pessoais nunca entram no repositório.
+*curriculo*
+*curr[ií]culo*
+*CV_*
+*.pdf
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.DS_Store

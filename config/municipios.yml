@@ -1,0 +1,49 @@
+# Municípios-alvo da base.
+#
+# Os códigos IBGE NÃO são fixados aqui de propósito: são resolvidos em tempo de
+# execução pela API de Localidades do IBGE (src/licita/ibge.py), que devolve, para
+# cada município de SP, a região imediata e a região intermediária às quais pertence.
+# Fixar código à mão é a forma mais fácil de introduzir erro silencioso na base.
+#
+# O resultado da resolução é gravado em dados/municipios.json e versionado, para que
+# a coleta funcione mesmo se a API do IBGE estiver fora do ar.
+
+uf: SP
+codigo_uf_ibge: 35
+
+# Regiões Geográficas Imediatas (divisão IBGE 2017) a incluir por inteiro.
+# Comparação é feita sem acento e sem diferenciar maiúsculas.
+regioes_imediatas:
+  - Jales
+  - Santa Fé do Sul
+  - Fernandópolis
+
+# Municípios avulsos, fora das regiões acima, incluídos por decisão de negócio.
+# General Salgado: comarca de foro do contrato de Nova Castilho e município
+# vizinho relevante que fica fora das regiões imediatas acima.
+municipios_extras:
+  - General Salgado
+
+# Municípios que recebem atenção prioritária nos relatórios e no painel.
+# Não alteram a coleta — apenas a ordenação e o destaque.
+prioritarios:
+  - Santa Fé do Sul   # sede de região imediata; maior mercado depois de Jales
+  - Jales             # maior município da microrregião
+  - Nova Castilho     # caso-âncora, com verdade documentada para regressão
+
+# Município e contratação usados como teste de aceitação da Fase 0.
+# Fonte: HANDOFF_LICITACOES_MERENDA_JALES_2026-08-23.md, seção 4.3.
+caso_ancora:
+  municipio: Nova Castilho
+  cnpj_orgao: "01613202000171"
+  ano: 2026
+  modalidade: 7                 # Pregão presencial
+  numero_compra: "007/2026"
+  processo: "030/2026"
+  objeto_contem: "leite"
+  # Valores homologados conhecidos, para o teste de regressão:
+  valor_unitario_estimado: 7.01
+  valor_unitario_homologado: 6.92
+  quantidade_total: 21000
+  valor_total_ata: 145320.00
+  licitantes_presentes: 1

@@ -1,0 +1,89 @@
+# Endpoints e parâmetros de coleta.
+#
+# AVISO: nenhum destes endpoints pôde ser validado ao vivo no ambiente onde este
+# código foi escrito (política de egress bloqueia todo host .gov.br). As definições
+# vêm da documentação oficial do PNCP e de implementações de terceiros.
+# Rode `python -m licita probe` antes de confiar em qualquer um deles.
+
+http:
+  timeout_s: 45
+  max_tentativas: 5
+  backoff_base_s: 2.0        # espera = backoff_base * 2**(tentativa-1), com jitter
+  backoff_teto_s: 60.0
+  pausa_entre_chamadas_s: 0.35   # rate limit cooperativo
+  user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
+  cache_ttl_h: 12            # respostas ficam em cache local por este período
+
+ibge:
+  base: "https://servicodados.ibge.gov.br/api/v1/localidades"
+  municipios_por_uf: "/estados/{uf}/municipios"
+
+pncp:
+  # API pública de consulta. Não exige autenticação.
+  consulta_base: "https://pncp.gov.br/api/consulta"
+  contratacoes_publicacao: "/v1/contratacoes/publicacao"
+  contratacoes_proposta: "/v1/contratacoes/proposta"
+  atas: "/v1/atas"
+  contratos: "/v1/contratos"
+
+  # API de detalhe. Leitura pública, porém MENOS confirmada que a de consulta —
+  # o probe valida antes de o coletor depender dela.
+  detalhe_base: "https://pncp.gov.br/api/pncp/v1"
+  itens: "/orgaos/{cnpj}/compras/{ano}/{sequencial}/itens"
+  resultados: "/orgaos/{cnpj}/compras/{ano}/{sequencial}/itens/{item}/resultados"
+  arquivos: "/orgaos/{cnpj}/compras/{ano}/{sequencial}/arquivos"
+
+  tamanho_pagina: 500        # máximo aceito pela API
+  # A modalidade é parâmetro obrigatório em /contratacoes/publicacao, por isso a
+  # coleta itera sobre esta lista. Ver tabela de domínio abaixo.
+  modalidades:
+    - 5    # Concorrência - Presencial
+    - 6    # Pregão - Eletrônico
+    - 7    # Pregão - Presencial   <- padrão dos municípios pequenos da região
+    - 8    # Dispensa de Licitação
+    - 9    # Inexigibilidade
+    - 12   # Credenciamento
+  # Tamanho da janela de datas por requisição. A API impõe limite não documentado
+  # com clareza; 90 dias é conservador e o probe testa se janelas maiores passam.
+  janela_dias: 90
+
+coleta:
+  # Backfill histórico: quantos anos para trás varrer na primeira execução.
+  anos_historico: 3
+  # O radar diário olha contratações com proposta em aberto neste horizonte.
+  radar_horizonte_dias: 60
+
+# --- Tabelas de domínio do PNCP (referência; não editar sem checar a fonte) ---
+
+dominios:
+  modalidade:
+    1: "Leilão - Eletrônico"
+    2: "Diálogo Competitivo"
+    3: "Concurso"
+    4: "Concorrência - Eletrônica"
+    5: "Concorrência - Presencial"
+    6: "Pregão - Eletrônico"
+    7: "Pregão - Presencial"
+    8: "Dispensa de Licitação"
+    9: "Inexigibilidade"
+    10: "Manifestação de Interesse"
+    11: "Pré-qualificação"
+    12: "Credenciamento"
+    13: "Leilão - Presencial"
+  situacao_contratacao:
+    1: "Divulgada no PNCP"
+    2: "Revogada"
+    3: "Anulada"
+    4: "Suspensa"
+  situacao_item:
+    1: "Em Andamento"
+    2: "Homologado"
+    3: "Anulado/Revogado/Cancelado"
+    4: "Deserto"       # ninguém apareceu — sinal mais forte de vácuo competitivo
+    5: "Fracassado"    # apareceram, mas todos inabilitados
+
+# Modalidades consideradas presenciais, para o filtro "presencial vs eletrônico".
+modalidades_presenciais: [5, 7, 13]
+
+# Modalidades que costumam abrigar serviço técnico especializado.
+modalidades_servico_tecnico: [8, 9, 12]

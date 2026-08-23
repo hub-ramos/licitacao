@@ -1,0 +1,74 @@
+name: Fase 0 — probe e cobertura
+
+# Execução manual. É o primeiro passo do projeto e o que decide o desenho do
+# resto: valida os endpoints do PNCP, testa o caso-âncora de Nova Castilho e
+# mede a cobertura real por município.
+on:
+  workflow_dispatch:
+    inputs:
+      anos:
+        description: "Anos de histórico a varrer na medição de cobertura"
+        required: false
+        default: "3"
+      rapido:
+        description: "Só endpoints e caso-âncora, sem medir cobertura"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    # A varredura de cobertura percorre ~45 municípios x 6 modalidades x 3 anos.
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Executar probe
+        id: probe
+        # continue-on-error: um endpoint quebrado faz o probe sair com 1, mas o
+        # relatório é justamente o que precisamos ler nesse caso.
+        continue-on-error: true
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m licita probe \
+            --anos "${{ inputs.anos }}" \
+            ${{ inputs.rapido && '--rapido' || '' }}
+
+      - name: Resumo no sumário do job
+        if: always()
+        run: cat dados/relatorio_cobertura.md >> "$GITHUB_STEP_SUMMARY" || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: relatorio-cobertura
+          path: |
+            dados/relatorio_cobertura.md
+            dados/probe.json
+            dados/municipios.json
+
+      - name: Commitar relatório
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dados/relatorio_cobertura.md dados/probe.json dados/municipios.json || true
+          git diff --staged --quiet || git commit -m "probe: relatório de cobertura da Fase 0"
+          git push
+
+      - name: Falhar se algum endpoint quebrou
+        if: steps.probe.outcome == 'failure'
+        run: |
+          echo "::error::Um ou mais endpoints não responderam. Leia dados/relatorio_cobertura.md"
+          exit 1

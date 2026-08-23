@@ -1,0 +1,72 @@
+name: Histórico semanal
+
+# Backfill incremental das contratações publicadas, com itens e resultados.
+# É a varredura pesada; por isso roda semanalmente, não todo dia.
+on:
+  schedule:
+    - cron: "0 7 * * 0"        # domingo, 04:00 em Brasília
+  workflow_dispatch:
+    inputs:
+      anos:
+        description: "Anos de histórico a coletar"
+        required: false
+        default: "3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: coleta-licitacoes
+  cancel-in-progress: false
+
+jobs:
+  historico:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330       # a varredura completa com detalhe é longa
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Testes de regressão
+        # O caso-âncora precisa continuar reproduzindo os números documentados
+        # antes de qualquer coleta sobrescrever a base.
+        run: python -m unittest discover -s tests -v
+
+      - name: Coletar histórico
+        env:
+          PYTHONPATH: src
+        run: python -m licita historico --anos "${{ inputs.anos || '3' }}"
+
+      - name: Coletar atas e contratos
+        env:
+          PYTHONPATH: src
+        run: python -m licita atas --anos "${{ inputs.anos || '3' }}"
+
+      - name: Métricas e exports
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m licita metricas
+          python -m licita exportar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: base-e-exports
+          path: |
+            dados/painel.html
+            dados/*.csv
+            dados/licitacoes.xlsx
+
+      - name: Commitar base e exports
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dados/
+          git diff --staged --quiet || git commit -m "histórico: coleta de $(date -u +%Y-%m-%d)"
+          git push

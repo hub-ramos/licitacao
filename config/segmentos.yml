@@ -1,0 +1,581 @@
+# Taxonomia de segmentos.
+#
+# Cada item de licitação é classificado em um segmento por três sinais, nesta ordem
+# de precedência (ver src/licita/segmentar.py):
+#   1. grupo CATMAT/CATSER, quando o órgão preencheu — é o sinal mais confiável
+#   2. palavras-chave na descrição do item
+#   3. palavras-chave no objeto da contratação, quando o item não tem descrição útil
+#
+# Campos de cada segmento:
+#   tipo       produto | servico   -> a divisão econômica central do projeto
+#   dominio    agrupamento temático usado nos filtros do painel
+#   aderencia  alta | media | baixa | bloqueado  -> prioridade de análise no projeto
+#   palavras   termos SEM acento e em minúsculas; casam por substring na descrição
+#              normalizada (a normalização remove acentos e baixa a caixa)
+#   excluir    termos que, se presentes, vetam o segmento (desambiguação)
+#   catmat / catser  prefixos de grupo do catálogo federal
+#   nota       por que este segmento importa; aparece no painel como tooltip
+
+# ---------------------------------------------------------------------------
+# SERVIÇOS TÉCNICOS EM SAÚDE
+# Municípios pequenos compram serviço técnico por dispensa, inexigibilidade
+# (art. 74, III — serviço técnico de natureza predominantemente intelectual)
+# e credenciamento, não por pregão.
+# ---------------------------------------------------------------------------
+
+servico_vigilancia_saude:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: "Consultoria em vigilância epidemiológica, sindrômica e laboratorial."
+  palavras:
+    - vigilancia epidemiologica
+    - vigilancia sanitaria
+    - vigilancia em saude
+    - vigilancia sindromica
+    - vigilancia laboratorial
+    - investigacao de surto
+    - controle de endemias
+    - plano de contingencia
+    - resposta rapida
+    - notificacao de agravo
+    - arbovirose
+    - controle de zoonose
+    - sindrome gripal
+    - virus respiratorio
+    - boletim epidemiologico
+    - sala de situacao
+    - busca ativa de casos
+
+servico_saude_digital:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: "Telessaúde, teleconsultoria e sistemas de informação da atenção primária."
+  palavras:
+    - telessaude
+    - telemedicina
+    - teleconsultoria
+    - telediagnostico
+    - saude digital
+    - e-sus
+    - esus
+    - prontuario eletronico
+    - regulacao assistencial
+    - sistema de informacao em saude
+    - informatizacao da atencao primaria
+    - gerenciador de ambiente laboratorial
+    - sistema de informacao laboratorial
+    - redcap
+
+servico_capacitacao_saude:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: "Capacitação e educação permanente de profissionais da rede municipal."
+  palavras:
+    - capacitacao
+    - treinamento
+    - educacao permanente
+    - educacao continuada
+    - curso de formacao
+    - oficina tecnica
+    - teleducacao
+  excluir:
+    - capacitacao de servidores em licitacao
+    - treinamento de brigada
+
+servico_indicadores_bi:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: "Painéis, indicadores estratégicos e georreferenciamento para secretarias de saúde."
+  palavras:
+    - painel de indicadores
+    - indicadores de saude
+    - business intelligence
+    - power bi
+    - georreferenciamento
+    - analise espacial
+    - geoprocessamento
+    - dashboard
+    - analise de dados
+
+servico_laboratorial:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: "Serviços de análises clínicas. Exige responsável técnico habilitado."
+  palavras:
+    - analises clinicas
+    - exames laboratoriais
+    - laboratorio de analises
+    - coleta de exames
+    - exames de patologia
+    - citopatologico
+
+servico_qualidade_laboratorial:
+  tipo: servico
+  dominio: saude
+  aderencia: alta
+  nota: >-
+    Controle de qualidade e auditoria da qualidade em laboratório. Mercado
+    pouco disputado em município pequeno, porque exige credencial técnica.
+  palavras:
+    - controle de qualidade laboratorial
+    - auditoria da qualidade
+    - auditoria interna em qualidade
+    - auditoria laboratorial
+    - ensaio de proficiencia
+    - acreditacao laboratorial
+    - boas praticas laboratoriais
+    - procedimento operacional padrao
+    - biosseguranca
+  excluir:
+    - auditoria contabil
+    - auditoria fiscal
+
+servico_saude_assistencial:
+  tipo: servico
+  dominio: saude
+  aderencia: media
+  nota: "Credenciamento de prestadores. Porta de entrada frequente em município pequeno."
+  palavras:
+    - credenciamento de prestadores
+    - servicos medicos
+    - plantao medico
+    - consultas especializadas
+    - procedimentos ambulatoriais
+
+# ---------------------------------------------------------------------------
+# PRODUTOS DE SAÚDE
+# ---------------------------------------------------------------------------
+
+insumos_laboratoriais:
+  tipo: produto
+  dominio: saude
+  aderencia: alta
+  nota: "Alta especificidade técnica na especificação do item — barreira natural à concorrência."
+  catmat: ["6550", "6640"]
+  palavras:
+    - reagente
+    - kit diagnostico
+    - meio de cultura
+    - tubo de coleta
+    - ponteira
+    - lamina de vidro
+    - laminula
+    - hemograma
+    - bioquimica clinica
+    - hematologia
+    - microbiologia
+    - antibiograma
+    - insumo laboratorial
+
+testes_rapidos:
+  tipo: produto
+  dominio: saude
+  aderencia: alta
+  nota: "Muito comprados por UBS de município pequeno. Demanda previsível por sazonalidade."
+  catmat: ["6550"]
+  palavras:
+    - teste rapido
+    - teste de gravidez
+    - teste de dengue
+    - teste de sifilis
+    - teste de hiv
+    - teste de hepatite
+    - teste de covid
+    - teste de influenza
+    - teste de sarampo
+    - autoteste
+    - swab
+    - painel viral
+    - virus sincicial
+    - chikungunya
+    - zika
+
+diagnostico_molecular:
+  tipo: produto
+  dominio: saude
+  aderencia: alta
+  nota: >-
+    Insumos de biologia molecular. Compra que cresce em município que estrutura
+    vigilância laboratorial própria.
+  catmat: ["6550"]
+  palavras:
+    - biologia molecular
+    - rt pcr
+    - teste pcr
+    - pcr em tempo real
+    - reacao em cadeia da polimerase
+    - extracao de acido nucleico
+    - kit de extracao
+    - sequenciamento genetico
+    - termociclador
+
+material_coleta:
+  tipo: produto
+  dominio: saude
+  aderencia: alta
+  nota: "Domínio técnico direto."
+  palavras:
+    - tubo a vacuo
+    - agulha para coleta
+    - scalp
+    - garrote
+    - frasco para amostra
+    - caixa para transporte de amostra
+    - meio de transporte viral
+
+material_medico_hospitalar:
+  tipo: produto
+  dominio: saude
+  aderencia: media
+  nota: "Barreira técnica menor que a de insumos laboratoriais; concorrência maior."
+  catmat: ["6515", "6510"]
+  palavras:
+    - seringa
+    - agulha descartavel
+    - luva de procedimento
+    - gaze
+    - atadura
+    - esparadrapo
+    - cateter
+    - sonda
+    - curativo
+    - soro fisiologico
+    - equipo
+    - material medico hospitalar
+
+rede_frio_imunizacao:
+  tipo: produto
+  dominio: saude
+  aderencia: media
+  nota: "Casa com o lado epidemiológico: PNI, campanhas de vacinação."
+  palavras:
+    - camara de conservacao
+    - camara fria
+    - caixa termica
+    - termometro digital
+    - datalogger
+    - rede de frio
+    - refrigerador para imunobiologico
+
+epi_saude:
+  tipo: produto
+  dominio: saude
+  aderencia: baixa
+  nota: "Baixa barreira técnica; muita concorrência e margem apertada."
+  palavras:
+    - equipamento de protecao individual
+    - mascara cirurgica
+    - mascara n95
+    - pff2
+    - avental descartavel
+    - protetor facial
+    - touca descartavel
+
+material_odontologico:
+  tipo: produto
+  dominio: saude
+  aderencia: baixa
+  nota: "Mesmo comprador dos demais itens de saúde."
+  catmat: ["6520"]
+  palavras:
+    - odontologic
+    - resina composta
+    - anestesico odontologico
+    - broca odontologica
+    - amalgama
+
+equipamento_medico:
+  tipo: produto
+  dominio: saude
+  aderencia: baixa
+  nota: "Ticket alto; exige assistência técnica e representação de fabricante."
+  catmat: ["6515", "6525", "6530"]
+  palavras:
+    - autoclave
+    - eletrocardiografo
+    - desfibrilador
+    - monitor multiparametrico
+    - ultrassom
+    - raio x
+    - cadeira odontologica
+    - centrifuga de laboratorio
+
+medicamentos:
+  tipo: produto
+  dominio: saude
+  aderencia: bloqueado
+  bloqueio: >-
+    Exige Autorização de Funcionamento (AFE/ANVISA) e responsável técnico
+    FARMACÊUTICO. Marcado como bloqueado para não consumir tempo de análise
+    com um segmento que o projeto não tem como habilitar.
+  catmat: ["6505"]
+  palavras:
+    - medicamento
+    - farmaco
+    - comprimido
+    - ampola
+    - psicotropico
+    - antibiotico
+    - farmacia basica
+    - insulina
+
+# ---------------------------------------------------------------------------
+# PRODUTOS — LINHA ORIGINAL DO HANDOFF
+# Segmentos mapeados a partir da rede de fornecedores da família.
+# ---------------------------------------------------------------------------
+
+laticinios:
+  tipo: produto
+  dominio: alimentacao
+  aderencia: media
+  nota: >-
+    Caso-âncora do projeto (Nova Castilho). Handoff concluiu que leite NÃO comporta
+    intermediário: fornecedor local já é EPP, margem apertada, marca obrigatória e
+    vedação ampla de subcontratação. Mantido na base para leitura de mercado.
+  palavras:
+    - leite
+    - iogurte
+    - queijo
+    - requeijao
+    - bebida lactea
+    - manteiga
+    - laticinio
+
+generos_alimenticios:
+  tipo: produto
+  dominio: alimentacao
+  aderencia: media
+  nota: "Mercearia seca. Atenção: Lei 9.972/2000 exige classificação vegetal em venda ao Poder Público."
+  palavras:
+    - genero alimenticio
+    - arroz
+    - feijao
+    - acucar
+    - cafe
+    - oleo de soja
+    - farinha
+    - macarrao
+    - sal refinado
+    - molho de tomate
+    - merenda escolar
+    - alimentacao escolar
+
+panificacao:
+  tipo: produto
+  dominio: alimentacao
+  aderencia: media
+  palavras:
+    - pao
+    - panificacao
+    - bolo
+    - biscoito
+    - rosca
+
+hortifruti:
+  tipo: produto
+  dominio: alimentacao
+  aderencia: baixa
+  nota: "Perecível de ciclo curto; PNAE destina no mínimo 30% à agricultura familiar via chamada pública."
+  palavras:
+    - hortifruti
+    - frutas
+    - verduras
+    - legumes
+    - polpa de fruta
+
+carnes:
+  tipo: produto
+  dominio: alimentacao
+  aderencia: baixa
+  nota: "Origem animal: exige SIF ou SISP para venda intermunicipal. SIM só vale no município emissor."
+  palavras:
+    - carne bovina
+    - carne suina
+    - frango
+    - linguica
+    - peixe
+    - pescado
+
+textil_uniforme:
+  tipo: produto
+  dominio: vestuario
+  aderencia: media
+  nota: "Handoff aponta como candidato a revenda em nome próprio. Fábricas de jeans na rede de contatos."
+  palavras:
+    - uniforme
+    - camiseta
+    - jaleco
+    - fardamento
+    - tecido
+    - confeccao
+    - bermuda
+    - agasalho
+
+calcados:
+  tipo: produto
+  dominio: vestuario
+  aderencia: media
+  palavras:
+    - tenis
+    - sandalia
+    - papete
+    - calcado
+    - bota
+    - sapato
+
+copa_cozinha:
+  tipo: produto
+  dominio: suprimentos
+  aderencia: media
+  palavras:
+    - copa e cozinha
+    - utensilio de cozinha
+    - panela
+    - talher
+    - prato
+    - copo
+    - garrafa termica
+    - marmita
+
+limpeza_higiene:
+  tipo: produto
+  dominio: suprimentos
+  aderencia: media
+  palavras:
+    - material de limpeza
+    - detergente
+    - agua sanitaria
+    - desinfetante
+    - papel higienico
+    - sabonete
+    - alcool 70
+    - vassoura
+    - saco de lixo
+
+papelaria_expediente:
+  tipo: produto
+  dominio: suprimentos
+  aderencia: media
+  palavras:
+    - material de expediente
+    - papelaria
+    - papel sulfite
+    - caneta
+    - toner
+    - cartucho
+    - grampeador
+    - pasta arquivo
+
+racao_agropecuaria:
+  tipo: produto
+  dominio: agropecuaria
+  aderencia: baixa
+  nota: >-
+    Quem apenas comercializa ração é ISENTO de registro no MAPA (art. 8º, Decreto
+    6.296/2007). Evitar CNAE 46.23-1-08, que dispara fiscalização de estabelecimento.
+  palavras:
+    - racao
+    - sal mineral
+    - suplemento animal
+    - medicamento veterinario
+    - vacina animal
+    - semente de pastagem
+
+madeira_construcao:
+  tipo: produto
+  dominio: construcao
+  aderencia: baixa
+  nota: >-
+    Exceção regulatória: DOF/GF (IBAMA/SINAFLOR) alcança o comerciante mesmo sem
+    estrutura própria, e exige CTF/APP. Handoff recomenda comissão apenas.
+  palavras:
+    - madeira
+    - material de construcao
+    - cimento
+    - tijolo
+    - areia
+    - brita
+    - tinta imobiliaria
+    - telha
+
+informatica:
+  tipo: produto
+  dominio: tecnologia
+  aderencia: baixa
+  palavras:
+    - computador
+    - notebook
+    - impressora
+    - nobreak
+    - switch
+    - roteador
+    - equipamento de informatica
+    - licenca de software
+
+combustivel:
+  tipo: produto
+  dominio: suprimentos
+  aderencia: baixa
+  nota: "Alto valor, mas exige posto revendedor com registro ANP. Fora de alcance."
+  palavras:
+    - combustivel
+    - gasolina
+    - etanol
+    - oleo diesel
+    - arla
+
+# ---------------------------------------------------------------------------
+# SERVIÇOS GERAIS — sem aderência ao perfil, mas classificados para não caírem
+# em "não classificado" e poluírem a análise de cobertura.
+# ---------------------------------------------------------------------------
+
+servico_obras_engenharia:
+  tipo: servico
+  dominio: construcao
+  aderencia: baixa
+  palavras:
+    - obra de engenharia
+    - reforma predial
+    - pavimentacao
+    - recapeamento
+    - construcao de
+    - drenagem
+
+servico_transporte:
+  tipo: servico
+  dominio: logistica
+  aderencia: baixa
+  palavras:
+    - transporte escolar
+    - locacao de veiculo
+    - fretamento
+    - transporte de pacientes
+
+servico_manutencao:
+  tipo: servico
+  dominio: suprimentos
+  aderencia: baixa
+  palavras:
+    - manutencao predial
+    - manutencao de veiculo
+    - manutencao de equipamento
+    - servico de borracharia
+
+servico_assessoria_geral:
+  tipo: servico
+  dominio: administrativo
+  aderencia: baixa
+  nota: "Assessoria contábil, jurídica e de RH. Concorrência local estabelecida."
+  palavras:
+    - assessoria contabil
+    - assessoria juridica
+    - consultoria contabil
+    - auditoria contabil
+    - auditoria fiscal
+    - servicos advocaticios
+    - concurso publico

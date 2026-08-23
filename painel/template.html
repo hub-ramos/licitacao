@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radar de Licitações — Microrregião de Jales</title>
+<style>
+:root{
+  --fundo:#f6f7f9; --painel:#fff; --borda:#dfe3e8; --texto:#16202c; --suave:#5b6b7c;
+  --acento:#1f6f8b; --acento-fraco:#e6f0f4;
+  --quente:#b3401f; --morno:#c07a12; --frio:#2f7a4f;
+  --sombra:0 1px 3px rgba(16,32,48,.08);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --fundo:#11161c; --painel:#19212a; --borda:#2b3742; --texto:#e6ecf2; --suave:#93a4b5;
+    --acento:#5fb3d4; --acento-fraco:#1d2c36;
+    --quente:#e8734a; --morno:#e0a83c; --frio:#5fbe8a;
+    --sombra:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+header{background:var(--painel);border-bottom:1px solid var(--borda);padding:14px 18px}
+h1{margin:0;font-size:17px;letter-spacing:-.2px}
+.sub{color:var(--suave);font-size:12.5px;margin-top:3px}
+.totais{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.total b{display:block;font-size:18px;line-height:1.2}
+.total span{color:var(--suave);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+nav{display:flex;gap:4px;padding:10px 18px 0;flex-wrap:wrap}
+nav button{background:none;border:1px solid transparent;border-bottom:none;color:var(--suave);
+  padding:8px 14px;border-radius:7px 7px 0 0;cursor:pointer;font-size:14px;font-weight:500}
+nav button[aria-selected=true]{background:var(--painel);border-color:var(--borda);color:var(--texto)}
+main{padding:0 18px 40px}
+.caixa{background:var(--painel);border:1px solid var(--borda);border-radius:0 8px 8px 8px;
+  box-shadow:var(--sombra);padding:14px}
+.filtros{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:14px}
+label{display:block;font-size:11.5px;color:var(--suave);margin-bottom:3px;
+  text-transform:uppercase;letter-spacing:.4px}
+select,input{width:100%;padding:7px 8px;border:1px solid var(--borda);border-radius:6px;
+  background:var(--fundo);color:var(--texto);font-size:13.5px}
+.acoes{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.acoes button{padding:7px 12px;border:1px solid var(--borda);border-radius:6px;
+  background:var(--fundo);color:var(--texto);cursor:pointer;font-size:13px}
+.contagem{color:var(--suave);font-size:13px}
+.rolagem{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 9px;text-align:left;border-bottom:1px solid var(--borda);
+  white-space:nowrap;vertical-align:top}
+th{position:sticky;top:0;background:var(--painel);cursor:pointer;
+  font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--suave);z-index:1}
+th:hover{color:var(--texto)}
+tbody tr:hover{background:var(--acento-fraco)}
+td.larga{white-space:normal;min-width:290px;max-width:430px}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.etq{display:inline-block;padding:1px 7px;border-radius:20px;font-size:11px;
+  border:1px solid var(--borda);color:var(--suave)}
+.etq.quente{color:var(--quente);border-color:var(--quente)}
+.etq.morno{color:var(--morno);border-color:var(--morno)}
+.etq.frio{color:var(--frio);border-color:var(--frio)}
+.etq.saude{color:var(--acento);border-color:var(--acento)}
+.barra{display:inline-block;height:7px;border-radius:4px;background:var(--acento);vertical-align:middle}
+.vazio{padding:40px;text-align:center;color:var(--suave)}
+.aviso{background:var(--acento-fraco);border-left:3px solid var(--acento);
+  padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin-bottom:14px;color:var(--texto)}
+a{color:var(--acento)}
+@media(max-width:620px){
+  main{padding:0 10px 30px} header{padding:12px 10px} nav{padding:8px 10px 0}
+  td.larga{min-width:200px}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Radar de Licitações — Microrregião de Jales</h1>
+  <div class="sub" id="carimbo"></div>
+  <div class="totais" id="totais"></div>
+</header>
+
+<nav id="abas">
+  <button data-aba="radar" aria-selected="true">Radar — proposta aberta</button>
+  <button data-aba="itens" aria-selected="false">Histórico de preços</button>
+  <button data-aba="metricas" aria-selected="false">Mapa de concorrência</button>
+</nav>
+
+<main>
+  <div class="caixa">
+    <div id="aviso" class="aviso" hidden></div>
+    <div class="filtros" id="filtros"></div>
+    <div class="acoes">
+      <button id="limpar">Limpar filtros</button>
+      <button id="baixar">Baixar CSV do que está filtrado</button>
+      <span class="contagem" id="contagem"></span>
+    </div>
+    <div class="rolagem"><table><thead id="cabecalho"></thead><tbody id="corpo"></tbody></table></div>
+    <div class="vazio" id="vazio" hidden>Nenhum registro corresponde aos filtros.</div>
+  </div>
+</main>
+
+<script id="dados" type="application/json">/*__DADOS__*/null</script>
+<script>
+"use strict";
+
+const D = JSON.parse(document.getElementById("dados").textContent) || {};
+const NADA = "—";
+
+/* ---------------------------------------------------------------- formato */
+const brl = v => (v === null || v === undefined || v === "")
+  ? NADA
+  : Number(v).toLocaleString("pt-BR", {style:"currency", currency:"BRL", maximumFractionDigits:2});
+const pct = v => (v === null || v === undefined || v === "")
+  ? NADA : (Number(v) * 100).toFixed(1).replace(".", ",") + "%";
+const nums = v => (v === null || v === undefined || v === "")
+  ? NADA : Number(v).toLocaleString("pt-BR");
+const dia = v => {
+  if (!v) return NADA;
+  const d = String(v).slice(0, 10).split("-");
+  return d.length === 3 ? `${d[2]}/${d[1]}/${d[0]}` : v;
+};
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* Dias até o encerramento — o que decide se dá tempo de participar. */
+function prazo(v){
+  if (!v) return null;
+  const alvo = new Date(String(v).slice(0,10) + "T00:00:00");
+  if (isNaN(alvo)) return null;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  return Math.round((alvo - hoje) / 86400000);
+}
+
+/* Índice de oportunidade: quanto maior, maior o vácuo competitivo. */
+function etqIndice(v){
+  if (v === null || v === undefined) return `<span class="etq">${NADA}</span>`;
+  const n = Number(v);
+  const classe = n >= 60 ? "quente" : n >= 35 ? "morno" : "frio";
+  const larg = Math.max(4, Math.round(n * 0.42));
+  return `<span class="barra" style="width:${larg}px"></span> `
+       + `<span class="etq ${classe}">${n.toFixed(0)}</span>`;
+}
+
+/* ----------------------------------------------------------------- abas */
+const ABAS = {
+  radar: {
+    dados: D.radar || [],
+    nota: "Contratações que ainda estão recebendo proposta. Prazo negativo significa que já encerrou.",
+    filtros: [
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"modalidade_nome", rotulo:"Modalidade"},
+      {campo:"presencial", rotulo:"Forma", mapa:{1:"Presencial", 0:"Eletrônica"}},
+      {campo:"orgao_de_saude", rotulo:"Órgão", mapa:{1:"Saúde", 0:"Demais"}},
+      {campo:"__busca", rotulo:"Buscar no objeto", tipo:"texto", alvo:["objeto","orgao","numero_compra"]},
+      {campo:"__prazo", rotulo:"Prazo", tipo:"prazo"}
+    ],
+    colunas: [
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"__prazo_dias", rotulo:"Prazo", classe:"num",
+       valor:r => prazo(r.data_encerramento_proposta),
+       render:r => { const p = prazo(r.data_encerramento_proposta);
+         if (p === null) return NADA;
+         const c = p < 0 ? "frio" : p <= 3 ? "quente" : p <= 10 ? "morno" : "";
+         return `<span class="etq ${c}">${p}d</span>`; }},
+      {campo:"data_encerramento_proposta", rotulo:"Encerra", render:r => dia(r.data_encerramento_proposta)},
+      {campo:"numero_compra", rotulo:"Compra"},
+      {campo:"modalidade_nome", rotulo:"Modalidade"},
+      {campo:"objeto", rotulo:"Objeto", classe:"larga"},
+      {campo:"valor_total_estimado", rotulo:"Estimado", classe:"num",
+       render:r => brl(r.valor_total_estimado)},
+      {campo:"orgao", rotulo:"Órgão", classe:"larga",
+       render:r => esc(r.orgao ?? "") + (r.orgao_de_saude ? ' <span class="etq saude">saúde</span>' : "")},
+      {campo:"link_sistema_origem", rotulo:"Origem",
+       render:r => r.link_sistema_origem
+         ? `<a href="${esc(r.link_sistema_origem)}" target="_blank" rel="noopener">abrir</a>` : NADA}
+    ],
+    ordem: {campo:"__prazo_dias", desc:false}
+  },
+
+  itens: {
+    dados: D.itens || [],
+    nota: "Preços homologados por item. Deságio é quanto o preço caiu ante a estimativa: "
+        + "deságio baixo com fornecedor único é assinatura de disputa nula.",
+    filtros: [
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"ano", rotulo:"Ano"},
+      {campo:"segmento", rotulo:"Segmento"},
+      {campo:"tipo_segmento", rotulo:"Produto/Serviço"},
+      {campo:"situacao_item_nome", rotulo:"Situação do item"},
+      {campo:"presencial", rotulo:"Forma", mapa:{1:"Presencial", 0:"Eletrônica"}},
+      {campo:"orgao_de_saude", rotulo:"Órgão", mapa:{1:"Saúde", 0:"Demais"}},
+      {campo:"srp", rotulo:"Registro de preço", mapa:{1:"Sim", 0:"Não"}},
+      {campo:"aderencia", rotulo:"Aderência"},
+      {campo:"nome_fornecedor", rotulo:"Fornecedor vencedor"},
+      {campo:"__busca", rotulo:"Buscar", tipo:"texto", alvo:["descricao","objeto","nome_fornecedor"]}
+    ],
+    colunas: [
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"ano", rotulo:"Ano", classe:"num"},
+      {campo:"descricao", rotulo:"Item", classe:"larga"},
+      {campo:"segmento", rotulo:"Segmento"},
+      {campo:"quantidade", rotulo:"Qtde", classe:"num", render:r => nums(r.quantidade)},
+      {campo:"unidade_medida", rotulo:"Un."},
+      {campo:"valor_unitario_estimado", rotulo:"Unit. estimado", classe:"num",
+       render:r => brl(r.valor_unitario_estimado)},
+      {campo:"valor_unitario_homologado", rotulo:"Unit. homologado", classe:"num",
+       render:r => brl(r.valor_unitario_homologado)},
+      {campo:"desagio", rotulo:"Deságio", classe:"num",
+       render:r => { if (r.desagio === null || r.desagio === undefined) return NADA;
+         const n = Number(r.desagio);
+         const c = n < 0.03 ? "quente" : n < 0.10 ? "morno" : "frio";
+         return `<span class="etq ${c}">${pct(n)}</span>`; }},
+      {campo:"situacao_item_nome", rotulo:"Situação",
+       render:r => { const s = r.situacao_item_nome || NADA;
+         const c = (r.situacao_item_id === 4 || r.situacao_item_id === 5) ? "quente" : "";
+         return `<span class="etq ${c}">${esc(s)}</span>`; }},
+      {campo:"nome_fornecedor", rotulo:"Vencedor", classe:"larga"},
+      {campo:"tipo_beneficio_nome", rotulo:"Benefício ME/EPP"}
+    ],
+    ordem: {campo:"ano", desc:true}
+  },
+
+  metricas: {
+    dados: D.metricas || [],
+    nota: "Índice de Oportunidade por município e segmento — 0 a 100, quanto maior, "
+        + "maior o vácuo competitivo. Composto por deserção, ausência de deságio, "
+        + "concentração de fornecedores e recorrência.",
+    filtros: [
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"ano", rotulo:"Ano"},
+      {campo:"segmento", rotulo:"Segmento"},
+      {campo:"tipo_segmento", rotulo:"Produto/Serviço"},
+      {campo:"__minimo", rotulo:"Índice mínimo", tipo:"minimo", alvo:"indice_oportunidade"}
+    ],
+    colunas: [
+      {campo:"indice_oportunidade", rotulo:"Índice", classe:"num",
+       render:r => etqIndice(r.indice_oportunidade)},
+      {campo:"municipio", rotulo:"Município"},
+      {campo:"segmento", rotulo:"Segmento"},
+      {campo:"ano", rotulo:"Ano", classe:"num"},
+      {campo:"tipo_segmento", rotulo:"Tipo"},
+      {campo:"itens", rotulo:"Itens", classe:"num"},
+      {campo:"itens_desertos", rotulo:"Desertos", classe:"num",
+       render:r => r.itens_desertos ? `<span class="etq quente">${r.itens_desertos}</span>` : "0"},
+      {campo:"itens_fracassados", rotulo:"Fracass.", classe:"num"},
+      {campo:"desagio_medio", rotulo:"Deságio médio", classe:"num",
+       render:r => pct(r.desagio_medio)},
+      {campo:"fornecedores_distintos", rotulo:"Fornec.", classe:"num"},
+      {campo:"hhi", rotulo:"Concentração", classe:"num",
+       render:r => r.hhi === null || r.hhi === undefined ? NADA : Number(r.hhi).toFixed(2)},
+      {campo:"valor_estimado", rotulo:"Valor estimado", classe:"num",
+       render:r => brl(r.valor_estimado)}
+    ],
+    ordem: {campo:"indice_oportunidade", desc:true}
+  }
+};
+
+/* --------------------------------------------------------------- estado */
+let abaAtual = "radar";
+let estado = {};                       // filtros por aba: {aba: {campo: valor}}
+let ordem = {};                        // ordenação por aba
+
+Object.keys(ABAS).forEach(k => { estado[k] = {}; ordem[k] = {...ABAS[k].ordem}; });
+
+const valorDe = (linha, coluna) => coluna.valor ? coluna.valor(linha) : linha[coluna.campo];
+
+function aplicar(aba){
+  const cfg = ABAS[aba];
+  const f = estado[aba];
+  return cfg.dados.filter(linha => cfg.filtros.every(filtro => {
+    const escolhido = f[filtro.campo];
+    if (escolhido === undefined || escolhido === "" || escolhido === null) return true;
+
+    if (filtro.tipo === "texto"){
+      const alvo = filtro.alvo.map(c => String(linha[c] ?? "")).join(" ").toLowerCase();
+      return escolhido.toLowerCase().split(/\s+/).every(t => alvo.includes(t));
+    }
+    if (filtro.tipo === "minimo") return Number(linha[filtro.alvo] ?? -Infinity) >= Number(escolhido);
+    if (filtro.tipo === "prazo"){
+      const p = prazo(linha.data_encerramento_proposta);
+      if (p === null) return false;
+      if (escolhido === "aberto") return p >= 0;
+      if (escolhido === "7") return p >= 0 && p <= 7;
+      if (escolhido === "15") return p >= 0 && p <= 15;
+      if (escolhido === "encerrado") return p < 0;
+      return true;
+    }
+    return String(linha[filtro.campo] ?? "") === String(escolhido);
+  }));
+}
+
+function ordenar(linhas, aba){
+  const o = ordem[aba];
+  if (!o || !o.campo) return linhas;
+  const coluna = ABAS[aba].colunas.find(c => c.campo === o.campo) || {campo:o.campo};
+  return [...linhas].sort((a, b) => {
+    let x = valorDe(a, coluna), y = valorDe(b, coluna);
+    // Sem dado vai sempre para o fim, independente da direção da ordenação.
+    const vazio = v => v === null || v === undefined || v === "";
+    if (vazio(x) && vazio(y)) return 0;
+    if (vazio(x)) return 1;
+    if (vazio(y)) return -1;
+    if (typeof x === "number" && typeof y === "number") return o.desc ? y - x : x - y;
+    x = String(x); y = String(y);
+    return o.desc ? y.localeCompare(x, "pt-BR") : x.localeCompare(y, "pt-BR");
+  });
+}
+
+/* -------------------------------------------------------------- desenho */
+function desenharFiltros(){
+  const cfg = ABAS[abaAtual];
+  const alvo = document.getElementById("filtros");
+  alvo.innerHTML = "";
+
+  cfg.filtros.forEach(filtro => {
+    const bloco = document.createElement("div");
+    const id = "f_" + filtro.campo;
+    let campo;
+
+    if (filtro.tipo === "texto"){
+      campo = `<input id="${id}" type="search" placeholder="digite para filtrar"
+               value="${esc(estado[abaAtual][filtro.campo] ?? "")}">`;
+    } else if (filtro.tipo === "minimo"){
+      campo = `<input id="${id}" type="number" min="0" max="100" step="5" placeholder="0"
+               value="${esc(estado[abaAtual][filtro.campo] ?? "")}">`;
+    } else if (filtro.tipo === "prazo"){
+      const sel = estado[abaAtual][filtro.campo] ?? "";
+      const ops = [["","todos"],["aberto","em aberto"],["7","até 7 dias"],
+                   ["15","até 15 dias"],["encerrado","já encerrado"]];
+      campo = `<select id="${id}">` + ops.map(([v,r]) =>
+        `<option value="${v}"${v === sel ? " selected" : ""}>${r}</option>`).join("") + `</select>`;
+    } else {
+      const vistos = new Map();
+      cfg.dados.forEach(l => {
+        const v = l[filtro.campo];
+        if (v === null || v === undefined || v === "") return;
+        vistos.set(String(v), (vistos.get(String(v)) || 0) + 1);
+      });
+      const rotulo = v => filtro.mapa ? (filtro.mapa[v] ?? v) : v;
+      const opcoes = [...vistos.entries()]
+        .sort((a, b) => String(rotulo(a[0])).localeCompare(String(rotulo(b[0])), "pt-BR"));
+      const sel = estado[abaAtual][filtro.campo] ?? "";
+      campo = `<select id="${id}"><option value="">todos</option>`
+        + opcoes.map(([v, n]) =>
+            `<option value="${esc(v)}"${v === sel ? " selected" : ""}>${esc(rotulo(v))} (${n})</option>`
+          ).join("") + `</select>`;
+    }
+
+    bloco.innerHTML = `<label for="${id}">${filtro.rotulo}</label>${campo}`;
+    alvo.appendChild(bloco);
+
+    const elemento = bloco.querySelector("#" + CSS.escape(id));
+    const evento = (filtro.tipo === "texto" || filtro.tipo === "minimo") ? "input" : "change";
+    elemento.addEventListener(evento, e => {
+      estado[abaAtual][filtro.campo] = e.target.value;
+      desenharTabela();
+      if (evento === "change") desenharFiltros();
+    });
+  });
+}
+
+function desenharTabela(){
+  const cfg = ABAS[abaAtual];
+  const linhas = ordenar(aplicar(abaAtual), abaAtual);
+
+  document.getElementById("cabecalho").innerHTML = "<tr>" + cfg.colunas.map(c => {
+    const o = ordem[abaAtual];
+    const seta = o.campo === c.campo ? (o.desc ? " ↓" : " ↑") : "";
+    return `<th data-campo="${esc(c.campo)}">${esc(c.rotulo)}${seta}</th>`;
+  }).join("") + "</tr>";
+
+  document.querySelectorAll("#cabecalho th").forEach(th => {
+    th.addEventListener("click", () => {
+      const campo = th.dataset.campo;
+      const o = ordem[abaAtual];
+      ordem[abaAtual] = {campo, desc: o.campo === campo ? !o.desc : true};
+      desenharTabela();
+    });
+  });
+
+  document.getElementById("corpo").innerHTML = linhas.map(l =>
+    "<tr>" + cfg.colunas.map(c => {
+      const conteudo = c.render ? c.render(l) : esc(l[c.campo] ?? NADA);
+      return `<td class="${c.classe || ""}">${conteudo}</td>`;
+    }).join("") + "</tr>"
+  ).join("");
+
+  document.getElementById("vazio").hidden = linhas.length > 0;
+  document.getElementById("contagem").textContent =
+    `${linhas.length.toLocaleString("pt-BR")} de ${cfg.dados.length.toLocaleString("pt-BR")} registros`;
+}
+
+function desenharAba(){
+  document.querySelectorAll("#abas button").forEach(b =>
+    b.setAttribute("aria-selected", String(b.dataset.aba === abaAtual)));
+  const aviso = document.getElementById("aviso");
+  aviso.textContent = ABAS[abaAtual].nota || "";
+  aviso.hidden = !ABAS[abaAtual].nota;
+  desenharFiltros();
+  desenharTabela();
+}
+
+/* --------------------------------------------------------------- ações */
+document.querySelectorAll("#abas button").forEach(b =>
+  b.addEventListener("click", () => { abaAtual = b.dataset.aba; desenharAba(); }));
+
+document.getElementById("limpar").addEventListener("click", () => {
+  estado[abaAtual] = {};
+  desenharAba();
+});
+
+document.getElementById("baixar").addEventListener("click", () => {
+  const cfg = ABAS[abaAtual];
+  const linhas = ordenar(aplicar(abaAtual), abaAtual);
+  const campos = cfg.colunas.map(c => c.campo).filter(c => !c.startsWith("__"));
+  const escapaCsv = v => {
+    const s = String(v ?? "");
+    return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+  const csv = [campos.join(";")]
+    .concat(linhas.map(l => campos.map(c => escapaCsv(l[c])).join(";")))
+    .join("\n");
+  // BOM para o Excel pt-BR reconhecer UTF-8.
+  const blob = new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `licitacoes_${abaAtual}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ---------------------------------------------------------------- carga */
+document.getElementById("carimbo").textContent = D.gerado_em
+  ? "Atualizado em " + dia(D.gerado_em) + " · dados do PNCP"
+  : "Sem dados carregados";
+
+const T = D.totais || {};
+document.getElementById("totais").innerHTML = [
+  ["Municípios", T.municipios], ["Contratações", T.contratacoes],
+  ["Itens", T.itens], ["Fornecedores", T.fornecedores]
+].map(([r, v]) => `<div class="total"><b>${nums(v ?? 0)}</b><span>${r}</span></div>`).join("");
+
+desenharAba();
+</script>
+</body>
+</html>
