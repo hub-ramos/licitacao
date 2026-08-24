@@ -74,8 +74,12 @@ def _campos_do_primeiro(dados: Any) -> tuple[int | None, list[str]]:
 
 class Probe:
     def __init__(self) -> None:
-        self.http = Cliente(usar_cache=False)   # probe sempre bate na origem
-        self.pncp = ClientePNCP(self.http)
+        # Sondas de endpoint precisam bater na origem — cache aqui mascararia
+        # justamente a falha que se quer detectar. As varreduras em massa, ao
+        # contrário, usam cache: reexecutar o probe no mesmo dia fica barato.
+        self.http = Cliente(usar_cache=False)
+        self.http_massa = Cliente(usar_cache=True)
+        self.pncp = ClientePNCP(self.http_massa)
         self.sondas: list[Sonda] = []
         self.municipios: list[Municipio] = []
         self.ancora: dict[str, Any] = {}
@@ -252,18 +256,30 @@ class Probe:
 
     # ------------------------------------------------------------- cobertura
 
-    def medir_cobertura(self, anos: int = 3) -> None:
-        """Conta contratações por município × ano × modalidade, sem gravar detalhe."""
+    def varrer(self, anos: int = 3) -> None:
+        """Varredura única que alimenta a cobertura E a sondagem de mercado.
+
+        Antes eram dois laços independentes sobre os mesmos municípios e as
+        mesmas modalidades, cada um refazendo as requisições do outro — as
+        modalidades de serviço técnico (8, 9 e 12) eram buscadas duas vezes,
+        ~20% de trabalho jogado fora. Aqui cada contratação é buscada uma vez e
+        lida por dois analisadores.
+        """
+        classificador = Classificador()
+        modalidades = fontes()["pncp"]["modalidades"]
+        de_servico = set(fontes().get("modalidades_servico_tecnico", [8, 9, 12]))
         hoje = date.today()
+
         for mun in self.municipios:
             for ano in range(hoje.year - anos + 1, hoje.year + 1):
                 fim = min(date(ano, 12, 31), hoje)
-                for modalidade in fontes()["pncp"]["modalidades"]:
+                for modalidade in modalidades:
                     achados = self.pncp.contratacoes_publicadas(
                         mun.codigo_ibge, modalidade, date(ano, 1, 1), fim
                     )
                     if not achados:
                         continue
+
                     self.cobertura.append({
                         "municipio": mun.nome,
                         "codigo_ibge": mun.codigo_ibge,
@@ -275,35 +291,69 @@ class Probe:
                         ),
                     })
 
-    def sondar_mercado_servico(self, anos: int = 2) -> None:
-        """Dimensiona o mercado de serviço técnico em saúde da região.
+                    if modalidade in de_servico:
+                        self._classificar_mercado(mun, modalidade, achados, classificador)
 
-        Conta contratações em dispensa, inexigibilidade e credenciamento cujo
-        objeto classifica como serviço do domínio saúde. É o que diz se a segunda
-        linha de negócio tem tamanho, antes de qualquer investimento nela.
+    def _classificar_mercado(self, mun, modalidade, achados, classificador) -> None:
+        """Separa, do que já foi buscado, o que é serviço técnico em saúde.
+
+        Dimensiona a segunda linha de negócio antes de qualquer investimento
+        nela: dispensa, inexigibilidade e credenciamento são por onde município
+        pequeno compra serviço técnico.
         """
-        classificador = Classificador()
-        modalidades = fontes().get("modalidades_servico_tecnico", [8, 9, 12])
-        hoje = date.today()
-        inicio = date(hoje.year - anos, hoje.month, 1)
+        for bruto in achados:
+            objeto = bruto.get("objetoCompra") or ""
+            cls = classificador.classificar(objeto=objeto)
+            if cls.tipo != "servico" or cls.dominio != "saude":
+                continue
+            self.mercado_servico.append({
+                "municipio": mun.nome,
+                "modalidade": modalidade,
+                "segmento": cls.segmento,
+                "objeto": objeto[:200],
+                "valor_estimado": bruto.get("valorTotalEstimado"),
+                "data": bruto.get("dataPublicacaoPncp"),
+            })
 
-        for mun in self.municipios:
-            for modalidade in modalidades:
-                for bruto in self.pncp.contratacoes_publicadas(
-                    mun.codigo_ibge, modalidade, inicio, hoje
-                ):
-                    objeto = bruto.get("objetoCompra") or ""
-                    cls = classificador.classificar(objeto=objeto)
-                    if cls.tipo != "servico" or cls.dominio != "saude":
-                        continue
-                    self.mercado_servico.append({
-                        "municipio": mun.nome,
-                        "modalidade": modalidade,
-                        "segmento": cls.segmento,
-                        "objeto": objeto[:200],
-                        "valor_estimado": bruto.get("valorTotalEstimado"),
-                        "data": bruto.get("dataPublicacaoPncp"),
-                    })
+    def descobrir_janela(self) -> Sonda:
+        """Descobre o maior intervalo de datas que a API aceita numa requisição.
+
+        `fontes.yml` fixa 90 dias por precaução, valor escolhido sem evidência.
+        Se a API aceitar um ano, a varredura inteira cai a um quarto das
+        requisições. Saber esse limite é resultado da Fase 0, não detalhe de
+        implementação — por isso vira uma sonda no relatório.
+        """
+        cfg = fontes()["pncp"]
+        url = cfg["consulta_base"] + cfg["contratacoes_publicacao"]
+        fim = date.today()
+        aceitos: list[int] = []
+
+        for dias in (90, 180, 365):
+            resp = self.http.obter(url, {
+                "dataInicial": _aaaammdd(fim - timedelta(days=dias - 1)),
+                "dataFinal": _aaaammdd(fim),
+                "codigoModalidadeContratacao": 6,
+                "uf": "SP", "pagina": 1, "tamanhoPagina": 1,
+            })
+            if resp.ok or resp.status == 204:
+                aceitos.append(dias)
+            else:
+                break
+
+        maior = max(aceitos) if aceitos else 0
+        sonda = Sonda(
+            nome="PNCP · maior janela de datas aceita",
+            url=url, status=200 if maior else None, ok=bool(maior),
+            registros=maior,
+            observacao=(
+                f"A API aceitou janela de {maior} dias. `janela_dias` está em "
+                f"{cfg['janela_dias']}; ajustar reduz as requisições na proporção."
+                if maior else
+                "Nenhuma janela testada foi aceita — verificar os parâmetros."
+            ),
+        )
+        self.sondas.append(sonda)
+        return sonda
 
     # ------------------------------------------------------------- execução
 
@@ -312,9 +362,9 @@ class Probe:
         log.info("municípios-alvo resolvidos: %d", len(self.municipios))
         self.testar_caso_ancora()
         self.sondar_endpoints()
+        self.descobrir_janela()
         if completo:
-            self.medir_cobertura(anos=anos)
-            self.sondar_mercado_servico()
+            self.varrer(anos=anos)
 
     # ------------------------------------------------------------ relatório
 
