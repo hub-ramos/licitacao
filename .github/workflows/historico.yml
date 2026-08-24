@@ -8,9 +8,25 @@ on:
   workflow_dispatch:
     inputs:
       anos:
-        description: "Anos de histórico a coletar"
+        description: "Anos de histórico a coletar (ignorado se 'desde' for informado)"
         required: false
         default: "3"
+      municipio:
+        description: "Restringe a municípios nomeados, separados por vírgula (nome ou IBGE). Vazio = todos"
+        required: false
+        default: ""
+      desde:
+        description: "Data inicial AAAA-MM-DD. Tem precedência sobre 'anos'"
+        required: false
+        default: ""
+      ate:
+        description: "Data final AAAA-MM-DD. Vazio = hoje"
+        required: false
+        default: ""
+      atas:
+        description: "Coletar também atas e contratos"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -38,15 +54,44 @@ jobs:
         # antes de qualquer coleta sobrescrever a base.
         run: python -m unittest discover -s tests -v
 
+      # As entradas viram argumentos só quando preenchidas: --desde vazio faria
+      # date.fromisoformat("") estourar, e --municipio vazio faria o filtro
+      # procurar um município de nome em branco.
+      #
+      # Duas armadilhas do Actions evitadas aqui. A primeira: o shell roda com
+      # `-e`, então `[ -n "$X" ] && VAR=...` derruba o passo quando X é vazio,
+      # porque a linha inteira sai com status 1 — daí o `if` explícito. A
+      # segunda: valores de entrada chegam por `env`, nunca interpolados dentro
+      # do comando, que seria injeção de shell por quem dispara o workflow.
       - name: Coletar histórico
         env:
           PYTHONPATH: src
-        run: python -m licita historico --anos "${{ inputs.anos || '3' }}"
+          ANOS: ${{ inputs.anos || '3' }}
+          MUNICIPIO: ${{ inputs.municipio }}
+          DESDE: ${{ inputs.desde }}
+          ATE: ${{ inputs.ate }}
+        run: |
+          args=()
+          if [ -n "$DESDE" ]; then args+=(--desde "$DESDE"); else args+=(--anos "$ANOS"); fi
+          if [ -n "$ATE" ]; then args+=(--ate "$ATE"); fi
+          if [ -n "$MUNICIPIO" ]; then args+=(--municipio "$MUNICIPIO"); fi
+          printf 'coleta: %s\n' "${args[*]}"
+          python -m licita historico "${args[@]}"
 
       - name: Coletar atas e contratos
+        if: inputs.atas
         env:
           PYTHONPATH: src
-        run: python -m licita atas --anos "${{ inputs.anos || '3' }}"
+          ANOS: ${{ inputs.anos || '3' }}
+          MUNICIPIO: ${{ inputs.municipio }}
+          DESDE: ${{ inputs.desde }}
+          ATE: ${{ inputs.ate }}
+        run: |
+          args=()
+          if [ -n "$DESDE" ]; then args+=(--desde "$DESDE"); else args+=(--anos "$ANOS"); fi
+          if [ -n "$ATE" ]; then args+=(--ate "$ATE"); fi
+          if [ -n "$MUNICIPIO" ]; then args+=(--municipio "$MUNICIPIO"); fi
+          python -m licita atas "${args[@]}"
 
       - name: Métricas e exports
         env:

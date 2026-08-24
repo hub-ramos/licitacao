@@ -137,5 +137,51 @@ class RelatorioSemRede(unittest.TestCase):
         self.assertIn("Candidato sem execução não vira conclusão", md)
 
 
+class RecorteDeColeta(unittest.TestCase):
+    """Filtro de município: existe para tornar possível coleta de calibração."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        from licita.ibge import Municipio
+        cls.alvos = [
+            Municipio("3546603", "Santa Fé do Sul", "SP", "Santa Fé do Sul",
+                      "São José do Rio Preto", "regiao_imediata", True),
+            Municipio("3525300", "Jales", "SP", "Jales",
+                      "São José do Rio Preto", "regiao_imediata", True),
+            Municipio("3532868", "Nova Castilho", "SP", "Araçatuba",
+                      "Araçatuba", "extra", True),
+        ]
+
+    def test_sem_filtro_devolve_tudo(self) -> None:
+        from licita.__main__ import _filtrar
+        self.assertEqual(len(_filtrar(self.alvos, None)), 3)
+        self.assertEqual(len(_filtrar(self.alvos, "")), 3)
+
+    def test_filtra_por_nome_ignorando_acento_e_caixa(self) -> None:
+        from licita.__main__ import _filtrar
+        for escrito in ("Santa Fé do Sul", "santa fe do sul", "SANTA FE DO SUL"):
+            with self.subTest(escrito=escrito):
+                self.assertEqual([m.nome for m in _filtrar(self.alvos, escrito)],
+                                 ["Santa Fé do Sul"])
+
+    def test_filtra_por_codigo_ibge(self) -> None:
+        from licita.__main__ import _filtrar
+        self.assertEqual([m.nome for m in _filtrar(self.alvos, "3525300")], ["Jales"])
+
+    def test_aceita_lista(self) -> None:
+        from licita.__main__ import _filtrar
+        self.assertEqual([m.nome for m in _filtrar(self.alvos, "Jales, Nova Castilho")],
+                         ["Jales", "Nova Castilho"])
+
+    def test_nome_errado_para_a_coleta(self) -> None:
+        """Filtro vazio por erro de digitação é indistinguível de município sem
+        licitação — e essa confusão já custou uma rodada a este projeto."""
+        from licita.__main__ import _filtrar
+        with self.assertRaises(SystemExit) as ctx:
+            _filtrar(self.alvos, "Santa Fe do Sul S/A")
+        self.assertIn("não encontrado", str(ctx.exception))
+        self.assertIn("Jales", str(ctx.exception), "a mensagem lista os conhecidos")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

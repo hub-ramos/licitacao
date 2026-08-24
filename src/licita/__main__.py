@@ -23,6 +23,7 @@ from .config import DADOS
 from .db import ARQUIVO_PADRAO, Base
 from .exportar import para_csv, para_painel, para_xlsx
 from .ibge import resolver
+from .texto import normalizar
 from .metricas import calcular
 from .fontes_extra import SondaFontes
 from .probe import Probe
@@ -48,10 +49,46 @@ def _periodo(args: argparse.Namespace) -> tuple[date, date]:
     return inicio, fim
 
 
-def _alvos(base: Base, forcar: bool = False):
+def _filtrar(alvos, escolhidos: str | None):
+    """Restringe a coleta a municípios nomeados, por nome ou por código IBGE.
+
+    Existe para tornar possível uma coleta de calibração: um município, um mês,
+    dado real na mão em minutos em vez de horas. Varrer os 38 municípios é o
+    caminho certo em regime, e o caminho errado para descobrir qual é o ritmo
+    que o PNCP sustenta.
+
+    Nome desconhecido é erro, não filtro vazio: uma coleta que devolve zero
+    porque o nome foi digitado errado é indistinguível de um município que não
+    tem licitação, e essa confusão já custou uma rodada neste projeto.
+    """
+    if not escolhidos:
+        return alvos
+    pedidos = [p.strip() for p in escolhidos.split(",") if p.strip()]
+    selecionados, faltando = [], []
+    for pedido in pedidos:
+        alvo = normalizar(pedido)
+        achado = next(
+            (m for m in alvos
+             if normalizar(m.nome) == alvo or m.codigo_ibge == pedido),
+            None,
+        )
+        (selecionados.append(achado) if achado else faltando.append(pedido))
+    if faltando:
+        conhecidos = ", ".join(sorted(m.nome for m in alvos))
+        raise SystemExit(
+            f"município não encontrado entre os alvos: {', '.join(faltando)}\n"
+            f"conhecidos: {conhecidos}"
+        )
+    return selecionados
+
+
+def _alvos(base: Base, forcar: bool = False, escolhidos: str | None = None):
     alvos = resolver(forcar=forcar)
+    # Grava a dimensão completa mesmo quando a coleta é restrita: o painel e as
+    # visões continuam sabendo quais municípios existem, e um recorte não apaga
+    # da base os municípios que ficaram de fora.
     Coletor(base).gravar_municipios(alvos)
-    return alvos
+    return _filtrar(alvos, escolhidos)
 
 
 def cmd_probe(args: argparse.Namespace) -> int:
@@ -121,7 +158,7 @@ def cmd_municipios(args: argparse.Namespace) -> int:
 def cmd_historico(args: argparse.Namespace) -> int:
     inicio, fim = _periodo(args)
     with Base(args.base) as base:
-        alvos = _alvos(base)
+        alvos = _alvos(base, escolhidos=args.municipio)
         coletor = Coletor(base)
         print(f"Coletando {inicio} a {fim} em {len(alvos)} municípios...")
         resumo = coletor.coletar_historico(alvos, inicio, fim, com_detalhe=not args.sem_detalhe)
@@ -134,7 +171,7 @@ def cmd_historico(args: argparse.Namespace) -> int:
 
 def cmd_radar(args: argparse.Namespace) -> int:
     with Base(args.base) as base:
-        alvos = _alvos(base)
+        alvos = _alvos(base, escolhidos=args.municipio)
         coletor = Coletor(base)
         print(coletor.coletar_radar(alvos, args.horizonte))
     return 0
@@ -143,7 +180,7 @@ def cmd_radar(args: argparse.Namespace) -> int:
 def cmd_atas(args: argparse.Namespace) -> int:
     inicio, fim = _periodo(args)
     with Base(args.base) as base:
-        alvos = _alvos(base)
+        alvos = _alvos(base, escolhidos=args.municipio)
         print(Coletor(base).coletar_atas_e_contratos(alvos, inicio, fim))
     return 0
 
@@ -205,6 +242,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--anos", type=int, help="quantos anos para trás coletar")
     p.add_argument("--desde", help="data inicial AAAA-MM-DD (tem precedência sobre --anos)")
     p.add_argument("--ate", help="data final AAAA-MM-DD")
+    p.add_argument("--municipio",
+                   help="restringe a coleta a municípios nomeados, separados por "
+                        "vírgula (nome ou código IBGE). Sem isto, varre todos os alvos")
     p.add_argument("--horizonte", type=int, help="dias à frente na varredura do radar")
     p.add_argument("--sem-detalhe", action="store_true",
                    help="não buscar itens e resultados (varredura rápida)")
