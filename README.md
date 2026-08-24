@@ -203,6 +203,7 @@ Ficam registradas onde afetam a coleta, com as duas versões, para que ninguém
 | Outlier de Três Fronteiras | `dados/relatorio_cobertura.md` | 1 contratação, R$ 371.276.147,04, município de ~6 mil habitantes. Erro de digitação na fonte ou contrato atípico — não investigado |
 | Atas e contratos varridos por CNPJ | `src/licita/coleta.py` | Uma requisição por órgão por janela, onde uma por janela com filtro local resolveria |
 | Backfill de 3 anos não cabe no workflow | `.github/workflows/historico.yml` | Com a latência de 2,2s medida no runner e a pausa de 1,0s, 3 anos custam ~10,4 h contra timeout de 5,5 h. A primeira coleta real vai com `anos=1` (~4 h); o histórico completo precisa ser fatiado |
+| Peso do painel no celular | `src/licita/exportar.py` | Medido em Chromium com 3.122 itens: **4,3 MB** de HTML, com as linhas todas renderizadas de uma vez. `LIMITE_PAINEL` admite 8.000 itens, o que daria ~11 MB. Cabe em 1 ano de coleta; não cabe em 3 sem paginação ou virtualização |
 
 ## O que esta base ainda não faz
 
