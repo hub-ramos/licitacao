@@ -50,7 +50,16 @@ pncp:
   resultados: "/orgaos/{cnpj}/compras/{ano}/{sequencial}/itens/{item}/resultados"
   arquivos: "/orgaos/{cnpj}/compras/{ano}/{sequencial}/arquivos"
 
-  tamanho_pagina: 500        # máximo aceito pela API
+  # `tamanhoPagina` tem limite POR ENDPOINT, não um valor único — foi o que
+  # quebrou a primeira varredura real: 500 aplicado a /contratacoes/publicacao
+  # devolve HTTP 422, e as 851 requisições voltaram vazias.
+  # Fonte: Manual das APIs de Consultas do PNCP. Mínimo 10 em todos.
+  tamanho_pagina:
+    contratacoes_publicacao: 50
+    contratacoes_proposta: 50
+    atas: 500
+    contratos: 500
+    padrao: 50               # usado por endpoint sem limite conhecido
   # A modalidade é parâmetro obrigatório em /contratacoes/publicacao, por isso a
   # coleta itera sobre esta lista. Ver tabela de domínio abaixo.
   modalidades:

@@ -10,8 +10,18 @@ Duas APIs distintas convivem aqui:
   por quanto*, então valem o risco — mas o coletor degrada para o nível de
   contratação se estes caminhos não responderem como esperado.
 
-Nenhum endpoint pôde ser exercitado ao vivo durante a escrita deste módulo; por
-isso todo acesso a campo do JSON é tolerante a ausência.
+Os endpoints de consulta foram exercitados contra a API real em 2026-08-24 e
+respondem conforme o manual; os campos usados aqui foram conferidos no retorno.
+O acesso a campo segue tolerante a ausência porque órgãos pequenos publicam com
+preenchimento irregular, e um campo vazio não pode derrubar a varredura.
+
+Duas restrições do manual que quebram a coleta em silêncio se ignoradas:
+
+* ``tamanhoPagina`` tem **limite por endpoint** — 50 em ``/contratacoes/*``,
+  500 em ``/atas`` e ``/contratos``, mínimo 10. Enviar 500 às contratações
+  devolve HTTP 422 e a coleta volta vazia, sem parecer erro.
+* ``codigoModalidadeContratacao`` é obrigatório em ``/contratacoes/publicacao``,
+  por isso a coleta itera sobre modalidades em vez de pedir todas de uma vez.
 """
 
 from __future__ import annotations
@@ -79,7 +89,9 @@ class ClientePNCP:
         self.consulta = cfg["consulta_base"]
         self.detalhe = cfg["detalhe_base"]
         self.rotas = cfg
-        self.tamanho_pagina = cfg["tamanho_pagina"]
+        # Limite de paginação por endpoint. Ver comentário em config/fontes.yml:
+        # aplicar 500 a /contratacoes/publicacao devolve 422 e a coleta volta vazia.
+        self.tamanhos = cfg["tamanho_pagina"]
         self.janela_dias = cfg["janela_dias"]
         self.falhas: list[Falha] = []
 
@@ -88,6 +100,10 @@ class ClientePNCP:
     def _registrar_falha(self, contexto: str, resp: Resposta) -> None:
         self.falhas.append(Falha(contexto, resp.url, resp.status, resp.erro))
         log.warning("falha em %s: %s %s", contexto, resp.status, resp.erro)
+
+    def tamanho_pagina(self, endpoint: str) -> int:
+        """Maior `tamanhoPagina` aceito pelo endpoint, conforme o manual do PNCP."""
+        return self.tamanhos.get(endpoint, self.tamanhos.get("padrao", 50))
 
     def _coletar(self, url: str, params: dict, contexto: str) -> list[dict]:
         reunidos: list[dict] = []
@@ -116,7 +132,7 @@ class ClientePNCP:
                 "dataFinal": _aaaammdd(jan_fim),
                 "codigoModalidadeContratacao": modalidade,
                 "codigoMunicipioIbge": codigo_ibge,
-                "tamanhoPagina": self.tamanho_pagina,
+                "tamanhoPagina": self.tamanho_pagina("contratacoes_publicacao"),
             }
             ctx = f"contratacoes {codigo_ibge} mod={modalidade} {jan_ini}..{jan_fim}"
             achados.extend(self._coletar(url, params, ctx))
@@ -131,7 +147,7 @@ class ClientePNCP:
             "dataFinal": _aaaammdd(data_final),
             "codigoModalidadeContratacao": modalidade,
             "codigoMunicipioIbge": codigo_ibge,
-            "tamanhoPagina": self.tamanho_pagina,
+            "tamanhoPagina": self.tamanho_pagina("contratacoes_proposta"),
         }
         return self._coletar(url, params, f"proposta {codigo_ibge} mod={modalidade}")
 
@@ -147,7 +163,7 @@ class ClientePNCP:
             params = {
                 "dataInicial": _aaaammdd(jan_ini),
                 "dataFinal": _aaaammdd(jan_fim),
-                "tamanhoPagina": self.tamanho_pagina,
+                "tamanhoPagina": self.tamanho_pagina("atas"),
             }
             if cnpj:
                 params["cnpj"] = apenas_digitos(cnpj)
@@ -162,7 +178,7 @@ class ClientePNCP:
             params = {
                 "dataInicial": _aaaammdd(jan_ini),
                 "dataFinal": _aaaammdd(jan_fim),
-                "tamanhoPagina": self.tamanho_pagina,
+                "tamanhoPagina": self.tamanho_pagina("contratos"),
             }
             if cnpj_orgao:
                 params["cnpjOrgao"] = apenas_digitos(cnpj_orgao)
