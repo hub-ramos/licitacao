@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Sequence
 
 from .config import DADOS, RAIZ
+from .config import glossario as _glossario
 from .db import Base
 
 log = logging.getLogger("licita.exportar")
@@ -114,6 +115,7 @@ def para_painel(base: Base, destino: Path = PAINEL) -> Path:
         "radar": _dicionarios(base, EXPORTS["radar"], LIMITE_PAINEL["radar"]),
         "metricas": _dicionarios(base, EXPORTS["metricas"], LIMITE_PAINEL["metricas"]),
         "vencedores": _dicionarios(base, EXPORTS["vencedores"], LIMITE_PAINEL["vencedores"]),
+        "glossario": _glossario(),
         "totais": {
             "contratacoes": base.contar("contratacao"),
             "itens": base.contar("item"),

@@ -1,0 +1,117 @@
+# Glossário do painel: campo do banco (ou conceito sem coluna própria) → texto
+# em linguagem simples, para quem abre o painel sem ter lido a documentação.
+#
+# Cada entrada tem `termo` (o nome mostrado na lista completa) e `explicacao`
+# (uma frase: o que é e por que importa). A chave do YAML é o que liga a
+# entrada à coluna — quando ela bate com o `campo` de uma coluna ou de um
+# filtro no painel, o cabeçalho ganha `title` nativo mais um "?" clicável
+# (o `title` sozinho não funciona em toque, e o painel é usado no celular).
+# Chaves sem coluna correspondente (dispensa, inexigibilidade, credenciamento,
+# taxa_desercao, homologado, estimado_x_homologado) só aparecem na lista
+# completa do botão "Glossário", para o termo não ficar de fora só porque
+# ainda não tem uma coluna dedicada.
+
+desagio:
+  termo: Deságio
+  explicacao: >-
+    Quanto o preço caiu entre a estimativa da prefeitura e o valor
+    contratado. Deságio baixo com fornecedor único indica que não houve
+    disputa real.
+
+desagio_medio:
+  termo: Deságio médio
+  explicacao: >-
+    A média do deságio de todos os itens do recorte. Perto de zero é sinal
+    de vácuo competitivo, não de preço já enxuto — a prefeitura raramente
+    superestima a ponto de sobrar 15% ou mais de desconto possível.
+
+hhi:
+  termo: HHI (concentração)
+  explicacao: >-
+    Índice de Herfindahl-Hirschman, normalizado de 0 a 1: mede quão
+    concentrado está o mercado entre os fornecedores. 1,0 significa que um
+    único fornecedor levou tudo; perto de 0 é disputa pulverizada.
+
+indice_oportunidade:
+  termo: Índice de Oportunidade
+  explicacao: >-
+    De 0 a 100, quanto maior mais vácuo competitivo: soma deserção, ausência
+    de deságio, concentração de fornecedores e recorrência, cada uma pesando
+    conforme os dados disponíveis. Não é probabilidade de ganhar — é onde
+    vale a pena olhar primeiro.
+
+itens_desertos:
+  termo: Deserto
+  explicacao: >-
+    Item que não teve nenhum licitante — a sessão abriu e ninguém apareceu
+    para disputar. É o sinal mais direto de vácuo competitivo que existe.
+
+itens_fracassados:
+  termo: Fracassado
+  explicacao: >-
+    Item que teve licitante, mas nenhuma proposta foi aceita (por preço,
+    documentação ou habilitação). Diferente de deserto: aqui houve
+    interesse, só não houve acordo.
+
+srp:
+  termo: SRP / Registro de Preço
+  explicacao: >-
+    Sistema de Registro de Preços: a licitação fixa um preço e a prefeitura
+    compra aos poucos, conforme a necessidade, dentro da validade da ata —
+    não é um contrato fechado de uma vez só.
+
+tipo_beneficio_nome:
+  termo: Benefício ME/EPP
+  explicacao: >-
+    Tratamento diferenciado para Microempresa e Empresa de Pequeno Porte
+    (Lei Complementar 123/2006) — exclusividade ou cota reservada no item,
+    para reduzir a barreira de entrada de fornecedor pequeno.
+
+valor_unitario_estimado:
+  termo: Valor estimado × homologado
+  explicacao: >-
+    O estimado é o preço de pesquisa de mercado que a prefeitura fez antes
+    do pregão; o homologado é o preço que realmente venceu. A diferença
+    entre os dois é o deságio.
+
+valor_unitario_homologado:
+  termo: Homologado
+  explicacao: >-
+    Homologado é o preço/fornecedor que a autoridade competente confirmou
+    como vencedor depois da disputa — é o que efetivamente será pago, não
+    uma proposta ainda em análise.
+
+valor_total_homologado_ajustado:
+  termo: Total homologado (ajustado)
+  explicacao: >-
+    Valor total do item já corrigido quando o órgão publicou o total no
+    campo do unitário (assinatura: homologado ≈ quantidade × estimado). O
+    valor cru continua disponível ao lado, para o ajuste ficar auditável.
+
+dispensa:
+  termo: Dispensa de Licitação
+  explicacao: >-
+    Contratação direta autorizada por lei (Lei 14.133/2021, art. 75) sem
+    disputa formal — por valor baixo, urgência ou outra hipótese legal. Não
+    ter deságio aqui é esperado, não é sinal de vácuo competitivo.
+
+inexigibilidade:
+  termo: Inexigibilidade
+  explicacao: >-
+    Contratação direta porque a disputa é inviável — fornecedor exclusivo,
+    notória especialização ou situação semelhante (Lei 14.133/2021, art.
+    74). Assim como a dispensa, não é medida de vácuo competitivo.
+
+credenciamento:
+  termo: Credenciamento
+  explicacao: >-
+    Modalidade em que a prefeitura pré-qualifica todos os fornecedores que
+    atendem certas condições, sem escolher um único vencedor — comum em
+    serviços de saúde pagos por demanda (ex.: plantonistas, exames).
+
+taxa_desercao:
+  termo: Taxa de deserção
+  explicacao: >-
+    Proporção de itens desertos ou fracassados sobre o total de itens
+    concluídos (homologado, deserto ou fracassado) do recorte — quanto
+    maior, mais frequente é a sessão sem disputa real.

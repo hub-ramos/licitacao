@@ -45,3 +45,9 @@ def fontes_complementares() -> dict[str, Any]:
     que `python -m licita fontes` a executa e registra o código HTTP obtido.
     """
     return _ler("fontes_complementares.yml")
+
+
+@functools.cache
+def glossario() -> dict[str, Any]:
+    """Campo → {termo, explicacao}, injetado no painel para os tooltips de cabeçalho."""
+    return _ler("glossario.yml")

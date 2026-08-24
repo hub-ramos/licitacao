@@ -553,5 +553,46 @@ class Exports(unittest.TestCase):
             base.fechar()
 
 
+class Glossario(unittest.TestCase):
+    """Toda coluna do painel com termo técnico tem verbete no glossário."""
+
+    # Campos que o painel mostra com jargão do domínio (deságio, HHI, SRP...) —
+    # ver painel/template.html (colunas/filtros) e config/glossario.yml.
+    CAMPOS_COM_JARGAO = [
+        "desagio", "desagio_medio", "hhi", "indice_oportunidade",
+        "itens_desertos", "itens_fracassados", "srp", "tipo_beneficio_nome",
+        "valor_unitario_estimado", "valor_unitario_homologado",
+        "valor_total_homologado_ajustado",
+    ]
+
+    def setUp(self) -> None:
+        from licita.config import glossario
+        self.glossario = glossario()
+        self.template = (RAIZ / "painel" / "template.html").read_text(encoding="utf-8")
+
+    def test_campos_com_jargao_aparecem_no_template(self) -> None:
+        """Trava contra typo: campo que não existe mais no painel não devia
+        continuar na lista de cobertura obrigatória. A maioria aparece como
+        `campo:"x"` (colunas/filtros genéricos); valor_total_homologado_ajustado
+        só aparece como acesso de propriedade (`it.valor_total_homologado_ajustado`)
+        porque a tabela de itens expandida tem cabeçalho estático — por isso o
+        teste aceita qualquer aparição do nome, não só o padrão `campo:"x"`."""
+        for campo in self.CAMPOS_COM_JARGAO:
+            self.assertIn(campo, self.template, f"{campo} sumiu do template")
+
+    def test_campos_com_jargao_tem_verbete(self) -> None:
+        for campo in self.CAMPOS_COM_JARGAO:
+            self.assertIn(campo, self.glossario, f"{campo} não tem entrada em glossario.yml")
+            self.assertTrue(self.glossario[campo].get("termo"))
+            self.assertTrue(self.glossario[campo].get("explicacao"))
+
+    def test_termos_sem_coluna_propria_estao_na_lista_completa(self) -> None:
+        """dispensa/inexigibilidade/credenciamento/taxa_desercao não têm coluna
+        dedicada — só aparecem no glossário; o botão "Glossário" tem que
+        listá-los, senão o termo fica de fora do painel por completo."""
+        for chave in ("dispensa", "inexigibilidade", "credenciamento", "taxa_desercao"):
+            self.assertIn(chave, self.glossario, f"{chave} não está em glossario.yml")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
