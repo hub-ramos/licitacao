@@ -1,1 +1,15 @@
 ﻿id;execucao;contexto;url;status;erro;criado_em
+11;2026-08-24T17:55:25+00:00;atas 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/atas;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-08-24T17:55:25+00:00
+10;2026-08-24T17:55:25+00:00;contratos 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratos;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-08-24T17:55:25+00:00
+9;2026-08-24T17:55:25+00:00;atas 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/atas?dataInicial=20260725&dataFinal=20260824&tamanhoPagina=500&cnpj=00973293000193&pagina=1;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-08-24T17:55:25+00:00
+8;2026-08-24T17:55:25+00:00;contratos 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratos;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-08-24T17:55:25+00:00
+7;2026-08-24T17:55:25+00:00;atas 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/atas;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-08-24T17:55:25+00:00
+6;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=12 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-08-24T17:37:01+00:00
+5;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=9 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-08-24T17:37:01+00:00
+4;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=8 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-08-24T17:37:01+00:00
+3;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=7 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-08-24T17:37:01+00:00
+2;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=6 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-08-24T17:37:01+00:00
+1;2026-08-24T17:37:01+00:00;contratacoes 3546603 mod=5 2026-07-25..2026-08-24;https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-08-24T17:37:01+00:00
