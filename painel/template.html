@@ -11,13 +11,22 @@
   --quente:#b3401f; --morno:#c07a12; --frio:#2f7a4f;
   --sombra:0 1px 3px rgba(16,32,48,.08);
 }
+/* Três estados de tema, não dois: o visitante pode não ter escolhido nada
+   (só prefers-color-scheme decide) ou ter escolhido explicitamente. O guard
+   :not([data-theme=light]) faz a escolha explícita ganhar do sistema. */
 @media (prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme=light]){
     --fundo:#11161c; --painel:#19212a; --borda:#2b3742; --texto:#e6ecf2; --suave:#93a4b5;
     --acento:#5fb3d4; --acento-fraco:#1d2c36;
     --quente:#e8734a; --morno:#e0a83c; --frio:#5fbe8a;
     --sombra:0 1px 3px rgba(0,0,0,.4);
   }
+}
+:root[data-theme=dark]{
+  --fundo:#11161c; --painel:#19212a; --borda:#2b3742; --texto:#e6ecf2; --suave:#93a4b5;
+  --acento:#5fb3d4; --acento-fraco:#1d2c36;
+  --quente:#e8734a; --morno:#e0a83c; --frio:#5fbe8a;
+  --sombra:0 1px 3px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--fundo);color:var(--texto);
