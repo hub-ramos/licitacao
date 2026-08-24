@@ -10,7 +10,9 @@ isso serve de teste de regressão de toda a cadeia de coleta e cálculo.
 
 CNPJ_ORGAO = "01613202000171"
 CONTROLE = f"{CNPJ_ORGAO}-1-000007/2026"
-IBGE_NOVA_CASTILHO = "3532827"
+# Código confirmado pela API de Localidades do IBGE em 2026-08-24.
+# Estava como "3532827", valor chutado ao escrever o fixture.
+IBGE_NOVA_CASTILHO = "3532868"
 
 ESTIMADO_UNITARIO = 7.01
 HOMOLOGADO_UNITARIO = 6.92
