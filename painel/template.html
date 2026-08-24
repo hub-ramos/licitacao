@@ -88,6 +88,18 @@ table.detalhe th{position:static;background:transparent;padding:5px 8px;
 table.detalhe td{padding:5px 8px;white-space:normal;border-bottom:1px solid var(--borda)}
 table.detalhe tr:last-child td{border-bottom:none}
 .vazio-detalhe{padding:6px 8px;color:var(--suave);font-size:12.5px}
+.detalhe-cabecalho{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:0 8px 8px}
+.detalhe-cabecalho .busca-itens{flex:1 1 220px;min-width:180px;padding:6px 8px;
+  border:1px solid var(--borda);border-radius:6px;background:var(--painel);
+  color:var(--texto);font-size:12.5px}
+.detalhe-contagem{color:var(--suave);font-size:11.5px;white-space:nowrap}
+.paginacao-detalhe{display:flex;gap:10px;align-items:center;justify-content:center;
+  padding:8px;font-size:12px;color:var(--suave)}
+.paginacao-detalhe .pag-btn{padding:4px 10px;border:1px solid var(--borda);
+  border-radius:6px;background:var(--painel);color:var(--texto);cursor:pointer;
+  font-size:12px}
+.paginacao-detalhe .pag-btn:disabled{opacity:.4;cursor:default}
 .aviso{background:var(--acento-fraco);border-left:3px solid var(--acento);
   padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin-bottom:14px;color:var(--texto)}
 a{color:var(--acento)}
@@ -108,6 +120,7 @@ a{color:var(--acento)}
   <button data-aba="radar" aria-selected="true">Radar — proposta aberta</button>
   <button data-aba="itens" aria-selected="false">Histórico de preços</button>
   <button data-aba="metricas" aria-selected="false">Mapa de concorrência</button>
+  <button data-aba="vencedores" aria-selected="false">Vencedores</button>
 </nav>
 
 <main>
@@ -184,8 +197,9 @@ ITENS.forEach(it => {
 
 /* Tabela de itens que abre sob a linha clicada, com o vencedor e o link do
    PNCP daquele item — os três pedidos que motivaram a linha expansível. */
-function tabelaDeItens(itens){
-  if (!itens || !itens.length) return `<div class="vazio-detalhe">Sem itens detalhados.</div>`;
+function tabelaDeItens(itens, vazioMsg){
+  if (!itens || !itens.length)
+    return `<div class="vazio-detalhe">${esc(vazioMsg || "Sem itens detalhados.")}</div>`;
   const linhas = itens.map(it => `<tr>
       <td class="num">${nums(it.numero_item)}</td>
       <td>${esc(it.descricao ?? NADA)}</td>
@@ -203,6 +217,111 @@ function tabelaDeItens(itens){
       <th>Unit. estimado</th><th>Total homologado</th><th>Situação</th>
       <th>Vencedor</th><th>Link</th>
     </tr></thead><tbody>${linhas}</tbody></table>`;
+}
+
+/* ------------------------------------------------- paginação + busca geral */
+/* Estado de cada painel expandido: página atual e o texto de busca, por
+   aba+linha. Persiste entre redesenhos para não perder a posição do usuário
+   ao clicar em "avançar" ou digitar uma busca. */
+const TAM_PAGINA_DETALHE = 10;
+let detalheEstado = {};   // {aba: {chave: {pagina, busca}}}
+
+function obterEstadoDetalhe(aba, chave){
+  if (!detalheEstado[aba]) detalheEstado[aba] = {};
+  if (!detalheEstado[aba][chave]) detalheEstado[aba][chave] = {pagina: 1, busca: ""};
+  return detalheEstado[aba][chave];
+}
+
+/* Busca em TODOS os itens da base, não só nos da linha aberta — pedido
+   explícito: um item pode estar noutra contratação/fornecedor e o usuário
+   quer achá-lo sem fechar o que já está vendo. */
+function buscarItensGeral(termo){
+  const termos = termo.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (!termos.length) return [];
+  return ITENS.filter(it => {
+    const alvo = `${it.descricao ?? ""} ${it.objeto ?? ""} ${it.nome_fornecedor ?? ""} `
+               + `${it.municipio ?? ""} ${it.segmento ?? ""} ${it.numero_compra ?? ""}`
+               .toLowerCase();
+    return termos.every(t => alvo.includes(t));
+  });
+}
+
+function paginacaoHtml(atual, total){
+  return `<div class="paginacao-detalhe">
+      <button type="button" class="pag-btn" data-dir="-1" ${atual <= 1 ? "disabled" : ""}>‹ Anterior</button>
+      <span>Página ${atual} de ${total}</span>
+      <button type="button" class="pag-btn" data-dir="1" ${atual >= total ? "disabled" : ""}>Avançar ›</button>
+    </div>`;
+}
+
+/* Monta o conteúdo inteiro do painel expandido: busca + contagem + tabela +
+   paginação. Chamada tanto no desenho completo da tabela quanto nas
+   atualizações pontuais (digitar na busca, clicar em avançar). */
+function renderizarDetalhe(cfg, aba, linha, chave){
+  const est = obterEstadoDetalhe(aba, chave);
+  const buscando = est.busca.trim().length > 0;
+  const lista = buscando ? buscarItensGeral(est.busca) : cfg.expandir.itens(linha);
+
+  const totalPaginas = Math.max(1, Math.ceil(lista.length / TAM_PAGINA_DETALHE));
+  if (est.pagina > totalPaginas) est.pagina = totalPaginas;
+  if (est.pagina < 1) est.pagina = 1;
+  const inicio = (est.pagina - 1) * TAM_PAGINA_DETALHE;
+  const pagina = lista.slice(inicio, inicio + TAM_PAGINA_DETALHE);
+
+  const contagem = buscando
+    ? `${lista.length.toLocaleString("pt-BR")} itens encontrados em toda a base`
+    : `${lista.length.toLocaleString("pt-BR")} itens de ${cfg.expandir.escopoRotulo || "esta linha"}`;
+  const vazioMsg = buscando ? "Nenhum item encontrado para esta busca." : "Sem itens detalhados.";
+
+  return `<div class="detalhe-cabecalho">
+      <input type="search" class="busca-itens" placeholder="Buscar em todos os itens da base…"
+             value="${esc(est.busca)}">
+      <span class="detalhe-contagem">${contagem}</span>
+    </div>
+    ${tabelaDeItens(pagina, vazioMsg)}
+    ${totalPaginas > 1 ? paginacaoHtml(est.pagina, totalPaginas) : ""}`;
+}
+
+/* Substitui só o conteúdo do painel aberto (não a tabela inteira), para não
+   perder o foco/cursor do campo de busca a cada tecla digitada. */
+function atualizarBlocoDetalhe(cfg, aba, chave, tr){
+  const linha = cfg.dados.find(r => String(cfg.expandir.chave(r)) === chave);
+  if (!linha) return;
+  const td = tr.querySelector("td");
+  const ativo = document.activeElement;
+  const eraBusca = ativo && ativo.classList && ativo.classList.contains("busca-itens") && tr.contains(ativo);
+  const cursor = eraBusca ? ativo.selectionStart : null;
+
+  td.innerHTML = renderizarDetalhe(cfg, aba, linha, chave);
+
+  if (eraBusca){
+    const novo = td.querySelector(".busca-itens");
+    if (novo){
+      novo.focus();
+      if (cursor !== null){ try { novo.setSelectionRange(cursor, cursor); } catch {} }
+    }
+  }
+  ligarEventosDetalhe(cfg, aba, chave, tr);
+}
+
+function ligarEventosDetalhe(cfg, aba, chave, tr){
+  const busca = tr.querySelector(".busca-itens");
+  if (busca){
+    busca.addEventListener("input", e => {
+      const est = obterEstadoDetalhe(aba, chave);
+      est.busca = e.target.value;
+      est.pagina = 1;
+      atualizarBlocoDetalhe(cfg, aba, chave, tr);
+    });
+  }
+  tr.querySelectorAll(".pag-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const est = obterEstadoDetalhe(aba, chave);
+      est.pagina += Number(btn.dataset.dir);
+      atualizarBlocoDetalhe(cfg, aba, chave, tr);
+    });
+  });
 }
 
 /* ----------------------------------------------------------------- abas */
@@ -243,7 +362,8 @@ const ABAS = {
     // que o ComprasNet mostra e que faltava aqui.
     expandir: {
       chave: r => r.numero_controle_pncp,
-      itens: r => IDX_POR_CONTRATACAO.get(r.numero_controle_pncp) || []
+      itens: r => IDX_POR_CONTRATACAO.get(r.numero_controle_pncp) || [],
+      escopoRotulo: "esta contratação"
     }
   },
 
@@ -326,10 +446,121 @@ const ABAS = {
     // "laticínios, 1 item" que não dizia qual item passa a dizer.
     expandir: {
       chave: r => `${r.codigo_ibge}|${r.segmento}|${r.ano}`,
-      itens: r => IDX_POR_SEG_MUN_ANO.get(`${r.codigo_ibge}|${r.segmento}|${r.ano}`) || []
+      itens: r => IDX_POR_SEG_MUN_ANO.get(`${r.codigo_ibge}|${r.segmento}|${r.ano}`) || [],
+      escopoRotulo: "este segmento × município × ano"
     }
+  },
+
+  // dados/colunas/filtros são recalculados por sincronizarVencedores() — a
+  // aba soma no cliente, sobre v_vencedor no grão de item ganho, e entrega
+  // os quatro recortes pedidos sem o servidor pré-decidir qual o usuário quer.
+  vencedores: {
+    dados: [],
+    nota: "Quem ganha o quê. Troque o agrupamento para ver concentração de "
+        + "fornecedor sob ângulos diferentes — quem parece disperso no geral "
+        + "pode dominar um segmento ou um município.",
+    filtros: [],
+    colunas: [],
+    ordem: {campo:"valor_total", desc:true},
+    expandir: {
+      chave: r => r._chave,
+      itens: r => r._linhas || [],
+      escopoRotulo: "este fornecedor, neste recorte"
+    },
+    aoAgrupar: () => sincronizarVencedores()
   }
 };
+
+/* --------------------------------------------------------- aba Vencedores */
+const VENCEDOR_RAW = D.vencedores || [];
+const AGRUPAMENTOS_VENCEDOR = [
+  ["geral", "Geral"], ["segmento", "Por segmento"],
+  ["mes", "Por mês/ano"], ["municipio", "Por município"]
+];
+
+/* Soma no cliente: um item ganho por linha em VENCEDOR_RAW vira um bucket por
+   fornecedor + a dimensão escolhida. As contagens de segmentos/municípios
+   distintos saem de Sets acumulados durante a soma, não de outra consulta. */
+function agruparVencedores(modo){
+  const buckets = new Map();
+  VENCEDOR_RAW.forEach(r => {
+    const dim = modo === "segmento" ? (r.segmento ?? NADA)
+              : modo === "mes" ? `${r.ano ?? NADA}-${String(r.mes ?? 0).padStart(2, "0")}`
+              : modo === "municipio" ? (r.municipio ?? NADA)
+              : "";
+    const chave = `${r.ni_fornecedor || NADA}::${dim}`;
+    let b = buckets.get(chave);
+    if (!b){
+      b = {
+        _chave: chave, _linhas: [],
+        ni_fornecedor: r.ni_fornecedor, nome_fornecedor: r.nome_fornecedor,
+        porte_fornecedor: r.porte_fornecedor,
+        segmento: modo === "segmento" ? r.segmento : undefined,
+        municipio: modo === "municipio" ? r.municipio : undefined,
+        ano: modo === "mes" ? r.ano : undefined,
+        mes: modo === "mes" ? r.mes : undefined,
+        valor_total: 0, itens: 0,
+        _contratacoes: new Set(), _segmentos: new Set(), _municipios: new Set()
+      };
+      buckets.set(chave, b);
+    }
+    b.valor_total += Number(r.valor_total_homologado_ajustado || 0);
+    b.itens += 1;
+    b._linhas.push(r);
+    if (r.numero_controle_pncp) b._contratacoes.add(r.numero_controle_pncp);
+    if (r.segmento) b._segmentos.add(r.segmento);
+    if (r.municipio) b._municipios.add(r.municipio);
+  });
+  return [...buckets.values()].map(b => ({
+    ...b,
+    contratacoes: b._contratacoes.size,
+    segmentos_distintos: b._segmentos.size,
+    municipios_distintos: b._municipios.size
+  }));
+}
+
+function colunasVencedores(modo){
+  const inicio = [
+    {campo:"nome_fornecedor", rotulo:"Fornecedor", classe:"larga"},
+    {campo:"porte_fornecedor", rotulo:"Porte"}
+  ];
+  const meio =
+    modo === "segmento" ? [{campo:"segmento", rotulo:"Segmento"}] :
+    modo === "mes" ? [
+      {campo:"ano", rotulo:"Ano", classe:"num"},
+      {campo:"mes", rotulo:"Mês", classe:"num",
+       render:r => r.mes ? String(r.mes).padStart(2, "0") : NADA}
+    ] :
+    modo === "municipio" ? [{campo:"municipio", rotulo:"Município"}] : [];
+  const fim = [
+    {campo:"valor_total", rotulo:"Valor total", classe:"num", render:r => brl(r.valor_total)},
+    {campo:"itens", rotulo:"Itens", classe:"num"},
+    {campo:"contratacoes", rotulo:"Contratações", classe:"num"}
+  ];
+  if (modo !== "segmento") fim.push({campo:"segmentos_distintos", rotulo:"Segmentos", classe:"num"});
+  if (modo !== "municipio") fim.push({campo:"municipios_distintos", rotulo:"Municípios", classe:"num"});
+  return [...inicio, ...meio, ...fim];
+}
+
+function filtrosVencedores(modo){
+  const f = [
+    {campo:"__agrupar", rotulo:"Agrupar por", tipo:"agrupar"},
+    {campo:"__busca", rotulo:"Buscar fornecedor", tipo:"texto", alvo:["nome_fornecedor"]},
+    {campo:"porte_fornecedor", rotulo:"Porte"}
+  ];
+  if (modo === "segmento") f.push({campo:"segmento", rotulo:"Segmento"});
+  if (modo === "mes") f.push({campo:"ano", rotulo:"Ano"});
+  if (modo === "municipio") f.push({campo:"municipio", rotulo:"Município"});
+  return f;
+}
+
+function sincronizarVencedores(){
+  const modo = (estado.vencedores && estado.vencedores.__agrupar) || "geral";
+  const cfg = ABAS.vencedores;
+  cfg.dados = agruparVencedores(modo);
+  cfg.colunas = colunasVencedores(modo);
+  cfg.filtros = filtrosVencedores(modo);
+}
 
 /* --------------------------------------------------------------- estado */
 let abaAtual = "radar";
@@ -350,6 +581,9 @@ function aplicar(aba){
     const escolhido = f[filtro.campo];
     if (escolhido === undefined || escolhido === "" || escolhido === null) return true;
 
+    // "agrupar" já reformou cfg.dados inteiro (ver sincronizarVencedores); não
+    // é um predicado por linha, filtrar por ele aqui zeraria a tabela.
+    if (filtro.tipo === "agrupar") return true;
     if (filtro.tipo === "texto"){
       const alvo = filtro.alvo.map(c => String(linha[c] ?? "")).join(" ").toLowerCase();
       return escolhido.toLowerCase().split(/\s+/).every(t => alvo.includes(t));
@@ -408,6 +642,10 @@ function desenharFiltros(){
                    ["15","até 15 dias"],["encerrado","já encerrado"]];
       campo = `<select id="${id}">` + ops.map(([v,r]) =>
         `<option value="${v}"${v === sel ? " selected" : ""}>${r}</option>`).join("") + `</select>`;
+    } else if (filtro.tipo === "agrupar"){
+      const sel = estado[abaAtual][filtro.campo] ?? "geral";
+      campo = `<select id="${id}">` + AGRUPAMENTOS_VENCEDOR.map(([v,r]) =>
+        `<option value="${v}"${v === sel ? " selected" : ""}>${r}</option>`).join("") + `</select>`;
     } else {
       const vistos = new Map();
       cfg.dados.forEach(l => {
@@ -432,6 +670,9 @@ function desenharFiltros(){
     const evento = (filtro.tipo === "texto" || filtro.tipo === "minimo") ? "input" : "change";
     elemento.addEventListener(evento, e => {
       estado[abaAtual][filtro.campo] = e.target.value;
+      // Mudar o agrupamento reformula cfg.dados/colunas antes de desenhar —
+      // sem isto a tabela mostraria colunas de um modo com dados de outro.
+      if (filtro.tipo === "agrupar" && cfg.aoAgrupar) cfg.aoAgrupar();
       desenharTabela();
       if (evento === "change") desenharFiltros();
     });
@@ -472,8 +713,8 @@ function desenharTabela(){
       + "</tr>";
     if (!aberta) return principal;
     return principal
-      + `<tr class="linha-detalhe"><td colspan="${cfg.colunas.length}">`
-      + tabelaDeItens(exp.itens(l)) + "</td></tr>";
+      + `<tr class="linha-detalhe" data-chave-detalhe="${esc(chave)}">`
+      + `<td colspan="${cfg.colunas.length}">${renderizarDetalhe(cfg, abaAtual, l, chave)}</td></tr>`;
   }).join("");
 
   if (exp){
@@ -485,6 +726,9 @@ function desenharTabela(){
         desenharTabela();
       });
     });
+    document.querySelectorAll("#corpo tr.linha-detalhe").forEach(tr => {
+      ligarEventosDetalhe(cfg, abaAtual, tr.dataset.chaveDetalhe, tr);
+    });
   }
 
   document.getElementById("vazio").hidden = linhas.length > 0;
@@ -495,9 +739,11 @@ function desenharTabela(){
 function desenharAba(){
   document.querySelectorAll("#abas button").forEach(b =>
     b.setAttribute("aria-selected", String(b.dataset.aba === abaAtual)));
+  const cfg = ABAS[abaAtual];
+  if (cfg.aoAgrupar) cfg.aoAgrupar();   // reconstrói dados/colunas da aba Vencedores
   const aviso = document.getElementById("aviso");
-  aviso.textContent = ABAS[abaAtual].nota || "";
-  aviso.hidden = !ABAS[abaAtual].nota;
+  aviso.textContent = cfg.nota || "";
+  aviso.hidden = !cfg.nota;
   desenharFiltros();
   desenharTabela();
 }

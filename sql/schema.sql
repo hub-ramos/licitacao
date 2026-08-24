@@ -344,3 +344,56 @@ LEFT JOIN municipio m ON m.codigo_ibge = c.codigo_ibge
 LEFT JOIN orgao o ON o.cnpj = c.cnpj_orgao
 WHERE c.data_encerramento_proposta IS NOT NULL
   AND date(substr(c.data_encerramento_proposta, 1, 10)) >= date('now');
+
+DROP VIEW IF EXISTS v_vencedor;
+
+-- Um item ganho por um fornecedor, por linha — o grão mais fino que a base
+-- sustenta. A aba Vencedores do painel soma isto no cliente para entregar os
+-- quatro recortes pedidos (geral, por segmento, por mês/ano, por município)
+-- a partir de um único conjunto, sem fixar de antemão qual recorte quem vai
+-- olhar. É também o que abastece a linha expansível de cada fornecedor: os
+-- itens que ele ganhou, com o mesmo link do edital.
+CREATE VIEW v_vencedor AS
+SELECT
+    r.ni_fornecedor,
+    r.nome_fornecedor,
+    r.porte_fornecedor,
+    c.codigo_ibge,
+    m.nome                          AS municipio,
+    i.segmento,
+    i.tipo_segmento,
+    c.ano,
+    -- Mês do resultado; quando o resultado não traz data (item sem
+    -- data_resultado publicada), cai para a publicação da contratação — mês
+    -- aproximado é melhor que nenhum mês.
+    CAST(strftime('%m', substr(
+        COALESCE(r.data_resultado, c.data_publicacao), 1, 10
+    )) AS INTEGER)                  AS mes,
+    i.numero_controle_pncp,
+    i.numero_item,
+    c.numero_compra,
+    c.link_pncp,
+    i.descricao,
+    i.quantidade,
+    i.unidade_medida,
+    i.valor_unitario_estimado,
+    r.valor_unitario_homologado,
+    -- Mesma correção de total_homologado_ajustado que v_item_completo usa
+    -- (ver src/licita/metricas.py) — sem ela, o ranking de vencedores volta a
+    -- ter o outlier de R$ 92.686.389,00.
+    CASE
+        WHEN i.quantidade > 1
+             AND r.valor_unitario_homologado IS NOT NULL
+             AND i.valor_unitario_estimado > 0
+             AND ABS(r.valor_unitario_homologado
+                     - i.valor_unitario_estimado * i.quantidade) < 0.01
+            THEN r.valor_unitario_homologado
+        ELSE r.valor_total_homologado
+    END                              AS valor_total_homologado_ajustado,
+    i.situacao_item_nome
+FROM resultado r
+JOIN item i ON i.numero_controle_pncp = r.numero_controle_pncp
+           AND i.numero_item = r.numero_item
+JOIN contratacao c ON c.numero_controle_pncp = i.numero_controle_pncp
+LEFT JOIN municipio m ON m.codigo_ibge = c.codigo_ibge
+WHERE r.ni_fornecedor IS NOT NULL;

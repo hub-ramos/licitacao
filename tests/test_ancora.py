@@ -158,6 +158,22 @@ class CasoAncora(unittest.TestCase):
         self.assertEqual(len(atas), 1)
         self.assertTrue(atas[0]["url"])
 
+    def test_v_vencedor_reproduz_os_tres_itens_do_fornecedor(self) -> None:
+        """A aba Vencedores soma isto no cliente — a visão tem que trazer o
+        grão certo: um item ganho por linha, com o valor já ajustado."""
+        linhas = self.base.consultar(
+            "SELECT * FROM v_vencedor WHERE ni_fornecedor = ?", (FORNECEDOR["ni"],)
+        )
+        self.assertEqual(len(linhas), 3, "três itens, um único fornecedor")
+        self.assertEqual({l["numero_controle_pncp"] for l in linhas}, {CONTROLE})
+        self.assertAlmostEqual(
+            sum(l["valor_total_homologado_ajustado"] for l in linhas),
+            VALOR_TOTAL_ARP, places=2,
+        )
+        for l in linhas:
+            self.assertEqual(l["mes"], 7, "data_resultado é 2026-07-29")
+            self.assertEqual(l["municipio"], "Nova Castilho")
+
 
 class ComponentesDoIndice(unittest.TestCase):
     """Componente sem dado não pode virar zero — zero é uma medição, ausência não."""

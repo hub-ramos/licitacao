@@ -27,6 +27,7 @@ MARCADOR = "/*__DADOS__*/null"
 EXPORTS: dict[str, str] = {
     "itens": "SELECT * FROM v_item_completo ORDER BY ano DESC, municipio, numero_controle_pncp, numero_item",
     "radar": "SELECT * FROM v_radar ORDER BY date(substr(data_encerramento_proposta,1,10))",
+    "vencedores": "SELECT * FROM v_vencedor ORDER BY ano DESC, mes DESC, nome_fornecedor",
     "metricas": """
         SELECT m.*, mu.nome AS municipio
           FROM metrica_mun_seg_ano m
@@ -47,7 +48,7 @@ EXPORTS: dict[str, str] = {
 
 # Quanto do painel vai embutido no HTML. Acima disso o arquivo fica pesado demais
 # para abrir no celular, que é o uso principal do painel.
-LIMITE_PAINEL = {"itens": 8000, "radar": 1000, "metricas": 3000}
+LIMITE_PAINEL = {"itens": 8000, "radar": 1000, "metricas": 3000, "vencedores": 8000}
 
 
 def _linhas(base: Base, sql: str) -> tuple[list[str], list[list[Any]]]:
@@ -112,6 +113,7 @@ def para_painel(base: Base, destino: Path = PAINEL) -> Path:
         "itens": _dicionarios(base, EXPORTS["itens"], LIMITE_PAINEL["itens"]),
         "radar": _dicionarios(base, EXPORTS["radar"], LIMITE_PAINEL["radar"]),
         "metricas": _dicionarios(base, EXPORTS["metricas"], LIMITE_PAINEL["metricas"]),
+        "vencedores": _dicionarios(base, EXPORTS["vencedores"], LIMITE_PAINEL["vencedores"]),
         "totais": {
             "contratacoes": base.contar("contratacao"),
             "itens": base.contar("item"),
