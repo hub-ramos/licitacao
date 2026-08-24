@@ -1,0 +1,335 @@
+[
+  {
+    "codigo_ibge": "3524808",
+    "nome": "Jales",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": true
+  },
+  {
+    "codigo_ibge": "3546603",
+    "nome": "Santa Fé do Sul",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": true
+  },
+  {
+    "codigo_ibge": "3502606",
+    "nome": "Aparecida d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3503950",
+    "nome": "Aspásia",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3513850",
+    "nome": "Dirce Reis",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3514205",
+    "nome": "Dolcinópolis",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3515202",
+    "nome": "Estrela d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3515509",
+    "nome": "Fernandópolis",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3516903",
+    "nome": "General Salgado",
+    "uf": "SP",
+    "regiao_imediata": "Araçatuba",
+    "regiao_intermediaria": "Araçatuba",
+    "motivo_inclusao": "extra",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3518008",
+    "nome": "Guarani d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3520707",
+    "nome": "Indiaporã",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3528205",
+    "nome": "Macedônia",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3529104",
+    "nome": "Marinópolis",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3529609",
+    "nome": "Meridiano",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3529658",
+    "nome": "Mesópolis",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3530003",
+    "nome": "Mira Estrela",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3532843",
+    "nome": "Nova Canaã Paulista",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3534757",
+    "nome": "Ouroeste",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3535200",
+    "nome": "Palmeira d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3535903",
+    "nome": "Paranapuã",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3536901",
+    "nome": "Pedranópolis",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3540259",
+    "nome": "Pontalinda",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3540408",
+    "nome": "Populina",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3544509",
+    "nome": "Rubinéia",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3545704",
+    "nome": "Santa Albertina",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3546108",
+    "nome": "Santa Clara d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3547403",
+    "nome": "Santa Rita d'Oeste",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3547650",
+    "nome": "Santa Salete",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3547205",
+    "nome": "Santana da Ponte Pensa",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3549003",
+    "nome": "São Francisco",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3549201",
+    "nome": "São João das Duas Pontes",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3549250",
+    "nome": "São João de Iracema",
+    "uf": "SP",
+    "regiao_imediata": "Fernandópolis",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3552551",
+    "nome": "Suzanápolis",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3554904",
+    "nome": "Três Fronteiras",
+    "uf": "SP",
+    "regiao_imediata": "Santa Fé do Sul",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3555307",
+    "nome": "Turmalina",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3555802",
+    "nome": "Urânia",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  },
+  {
+    "codigo_ibge": "3556958",
+    "nome": "Vitória Brasil",
+    "uf": "SP",
+    "regiao_imediata": "Jales",
+    "regiao_intermediaria": "São José do Rio Preto",
+    "motivo_inclusao": "regiao_imediata",
+    "prioritario": false
+  }
+]

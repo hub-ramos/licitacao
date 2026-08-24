@@ -1,0 +1,600 @@
+{
+  "sondas": [
+    {
+      "nome": "IBGE · municípios da UF",
+      "url": "https://servicodados.ibge.gov.br/api/v1/localidades/estados/35/municipios",
+      "params": {},
+      "status": 200,
+      "ok": true,
+      "registros": 645,
+      "campos": [
+        "id",
+        "microrregiao",
+        "nome",
+        "regiao-imediata"
+      ],
+      "erro": null,
+      "observacao": "Resolve os códigos IBGE dos municípios-alvo."
+    },
+    {
+      "nome": "PNCP · contratações por publicação",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "params": {
+        "dataInicial": "20260526",
+        "dataFinal": "20260824",
+        "codigoModalidadeContratacao": 7,
+        "uf": "SP",
+        "pagina": 1,
+        "tamanhoPagina": 10
+      },
+      "status": 200,
+      "ok": true,
+      "registros": 10,
+      "campos": [
+        "amparoLegal",
+        "anoCompra",
+        "dataAberturaProposta",
+        "dataAtualizacao",
+        "dataAtualizacaoGlobal",
+        "dataEncerramentoProposta",
+        "dataInclusao",
+        "dataPublicacaoPncp",
+        "emendaParlamentar",
+        "fontesOrcamentarias",
+        "informacaoComplementar",
+        "justificativaPresencial",
+        "linkProcessoEletronico",
+        "linkSistemaOrigem",
+        "modalidadeId",
+        "modalidadeNome",
+        "modoDisputaId",
+        "modoDisputaNome",
+        "numeroCompra",
+        "numeroControlePNCP",
+        "objetoCompra",
+        "orgaoEntidade",
+        "orgaoSubRogado",
+        "processo",
+        "sequencialCompra",
+        "situacaoCompraId",
+        "situacaoCompraNome",
+        "srp",
+        "tipoInstrumentoConvocatorioCodigo",
+        "tipoInstrumentoConvocatorioNome",
+        "unidadeOrgao",
+        "unidadeSubRogada",
+        "usuarioNome",
+        "valorTotalEstimado",
+        "valorTotalHomologado"
+      ],
+      "erro": null,
+      "observacao": "Fundação do histórico. Modalidade 7 = pregão presencial."
+    },
+    {
+      "nome": "PNCP · contratações com proposta aberta",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/proposta",
+      "params": {
+        "dataFinal": "20261023",
+        "codigoModalidadeContratacao": 6,
+        "uf": "SP",
+        "pagina": 1,
+        "tamanhoPagina": 10
+      },
+      "status": 200,
+      "ok": true,
+      "registros": 10,
+      "campos": [
+        "amparoLegal",
+        "anoCompra",
+        "dataAberturaProposta",
+        "dataAtualizacao",
+        "dataAtualizacaoGlobal",
+        "dataEncerramentoProposta",
+        "dataInclusao",
+        "dataPublicacaoPncp",
+        "emendaParlamentar",
+        "fontesOrcamentarias",
+        "informacaoComplementar",
+        "justificativaPresencial",
+        "linkProcessoEletronico",
+        "linkSistemaOrigem",
+        "modalidadeId",
+        "modalidadeNome",
+        "modoDisputaId",
+        "modoDisputaNome",
+        "numeroCompra",
+        "numeroControlePNCP",
+        "objetoCompra",
+        "orgaoEntidade",
+        "orgaoSubRogado",
+        "processo",
+        "sequencialCompra",
+        "situacaoCompraId",
+        "situacaoCompraNome",
+        "srp",
+        "tipoInstrumentoConvocatorioCodigo",
+        "tipoInstrumentoConvocatorioNome",
+        "unidadeOrgao",
+        "unidadeSubRogada",
+        "usuarioNome",
+        "valorTotalEstimado",
+        "valorTotalHomologado"
+      ],
+      "erro": null,
+      "observacao": "Base do radar diário de oportunidades."
+    },
+    {
+      "nome": "PNCP · atas de registro de preço",
+      "url": "https://pncp.gov.br/api/consulta/v1/atas",
+      "params": {
+        "dataInicial": "20260526",
+        "dataFinal": "20260824",
+        "pagina": 1,
+        "tamanhoPagina": 10
+      },
+      "status": 200,
+      "ok": true,
+      "registros": 10,
+      "campos": [
+        "anoAta",
+        "cancelado",
+        "cnpjOrgao",
+        "cnpjOrgaoSubrogado",
+        "codigoUnidadeOrgao",
+        "codigoUnidadeOrgaoSubrogado",
+        "dataAssinatura",
+        "dataAtualizacao",
+        "dataAtualizacaoGlobal",
+        "dataCancelamento",
+        "dataInclusao",
+        "dataPublicacaoPncp",
+        "nomeOrgao",
+        "nomeOrgaoSubrogado",
+        "nomeUnidadeOrgao",
+        "nomeUnidadeOrgaoSubrogado",
+        "numeroAtaRegistroPreco",
+        "numeroControlePNCPAta",
+        "numeroControlePNCPCompra",
+        "objetoContratacao",
+        "possibilidadeAdesao",
+        "usuario",
+        "vigenciaFim",
+        "vigenciaInicio"
+      ],
+      "erro": null,
+      "observacao": ""
+    },
+    {
+      "nome": "PNCP · contratos",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratos",
+      "params": {
+        "dataInicial": "20260526",
+        "dataFinal": "20260824",
+        "pagina": 1,
+        "tamanhoPagina": 10
+      },
+      "status": 200,
+      "ok": true,
+      "registros": 10,
+      "campos": [
+        "anoContrato",
+        "categoriaProcesso",
+        "codigoPaisFornecedor",
+        "dataAssinatura",
+        "dataAtualizacao",
+        "dataAtualizacaoGlobal",
+        "dataPublicacaoPncp",
+        "dataVigenciaFim",
+        "dataVigenciaInicio",
+        "emendaParlamentar",
+        "frutoAdesao",
+        "identificadorCipi",
+        "informacaoComplementar",
+        "niFornecedor",
+        "niFornecedorSubContratado",
+        "nomeFornecedorSubContratado",
+        "nomeRazaoSocialFornecedor",
+        "numeroContratoEmpenho",
+        "numeroControlePNCP",
+        "numeroControlePncpAta",
+        "numeroControlePncpCompra",
+        "numeroParcelas",
+        "numeroRetificacao",
+        "objetoContrato",
+        "orgaoEntidade",
+        "orgaoSubRogado",
+        "processo",
+        "receita",
+        "sequencialContrato",
+        "temRemanejamento",
+        "tipoContrato",
+        "tipoPessoa",
+        "tipoPessoaSubContratada",
+        "unidadeOrgao",
+        "unidadeSubRogada",
+        "urlCipi",
+        "usuarioNome",
+        "valorAcumulado",
+        "valorGlobal",
+        "valorInicial"
+      ],
+      "erro": null,
+      "observacao": "Traz niFornecedor e valorGlobal: é a fonte de quem ganha o quê."
+    },
+    {
+      "nome": "PNCP · rotas de detalhe (itens/resultados/arquivos)",
+      "url": "https://pncp.gov.br/api/pncp/v1/orgaos/{cnpj}/compras/{ano}/{sequencial}/itens",
+      "params": {},
+      "status": null,
+      "ok": false,
+      "registros": null,
+      "campos": [],
+      "erro": "não testadas: o caso-âncora não foi localizado na API de consulta",
+      "observacao": "Sem o sequencial da contratação não há como montar a URL."
+    },
+    {
+      "nome": "PNCP · maior janela de datas aceita",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "params": {},
+      "status": null,
+      "ok": false,
+      "registros": 0,
+      "campos": [],
+      "erro": null,
+      "observacao": "Nenhuma janela testada foi aceita — verificar os parâmetros."
+    }
+  ],
+  "caso_ancora": {
+    "procurado": {
+      "municipio": "Nova Castilho",
+      "cnpj_orgao": "01613202000171",
+      "numero_compra": "007/2026",
+      "modalidade": 7
+    },
+    "encontrado": false,
+    "verdade_conhecida": {
+      "valor_unitario_estimado": 7.01,
+      "valor_unitario_homologado": 6.92,
+      "quantidade_total": 21000,
+      "valor_total_ata": 145320.0,
+      "licitantes_presentes": 1
+    }
+  },
+  "cobertura": [],
+  "mercado_servico": [],
+  "municipios": [
+    {
+      "codigo_ibge": "3524808",
+      "nome": "Jales",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": true
+    },
+    {
+      "codigo_ibge": "3546603",
+      "nome": "Santa Fé do Sul",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": true
+    },
+    {
+      "codigo_ibge": "3502606",
+      "nome": "Aparecida d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3503950",
+      "nome": "Aspásia",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3513850",
+      "nome": "Dirce Reis",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3514205",
+      "nome": "Dolcinópolis",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3515202",
+      "nome": "Estrela d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3515509",
+      "nome": "Fernandópolis",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3516903",
+      "nome": "General Salgado",
+      "uf": "SP",
+      "regiao_imediata": "Araçatuba",
+      "regiao_intermediaria": "Araçatuba",
+      "motivo_inclusao": "extra",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3518008",
+      "nome": "Guarani d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3520707",
+      "nome": "Indiaporã",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3528205",
+      "nome": "Macedônia",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3529104",
+      "nome": "Marinópolis",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3529609",
+      "nome": "Meridiano",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3529658",
+      "nome": "Mesópolis",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3530003",
+      "nome": "Mira Estrela",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3532843",
+      "nome": "Nova Canaã Paulista",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3534757",
+      "nome": "Ouroeste",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3535200",
+      "nome": "Palmeira d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3535903",
+      "nome": "Paranapuã",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3536901",
+      "nome": "Pedranópolis",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3540259",
+      "nome": "Pontalinda",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3540408",
+      "nome": "Populina",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3544509",
+      "nome": "Rubinéia",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3545704",
+      "nome": "Santa Albertina",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3546108",
+      "nome": "Santa Clara d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3547403",
+      "nome": "Santa Rita d'Oeste",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3547650",
+      "nome": "Santa Salete",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3547205",
+      "nome": "Santana da Ponte Pensa",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3549003",
+      "nome": "São Francisco",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3549201",
+      "nome": "São João das Duas Pontes",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3549250",
+      "nome": "São João de Iracema",
+      "uf": "SP",
+      "regiao_imediata": "Fernandópolis",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3552551",
+      "nome": "Suzanápolis",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3554904",
+      "nome": "Três Fronteiras",
+      "uf": "SP",
+      "regiao_imediata": "Santa Fé do Sul",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3555307",
+      "nome": "Turmalina",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3555802",
+      "nome": "Urânia",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    },
+    {
+      "codigo_ibge": "3556958",
+      "nome": "Vitória Brasil",
+      "uf": "SP",
+      "regiao_imediata": "Jales",
+      "regiao_intermediaria": "São José do Rio Preto",
+      "motivo_inclusao": "regiao_imediata",
+      "prioritario": false
+    }
+  ]
+}
