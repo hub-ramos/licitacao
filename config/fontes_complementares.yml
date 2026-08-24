@@ -1,0 +1,167 @@
+# Candidatos a fonte complementar do PNCP.
+#
+# REGRA DESTE ARQUIVO: nada aqui é afirmação sobre a fonte. É uma pergunta a ser
+# feita à rede. Cada candidato traz a URL da sua documentação e uma lista de
+# checagens; `python -m licita fontes` executa e escreve o veredito com o código
+# HTTP obtido em `dados/fontes_complementares.md`. Candidato sem execução não
+# vira conclusão.
+#
+# Por que existe: a Fase 0 de 2026-08-24 mediu que o PNCP não cobre a região
+# inteira — 17 dos 38 municípios voltaram sem nenhuma contratação, e o
+# caso-âncora (Nova Castilho, Pregão Presencial 007/2026, documentado em PDF)
+# não está lá. Quatro lacunas ficaram abertas, e cada candidato abaixo existe
+# para fechar uma delas.
+#
+# Placeholders substituídos em tempo de execução:
+#   {ibge_ancora}  código IBGE do município do caso-âncora
+#   {cnpj_ancora}  CNPJ do órgão do caso-âncora
+#   {ano}          ano corrente
+#   {cnpj_teste}   CNPJ público usado para testar API de enriquecimento
+
+lacunas:
+  municipios_ausentes: >-
+    17 dos 38 municípios-alvo não têm nenhuma contratação no PNCP, Nova Castilho
+    incluída. Sem outra fonte, a base tem buraco estrutural.
+  numero_de_licitantes: >-
+    O PNCP não publica quantos licitantes compareceram à sessão. Hoje o projeto
+    usa proxies (deserção, deságio, HHI). O número real só existe na ata.
+  enriquecimento_fornecedor: >-
+    A base guarda nome e porte do vencedor. Sem CNAE, sede e data de abertura
+    não dá para medir quanto do dinheiro fica na região nem quem é cativo.
+  compra_prospectiva: >-
+    Tudo que a base vê é passado. O Plano de Contratações Anual mostra o que o
+    município pretende comprar antes de publicar edital.
+
+candidatos:
+
+  - chave: querido_diario
+    nome: Querido Diário (Open Knowledge Brasil)
+    lacuna: municipios_ausentes
+    documentacao:
+      - https://docs.queridodiario.ok.org.br/pt-br/latest/utilizando/api-publica.html
+      - https://github.com/okfn-brasil/querido-diario-api
+    natureza: >-
+      Diários oficiais municipais coletados por robôs e expostos em API pública.
+      A documentação fala em mais de 350 municípios com diário publicado e
+      robôs para cerca de 2.200 — ou seja, cobertura parcial por definição.
+      A pergunta não é se a API existe, é se ELA TEM os municípios que faltam.
+    checagens:
+      # Duas bases aparecem na documentação e em material de terceiros. Testar as
+      # duas em vez de escolher uma no chute.
+      - nome: base api.queridodiario.ok.org.br
+        url: https://api.queridodiario.ok.org.br/gazettes
+        params: {territory_ids: "{ibge_ancora}", size: 2}
+        responde: A API responde e conhece o território do caso-âncora?
+      - nome: base queridodiario.ok.org.br/api
+        url: https://queridodiario.ok.org.br/api/gazettes
+        params: {territory_ids: "{ibge_ancora}", size: 2}
+        responde: Variante de base citada na documentação do projeto.
+      - nome: busca textual por licitação no município-âncora
+        url: https://queridodiario.ok.org.br/api/gazettes
+        params: {territory_ids: "{ibge_ancora}", querystring: "licitacao", size: 2}
+        responde: Se há diário, ele contém aviso de licitação recuperável por busca?
+      - nome: cobertura declarada por cidade
+        url: https://queridodiario.ok.org.br/api/cities
+        params: {city_name: "Nova Castilho"}
+        responde: Existe rota que declare quais municípios estão cobertos?
+
+  - chave: tce_sp_audesp
+    nome: AUDESP Fase IV — TCE-SP
+    lacuna: municipios_ausentes
+    documentacao:
+      - https://www.tce.sp.gov.br/audesp/documentacao/reformulacao-fase-iv-jsonschemas-e-documentacao-xlsx
+      - https://transparencia.tce.sp.gov.br/conjunto-de-dados
+    natureza: >-
+      Todos os municípios paulistas remetem licitações e ajustes ao TCE-SP por
+      obrigação legal, desde 2018. É a única fonte com cobertura garantida por
+      lei sobre os 38 municípios — e a única candidata a trazer participantes
+      por sessão. O material público descreve arquivos para download; a API em
+      audesp.tce.sp.gov.br é descrita como via de ENVIO pelo jurisdicionado,
+      com autenticação. Confirmar qual das duas serve para leitura.
+    checagens:
+      - nome: especificação da API do AUDESP
+        url: https://audesp.tce.sp.gov.br/api/audesp.yaml
+        formato: texto
+        responde: A spec é pública? Quais rotas ela declara, e alguma é de leitura?
+      - nome: portal de dados abertos do TCE-SP
+        url: https://transparencia.tce.sp.gov.br/conjunto-de-dados
+        formato: texto
+        responde: A página lista os cubos LICITACOES e AJUSTES para download?
+      # HIPÓTESE, não fato: portais de dados abertos brasileiros costumam rodar
+      # CKAN, que expõe /api/3/action/package_list. Se responder, há catálogo
+      # programável e o download deixa de ser manual.
+      - nome: catálogo CKAN (hipótese a testar)
+        url: https://transparencia.tce.sp.gov.br/api/3/action/package_list
+        responde: O portal expõe catálogo CKAN? Se sim, o download vira automatizável.
+
+  - chave: pncp_arquivos_da_sessao
+    nome: PNCP — rotas de detalhe e arquivos da sessão
+    lacuna: numero_de_licitantes
+    documentacao:
+      - https://pncp.gov.br/api/pncp/swagger-ui/index.html
+    natureza: >-
+      Rotas já implementadas em src/licita/pncp.py, mas NUNCA exercitadas: o
+      relatório de 24/08 registra "não testadas — o caso-âncora não foi
+      localizado". Sem confirmar que /itens, /resultados e /arquivos respondem,
+      a coleta de detalhe é fé. E é /arquivos que decide se um parser de ata
+      para contar licitantes tem insumo.
+    checagens:
+      # Alvo escolhido em tempo de execução: a primeira contratação real que a
+      # consulta devolver para um município prioritário. Ver fontes_extra.py.
+      - nome: itens de uma contratação real da região
+        dinamica: pncp_detalhe_itens
+        responde: A rota de itens responde para uma contratação que existe mesmo?
+      - nome: resultados por item
+        dinamica: pncp_detalhe_resultados
+        responde: Vem vencedor, CNPJ e valor homologado por item?
+      - nome: arquivos publicados
+        dinamica: pncp_detalhe_arquivos
+        responde: Há PDF de ata da sessão? É o insumo do parser de licitantes.
+
+  - chave: pncp_pca
+    nome: PNCP — Plano de Contratações Anual
+    lacuna: compra_prospectiva
+    documentacao:
+      - https://gist.github.com/Micael106/04a3e5515057ab11ea8797603682f0bd
+      - https://pncp.gov.br/api/consulta/swagger-ui/index.html
+    natureza: >-
+      Endpoint /v1/pca documentado no Manual das APIs de Consultas, com
+      anoPca, codigoClassificacaoSuperior e pagina obrigatórios. O projeto não
+      usa. Se municípios pequenos publicarem PCA, a base ganha o único dado
+      prospectivo que existe: a compra antes do edital.
+    checagens:
+      # `codigoClassificacaoSuperior` é obrigatório e o manual não lista os
+      # valores válidos. Chamar sem ele serve para ler a mensagem de erro da
+      # própria API, que normalmente nomeia o que falta.
+      - nome: PCA sem classificação (para ler a recusa da API)
+        url: https://pncp.gov.br/api/consulta/v1/pca/
+        params: {anoPca: "{ano}", pagina: 1, tamanhoPagina: 10}
+        responde: Qual erro a API devolve? A mensagem costuma nomear o parâmetro.
+      - nome: PCA por usuário
+        url: https://pncp.gov.br/api/consulta/v1/pca/usuario
+        params: {anoPca: "{ano}", idUsuario: 3, pagina: 1, tamanhoPagina: 10}
+        responde: A variante por idUsuario responde e traz item de município?
+
+  - chave: cnpj_publico
+    nome: Enriquecimento de CNPJ (BrasilAPI e MinhaReceita)
+    lacuna: enriquecimento_fornecedor
+    documentacao:
+      - https://brasilapi.com.br/docs
+      - https://docs.minhareceita.org
+    natureza: >-
+      Ambas processam a base pública de CNPJ da Receita Federal, publicada em
+      arquivos mensais, e expõem por HTTP sem chave. Nenhuma das duas publica
+      limite fixo de requisições. Para a base, o valor é CNAE principal, porte,
+      município-sede e data de abertura do vencedor — sem isso não dá para
+      medir quanto do dinheiro fica na região.
+    checagens:
+      - nome: BrasilAPI
+        url: https://brasilapi.com.br/api/cnpj/v1/{cnpj_teste}
+        responde: Responde sem chave? Traz CNAE principal, porte e município?
+      - nome: MinhaReceita
+        url: https://minhareceita.org/{cnpj_teste}
+        responde: Alternativa caso a BrasilAPI limite ou saia do ar.
+
+# CNPJ usado nas checagens de enriquecimento: Banco do Brasil S.A., matriz.
+# Público, estável e sem relação com nenhum fornecedor da base.
+cnpj_teste: "00000000000191"

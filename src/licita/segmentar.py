@@ -10,17 +10,43 @@ Ordem de precedência dos sinais, do mais confiável para o menos:
 
 Entre palavras-chave concorrentes vence a mais longa: "teste rapido de dengue"
 deve ganhar de "teste rapido", e "camara de conservacao" de "camara".
+
+O casamento é por **palavra inteira**, não por substring. A primeira versão usava
+``palavra in texto`` e classificava "licenciamento de uso de software" como
+material de construção, porque "cimento" está dentro de "licenCIMENTO" — três
+contratações reais da Fase 0 caíram nisso. Como o segmento é o eixo do Índice de
+Oportunidade, erro de segmento contamina toda a análise, em silêncio.
 """
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
+from functools import lru_cache
 from typing import Any
 
 from .config import segmentos as cfg_segmentos
 from .texto import normalizar
 
 NAO_CLASSIFICADO = "nao_classificado"
+
+
+@lru_cache(maxsize=4096)
+def _padrao(palavra: str) -> re.Pattern[str]:
+    """Compila uma palavra-chave em regex de palavra inteira, tolerando plural.
+
+    ``normalizar`` já reduziu o texto a ``[0-9a-z ]``, então basta impedir que a
+    vizinhança seja alfanumérica. O sufixo opcional aceita "cimentos" e "exames"
+    sem aceitar "licenciamento".
+    """
+    return re.compile(
+        r"(?<![0-9a-z])" + re.escape(palavra) + r"(?:e?s)?(?![0-9a-z])"
+    )
+
+
+def casa(palavra: str, texto_norm: str) -> bool:
+    """Verdadeiro se ``palavra`` ocorre em ``texto_norm`` como palavra inteira."""
+    return bool(palavra) and _padrao(palavra).search(texto_norm) is not None
 
 
 @dataclass(frozen=True)
@@ -123,10 +149,10 @@ class Classificador:
             return None
         melhor: tuple[int, Segmento, str] | None = None
         for seg in self.segmentos:
-            if any(veto and veto in texto_norm for veto in seg.excluir):
+            if any(casa(veto, texto_norm) for veto in seg.excluir):
                 continue
             for palavra in seg.palavras:
-                if palavra and palavra in texto_norm:
+                if casa(palavra, texto_norm):
                     if melhor is None or len(palavra) > melhor[0]:
                         melhor = (len(palavra), seg, palavra)
         return (melhor[1], melhor[2]) if melhor else None

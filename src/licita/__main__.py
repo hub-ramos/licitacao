@@ -1,6 +1,7 @@
 """Interface de linha de comando.
 
     python -m licita probe        # Fase 0 — valida fontes e mede cobertura
+    python -m licita fontes       # sonda as fontes complementares ao PNCP
     python -m licita municipios   # resolve e grava os municípios-alvo
     python -m licita historico    # backfill de contratações + itens + resultados
     python -m licita radar        # varredura rápida de propostas em aberto
@@ -23,6 +24,7 @@ from .db import ARQUIVO_PADRAO, Base
 from .exportar import para_csv, para_painel, para_xlsx
 from .ibge import resolver
 from .metricas import calcular
+from .fontes_extra import SondaFontes
 from .probe import Probe
 from .config import fontes
 
@@ -57,12 +59,17 @@ def cmd_probe(args: argparse.Namespace) -> int:
     probe.executar(anos=args.anos or 3, completo=not args.rapido)
     probe.escrever()
 
-    falhas = [s for s in probe.sondas if not s.ok]
+    # Sonda inconclusiva não é endpoint quebrado — não pode pintar o CI de
+    # vermelho nem ser contada como falha no resumo.
+    falhas = [s for s in probe.sondas if not s.ok and not s.inconclusivo]
+    inconclusivas = [s for s in probe.sondas if not s.ok and s.inconclusivo]
     achou = probe.ancora.get("encontrado")
 
     print()
     print(f"Municípios-alvo ....... {len(probe.municipios)}")
     print(f"Endpoints OK .......... {len(probe.sondas) - len(falhas)}/{len(probe.sondas)}")
+    if inconclusivas:
+        print(f"Sem veredito .......... {len(inconclusivas)} (bloqueio ou timeout; repetir)")
     print(f"Caso-âncora ........... {'ENCONTRADO' if achou else 'NÃO ENCONTRADO'}")
     print(f"Cobertura ............. {len(probe.cobertura)} combinações município/ano/modalidade")
     print(f"Serviço técnico saúde . {len(probe.mercado_servico)} contratações")
@@ -70,6 +77,35 @@ def cmd_probe(args: argparse.Namespace) -> int:
 
     # Endpoint quebrado é falha de execução: o CI precisa acusar em vermelho.
     return 1 if falhas else 0
+
+
+def cmd_fontes(args: argparse.Namespace) -> int:
+    """Pergunta à rede quais fontes complementares existem de fato.
+
+    Não altera a base: só produz dados/fontes_complementares.md. Sai com 0 mesmo
+    quando um candidato não serve — descobrir que uma fonte não serve é
+    resultado válido, não falha de execução. Só falha se nenhuma checagem
+    chegou a ser respondida, que é sintoma de problema de rede, não de fonte.
+    """
+    sonda = SondaFontes()
+    sonda.executar()
+    sonda.escrever()
+
+    por_veredito: dict[str, int] = {}
+    for c in sonda.checagens:
+        por_veredito[c.veredito] = por_veredito.get(c.veredito, 0) + 1
+
+    print()
+    for veredito in ("RESPONDE", "RESPONDE VAZIO", "NAO SERVE", "INCONCLUSIVO"):
+        print(f"{veredito:<16} {por_veredito.get(veredito, 0)}")
+    print(f"\nRelatório: {DADOS / 'fontes_complementares.md'}")
+
+    respondidas = len(sonda.checagens) - por_veredito.get("INCONCLUSIVO", 0)
+    if sonda.checagens and respondidas == 0:
+        print("\nNenhuma checagem foi respondida — verificar a rede antes de "
+              "concluir qualquer coisa sobre as fontes.", file=sys.stderr)
+        return 1
+    return 0
 
 
 def cmd_municipios(args: argparse.Namespace) -> int:
@@ -153,7 +189,8 @@ def cmd_tudo(args: argparse.Namespace) -> int:
 
 
 COMANDOS = {
-    "probe": cmd_probe, "municipios": cmd_municipios, "historico": cmd_historico,
+    "probe": cmd_probe, "fontes": cmd_fontes,
+    "municipios": cmd_municipios, "historico": cmd_historico,
     "radar": cmd_radar, "atas": cmd_atas, "metricas": cmd_metricas,
     "exportar": cmd_exportar, "tudo": cmd_tudo,
 }

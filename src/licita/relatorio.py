@@ -45,13 +45,28 @@ def _secao_endpoints(p: "Probe") -> list[str]:
             linhas.append("")
         linhas += ["</details>", ""]
 
-    falhas = [s for s in p.sondas if not s.ok]
+    # Falha e inconclusivo pedem ações diferentes: uma manda corrigir o
+    # parâmetro, a outra manda repetir a medição. Somar as duas num número só
+    # foi o que fez o relatório de 24/08 anunciar endpoint quebrado quando o que
+    # havia era rate limit.
+    falhas = [s for s in p.sondas if not s.ok and not s.inconclusivo]
+    inconclusivas = [s for s in p.sondas if not s.ok and s.inconclusivo]
     if falhas:
         linhas += [
             "> **Atenção:** "
             f"{len(falhas)} de {len(p.sondas)} endpoints não responderam como esperado. "
             "Os módulos que dependem deles degradam em vez de quebrar, mas a base "
             "ficará incompleta até que sejam corrigidos.",
+            "",
+        ]
+    if inconclusivas:
+        linhas += [
+            "> **Sem veredito:** "
+            f"{len(inconclusivas)} de {len(p.sondas)} sondas não chegaram a ser "
+            "respondidas — bloqueio por excesso de requisições ou timeout. Isto "
+            "**não** é resposta negativa sobre a fonte: é medição que precisa ser "
+            "repetida antes de qualquer conclusão. "
+            + "; ".join(s.nome for s in inconclusivas),
             "",
         ]
     return linhas

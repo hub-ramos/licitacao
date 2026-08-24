@@ -53,6 +53,7 @@ export PYTHONPATH=src          # no Windows: set PYTHONPATH=src
 
 ```bash
 python -m licita probe        # Fase 0 — valide as fontes ANTES de qualquer coisa
+python -m licita fontes       # sonda as fontes complementares ao PNCP
 python -m licita municipios   # resolve os municípios-alvo pelo IBGE
 python -m licita historico    # backfill: contratações, itens, resultados
 python -m licita radar        # varredura rápida de propostas em aberto
@@ -69,6 +70,7 @@ Saídas em `dados/`:
 - `*.csv` — separador `;` e BOM, abrem direto no Excel pt-BR
 - `licitacoes.xlsx` — mesmas tabelas em abas, com filtro automático
 - `relatorio_cobertura.md` — saída da Fase 0
+- `fontes_complementares.md` — veredito, por execução, sobre cada fonte candidata
 
 ### Automação
 
@@ -76,7 +78,7 @@ Três workflows do GitHub Actions:
 
 | Workflow | Quando | O que faz |
 |---|---|---|
-| `probe.yml` | Manual | Fase 0: valida endpoints, testa o caso-âncora, mede cobertura |
+| `probe.yml` | Manual | Fase 0: valida endpoints, testa o caso-âncora, mede cobertura. Entrada `fontes` sonda também as fontes complementares |
 | `radar.yml` | Dias úteis, 06:00 BRT | Propostas em aberto + exports |
 | `historico.yml` | Domingo, 04:00 BRT | Backfill completo + atas + métricas + exports |
 
@@ -119,7 +121,8 @@ Tudo em `config/`, sem tocar em código:
 |---|---|
 | `municipios.yml` | Regiões-alvo, extras, prioritários e o caso-âncora |
 | `segmentos.yml` | Taxonomia: palavras-chave, grupos CATMAT/CATSER, produto × serviço |
-| `fontes.yml` | Endpoints, modalidades, janelas, rate limit |
+| `fontes.yml` | Endpoints, modalidades, janelas, perfis de retry e ritmo |
+| `fontes_complementares.yml` | Candidatas a fonte complementar, cada uma com a URL da sua documentação |
 
 Os **códigos IBGE não são fixados à mão** de propósito: são resolvidos pelo nome
 da região imediata na API de Localidades. Código digitado errado produz base
@@ -157,6 +160,48 @@ linha nem alterar métrica.
 Coluna nova é sempre acrescentada; coluna existente **nunca** é removida nem
 renomeada. Os CSV alimentam relatórios de BI externos, e coluna que desaparece
 quebra relatório sem avisar.
+
+## Fontes complementares: perguntar, não supor
+
+A Fase 0 de 2026-08-24 mediu que o PNCP **não** cobre a região inteira: 17 dos
+38 municípios voltaram sem nenhuma contratação, e o caso-âncora de Nova Castilho
+não está lá. `config/fontes_complementares.yml` cataloga as candidatas a tapar
+esse buraco, cada uma com a URL da sua documentação e as perguntas a fazer.
+
+`python -m licita fontes` executa as perguntas e escreve
+`dados/fontes_complementares.md` com o código HTTP de cada requisição. A regra é
+a mesma do `probe`: **candidato sem execução não vira conclusão**, e quatro
+vereditos são possíveis —
+
+| Veredito | Significa | O que fazer |
+|---|---|---|
+| `RESPONDE` | Existe, responde e trouxe registro | Só aqui cabe decidir integrar |
+| `RESPONDE VAZIO` | Existe e respondeu, mas não tem o que se procurou | Resposta negativa legítima |
+| `NAO SERVE` | Avaliou a requisição e recusou (4xx que não seja 429) | Parâmetro errado ou rota inexistente |
+| `INCONCLUSIVO` | Bloqueio, timeout ou 5xx | Repetir antes de concluir qualquer coisa |
+
+A distinção entre as duas últimas não é preciosismo: na execução de 24/08, 103
+respostas HTTP 429 do PNCP foram lidas como ausência de dados, e quase se
+concluiu que o PNCP não cobria a região.
+
+## Divergências entre documentação e API viva
+
+Ficam registradas onde afetam a coleta, com as duas versões, para que ninguém
+"corrija" a medição de volta lendo só o manual:
+
+| Ponto | Documentação | Medição |
+|---|---|---|
+| `tamanhoPagina` | Manual das APIs de Consultas v1.0: até 500 em todos os endpoints | HTTP 400 acima de 50 em `/contratacoes/*`; 500 aceito em `/atas` e `/contratos` |
+| Rate limit | Nenhum manual do PNCP cita limite ou HTTP 429 | A API devolve 429 com corpo HTML em latin-1; 0,35s de pausa produziu 103 bloqueios em 29 municípios |
+
+## Pendências conhecidas, ainda não corrigidas
+
+| Pendência | Onde | Por que importa |
+|---|---|---|
+| Campos do PNCP descartados | `sql/schema.sql`, `src/licita/coleta.py` | A API devolve `justificativaPresencial`, `tipoInstrumentoConvocatorioNome`, `linkProcessoEletronico`, `fontesOrcamentarias` e `orgaoSubRogado`. O primeiro fala direto com a tese de que o gargalo é a sessão presencial |
+| `contrato` sem vínculo com a contratação | `src/licita/coleta.py` | `numeroControlePncpCompra` vem no retorno e não é gravado. É o caminho alternativo para saber quem ganhou quando as rotas de detalhe falham |
+| Outlier de Três Fronteiras | `dados/relatorio_cobertura.md` | 1 contratação, R$ 371.276.147,04, município de ~6 mil habitantes. Erro de digitação na fonte ou contrato atípico — não investigado |
+| Atas e contratos varridos por CNPJ | `src/licita/coleta.py` | Uma requisição por órgão por janela, onde uma por janela com filtro local resolveria |
 
 ## O que esta base ainda não faz
 

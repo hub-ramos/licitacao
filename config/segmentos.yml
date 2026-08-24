@@ -10,8 +10,10 @@
 #   tipo       produto | servico   -> a divisão econômica central do projeto
 #   dominio    agrupamento temático usado nos filtros do painel
 #   aderencia  alta | media | baixa | bloqueado  -> prioridade de análise no projeto
-#   palavras   termos SEM acento e em minúsculas; casam por substring na descrição
-#              normalizada (a normalização remove acentos e baixa a caixa)
+#   palavras   termos SEM acento e em minúsculas; casam por PALAVRA INTEIRA na
+#              descrição normalizada, tolerando plural (a normalização remove
+#              acentos e baixa a caixa). Não é substring: "cimento" não casa
+#              dentro de "licenciamento" — ver src/licita/segmentar.py
 #   excluir    termos que, se presentes, vetam o segmento (desambiguação)
 #   catmat / catser  prefixos de grupo do catálogo federal
 #   nota       por que este segmento importa; aparece no painel como tooltip
@@ -46,6 +48,14 @@ servico_vigilancia_saude:
     - boletim epidemiologico
     - sala de situacao
     - busca ativa de casos
+    # Controle vetorial. A Fase 0 trouxe termonebulização com inseticida
+    # registrado na ANVISA em Guarani d'Oeste — vigilância em saúde comprada
+    # por dispensa, e o segmento não a reconhecia pelo termo técnico.
+    - termonebulizacao
+    - nebulizacao espacial
+    - controle vetorial
+    - combate a dengue
+    - combate ao aedes
 
 servico_saude_digital:
   tipo: servico
@@ -73,26 +83,78 @@ servico_capacitacao_saude:
   dominio: saude
   aderencia: alta
   nota: "Capacitação e educação permanente de profissionais da rede municipal."
+  # As palavras isoladas `capacitacao`, `treinamento`, `educacao permanente` e
+  # `curso de formacao` foram REMOVIDAS. Medido na Fase 0 de 2026-08-24: das 26
+  # contratações classificadas como serviço de saúde, 19 vieram destas quatro —
+  # munição da Guarda Civil, Libras, LOA, gestão patrimonial, EMPRETEC,
+  # certificação RPPS, congresso de educação. Todo contrato de software também
+  # cita "implantação e treinamento". Qualquer termo aqui precisa carregar o
+  # contexto de saúde dentro de si; se não carregar, ele não pertence a este
+  # segmento. O preço disto é falso negativo em edital que só diz "capacitação"
+  # e revela a área no anexo — aceito conscientemente: mercado superestimado por
+  # falso positivo é pior que mercado subestimado.
   palavras:
-    - capacitacao
-    - treinamento
-    - educacao permanente
-    - educacao continuada
-    - curso de formacao
-    - oficina tecnica
+    - capacitacao em saude
+    - capacitacao na area da saude
+    - capacitacao de profissionais de saude
+    - capacitacao de agentes comunitarios
+    - capacitacao de agentes de saude
+    - capacitacao de agentes de endemias
+    - capacitacao em vigilancia
+    - capacitacao em vigilancia em saude
+    - capacitacao em biosseguranca
+    - capacitacao em imunizacao
+    - capacitacao em atencao basica
+    - capacitacao em atencao primaria
+    - capacitacao em saude mental
+    - capacitacao em enfermagem
+    - capacitacao em e sus
+    - capacitacao no e sus
+    - capacitacao em telessaude
+    - treinamento em saude
+    - treinamento de profissionais de saude
+    - treinamento em biosseguranca
+    - educacao permanente em saude
+    - educacao permanente dos profissionais de saude
+    - educacao continuada em saude
+    - educacao continuada em enfermagem
+    - curso de formacao em saude
+    - teleducacao em saude
     - teleducacao
+    - suporte basico de vida
+    - suporte avancado de vida
+    - primeiros socorros
   excluir:
     - capacitacao de servidores em licitacao
     - treinamento de brigada
+    - gestao patrimonial
+    - guarda civil
+    - lei orcamentaria anual
+    - lei de diretrizes orcamentarias
+    - lingua brasileira de sinais
+    - libras
+    - educacao especial
+    - educacao inclusiva
+    - empretec
+    - certificacao profissional rpps
+    - regime proprio de previdencia
+    - processos administrativos
 
 servico_indicadores_bi:
   tipo: servico
   dominio: saude
   aderencia: alta
   nota: "Painéis, indicadores estratégicos e georreferenciamento para secretarias de saúde."
+  # Mesmo defeito medido em `servico_capacitacao_saude`: `geoprocessamento`,
+  # `georreferenciamento`, `dashboard` e `analise de dados` não são de saúde.
+  # Na Fase 0 este segmento capturou geoprocessamento de dados vetoriais na área
+  # de ENGENHARIA, em Rubinéia. Os termos genéricos ficam, mas vetados quando o
+  # texto revela outra área; os específicos de saúde não dependem de veto.
   palavras:
     - painel de indicadores
     - indicadores de saude
+    - indicadores de atencao basica
+    - previne brasil
     - business intelligence
     - power bi
     - georreferenciamento
@@ -100,6 +162,13 @@ servico_indicadores_bi:
     - geoprocessamento
     - dashboard
     - analise de dados
+  excluir:
+    - area de engenharia
+    - dados vetoriais
+    - cadastro imobiliario
+    - planta generica de valores
+    - regularizacao fundiaria
+    - topografia
 
 servico_laboratorial:
   tipo: servico

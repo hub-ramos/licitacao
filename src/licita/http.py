@@ -26,6 +26,11 @@ log = logging.getLogger("licita.http")
 # Status que valem nova tentativa: throttling e falhas transitórias de servidor.
 STATUS_RETENTAVEIS = {408, 425, 429, 500, 502, 503, 504}
 
+# Excesso de requisições. Tratado à parte dos 5xx porque a resposta certa é
+# diferente: um 500 é transitório e some sozinho, um 429 só some se quem chama
+# desacelerar. A varredura de 24/08 tomou 103 destes seguindo no mesmo ritmo.
+STATUS_EXCESSO = 429
+
 
 @dataclass
 class Resposta:
@@ -74,7 +79,19 @@ class Cliente:
         self.max_tentativas = cfg["max_tentativas"]
         self.backoff_base = cfg["backoff_base_s"]
         self.backoff_teto = cfg["backoff_teto_s"]
+        # Retry-After é instrução do servidor (RFC 9110 §10.2.3), não sugestão:
+        # tem teto próprio, mais alto que o do backoff calculado. Truncá-lo no
+        # teto do backoff fazia esperar 10s quando o PNCP pedia mais, e o 429
+        # voltava na requisição seguinte.
+        self.retry_after_teto = cfg.get("retry_after_teto_s", 120.0)
         self.pausa = cfg["pausa_entre_chamadas_s"]
+        self.pausa_teto = cfg.get("pausa_teto_s", 8.0)
+        self.sucessos_para_afrouxar = cfg.get("sucessos_para_afrouxar", 20)
+        # Ritmo corrente. Sobe a cada 429 e desce sozinho depois de uma sequência
+        # de sucessos: o valor de config é o piso, não o ritmo fixo.
+        self._pausa_atual = self.pausa
+        self._sucessos_seguidos = 0
+        self.excessos = 0            # quantos 429 esta sessão levou
         self.cache_ttl_s = cfg["cache_ttl_h"] * 3600
         self._sessao.headers.update(
             {"User-Agent": cfg["user_agent"], "Accept": "application/json"}
@@ -112,19 +129,54 @@ class Cliente:
 
     def _respeitar_rate_limit(self) -> None:
         decorrido = time.monotonic() - self._ultimo_envio
-        if decorrido < self.pausa:
-            time.sleep(self.pausa - decorrido)
+        if decorrido < self._pausa_atual:
+            time.sleep(self._pausa_atual - decorrido)
         self._ultimo_envio = time.monotonic()
 
-    def _espera(self, tentativa: int, retry_after: str | None) -> float:
+    def _frear(self) -> None:
+        """Dobra a pausa entre chamadas depois de um 429, até o teto.
+
+        Sem isto, esperar e repetir resolve a requisição atual e não muda nada
+        para as seguintes: a varredura volta ao ritmo que causou o bloqueio e
+        toma 429 de novo. O freio precisa valer para a sessão inteira.
+        """
+        self.excessos += 1
+        self._sucessos_seguidos = 0
+        anterior = self._pausa_atual
+        self._pausa_atual = min(max(self._pausa_atual * 2, 0.5), self.pausa_teto)
+        if self._pausa_atual > anterior:
+            log.warning("HTTP 429: pausa entre chamadas %.2fs -> %.2fs",
+                        anterior, self._pausa_atual)
+
+    def _afrouxar(self) -> None:
+        """Alivia o freio depois de uma sequência de sucessos, sem voltar abaixo
+        da pausa de config, que é o piso."""
+        if self._pausa_atual <= self.pausa:
+            return
+        self._sucessos_seguidos += 1
+        if self._sucessos_seguidos < self.sucessos_para_afrouxar:
+            return
+        self._sucessos_seguidos = 0
+        self._pausa_atual = max(self.pausa, self._pausa_atual * 0.8)
+        log.info("ritmo normalizando: pausa entre chamadas -> %.2fs", self._pausa_atual)
+
+    def _espera(self, tentativa: int, retry_after: str | None,
+                status: int | None = None) -> float:
         """Backoff exponencial com jitter; honra Retry-After quando presente."""
         if retry_after:
             try:
-                return min(float(retry_after), self.backoff_teto)
+                return min(float(retry_after), self.retry_after_teto)
             except ValueError:
                 pass
         bruto = self.backoff_base * (2 ** (tentativa - 1))
-        return min(bruto, self.backoff_teto) * random.uniform(0.7, 1.3)
+        teto = self.backoff_teto
+        if status == STATUS_EXCESSO:
+            # Excesso de requisições pede espera mais longa que uma falha de
+            # servidor: o teto do backoff comum é curto demais para o bloqueio
+            # sair. O limite é o mesmo do Retry-After.
+            bruto *= 4
+            teto = self.retry_after_teto
+        return min(bruto, teto) * random.uniform(0.7, 1.3)
 
     def obter(self, url: str, params: dict | None = None) -> Resposta:
         """GET com retry. Devolve ``Resposta`` mesmo em falha total."""
@@ -147,12 +199,21 @@ class Cliente:
                     continue
                 break
 
+            if resp.status_code == STATUS_EXCESSO:
+                # Freia sempre, inclusive na última tentativa: o próximo GET
+                # desta sessão já sai no ritmo mais lento.
+                self._frear()
+
             if resp.status_code in STATUS_RETENTAVEIS and tentativa < self.max_tentativas:
                 ultimo_erro = f"HTTP {resp.status_code}"
-                time.sleep(self._espera(tentativa, resp.headers.get("Retry-After")))
+                time.sleep(self._espera(tentativa, resp.headers.get("Retry-After"),
+                                        resp.status_code))
                 continue
 
             duracao = time.monotonic() - inicio
+
+            if resp.ok:
+                self._afrouxar()
 
             if resp.status_code == 204 or not resp.content:
                 return Resposta(url=resp.url, status=resp.status_code, dados=None,
@@ -177,6 +238,35 @@ class Cliente:
         return Resposta(url=url, status=None, erro=ultimo_erro,
                         tentativas=self.max_tentativas,
                         duracao_s=time.monotonic() - inicio)
+
+    def obter_bruto(self, url: str, params: dict | None = None) -> Resposta:
+        """GET sem exigir JSON. Devolve tipo de conteúdo, tamanho e um trecho.
+
+        Existe para sondar fonte que não é API JSON — a spec YAML do AUDESP, a
+        página de conjuntos de dados do TCE-SP. Pela via normal elas voltariam
+        como "resposta não-JSON", que é veredito sobre o formato e não sobre a
+        existência da fonte. Não usa cache: sonda tem de bater na origem.
+        """
+        inicio = time.monotonic()
+        self._respeitar_rate_limit()
+        try:
+            resp = self._sessao.get(url, params=params, timeout=self.timeout)
+        except requests.RequestException as exc:
+            return Resposta(url=url, status=None, erro=f"{type(exc).__name__}: {exc}",
+                            duracao_s=time.monotonic() - inicio)
+        if resp.status_code == STATUS_EXCESSO:
+            self._frear()
+        texto = resp.text or ""
+        return Resposta(
+            url=resp.url, status=resp.status_code,
+            dados={
+                "tipo_conteudo": resp.headers.get("Content-Type", ""),
+                "bytes": len(resp.content or b""),
+                "trecho": texto[:600],
+            },
+            erro=None if resp.ok else f"HTTP {resp.status_code}",
+            duracao_s=time.monotonic() - inicio,
+        )
 
     def paginar(self, url: str, params: dict, limite_paginas: int = 200):
         """Itera páginas de um endpoint paginado do PNCP.

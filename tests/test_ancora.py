@@ -18,7 +18,7 @@ from fixtures import (  # noqa: E402
 from licita.coleta import Coletor  # noqa: E402
 from licita.db import Base  # noqa: E402
 from licita.ibge import Municipio  # noqa: E402
-from licita.metricas import calcular  # noqa: E402
+from licita.metricas import Componentes, DESAGIO_SAUDAVEL, calcular, hhi  # noqa: E402
 
 NOVA_CASTILHO = Municipio(
     codigo_ibge=IBGE_NOVA_CASTILHO, nome="Nova Castilho", uf="SP",
@@ -108,6 +108,43 @@ class CasoAncora(unittest.TestCase):
             "licitante único com deságio de 1,28% tem que pontuar alto no índice",
         )
 
+    def test_agregados_reproduzem_a_arp(self) -> None:
+        """Os totais da métrica têm que bater com os PDFs, não só o deságio."""
+        calcular(self.base)
+        m = self.base.consultar(
+            "SELECT * FROM metrica_mun_seg_ano WHERE segmento = 'laticinios'"
+        )[0]
+        self.assertEqual(m["contratacoes"], 1)
+        self.assertEqual(m["itens"], 3)
+        self.assertEqual(m["itens_homologados"], 3)
+        self.assertEqual(m["itens_fracassados"], 0)
+        self.assertAlmostEqual(m["taxa_desercao"], 0.0, places=6)
+        self.assertAlmostEqual(m["valor_homologado"], VALOR_TOTAL_ARP, places=2)
+        self.assertAlmostEqual(
+            m["valor_estimado"], QUANTIDADE_TOTAL * ESTIMADO_UNITARIO, places=2
+        )
+
+    def test_indice_reproduz_o_valor_documentado(self) -> None:
+        """O índice do caso-âncora é 58,27. Vale a conta inteira, não só "alto".
+
+        Com um ano só na base a recorrência é ``None`` e sai do cálculo, então os
+        pesos se renormalizam sobre os três componentes que existem:
+
+            desercao     0/3            = 0,0     × 0,35
+            sem_desagio  1 − 0,0128/0,15 = 0,9147 × 0,30
+            concentracao HHI             = 1,0    × 0,25
+            peso disponível                        = 0,90
+            índice = 100 × (0,30×0,9147 + 0,25×1,0) / 0,90 = 58,27
+
+        Se alguém mexer nos pesos, no limiar de deságio saudável ou na
+        renormalização, este número muda e o teste avisa.
+        """
+        calcular(self.base)
+        m = self.base.consultar(
+            "SELECT * FROM metrica_mun_seg_ano WHERE segmento = 'laticinios'"
+        )[0]
+        self.assertAlmostEqual(m["indice_oportunidade"], 58.27, places=2)
+
     def test_arquivos_da_sessao_guardados(self) -> None:
         """A ata em PDF é o insumo do parser de contagem de licitantes (Fase 3)."""
         atas = self.base.consultar(
@@ -115,6 +152,34 @@ class CasoAncora(unittest.TestCase):
         )
         self.assertEqual(len(atas), 1)
         self.assertTrue(atas[0]["url"])
+
+
+class ComponentesDoIndice(unittest.TestCase):
+    """Componente sem dado não pode virar zero — zero é uma medição, ausência não."""
+
+    def test_ausencia_renormaliza_em_vez_de_pontuar_zero(self) -> None:
+        # Só concentração medida, e no pior valor possível. Se a ausência dos
+        # outros três virasse zero, o índice cairia para 25 e um mercado
+        # capturado apareceria como saudável.
+        so_concentracao = Componentes(concentracao=1.0)
+        self.assertAlmostEqual(so_concentracao.indice(), 100.0, places=2)
+
+        # Com recorrência ausente, os pesos se dividem entre os três restantes.
+        do_ancora = Componentes(
+            desercao=0.0,
+            sem_desagio=round(1 - 0.0128 / DESAGIO_SAUDAVEL, 4),
+            concentracao=1.0,
+        )
+        self.assertAlmostEqual(do_ancora.indice(), 58.27, places=2)
+
+    def test_sem_nenhum_componente_o_indice_e_nulo(self) -> None:
+        self.assertIsNone(Componentes().indice())
+
+    def test_hhi_de_licitante_unico_e_um(self) -> None:
+        """O caso-âncora: um fornecedor levando os três itens."""
+        self.assertAlmostEqual(hhi([20760.0, 27680.0, 96880.0]), 0.5, places=1)
+        self.assertEqual(hhi([VALOR_TOTAL_ARP]), 1.0)
+        self.assertIsNone(hhi([]), "sem resultado homologado não há concentração a medir")
 
 
 class Idempotencia(unittest.TestCase):

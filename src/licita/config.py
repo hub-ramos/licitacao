@@ -35,3 +35,13 @@ def municipios() -> dict[str, Any]:
 @functools.cache
 def segmentos() -> dict[str, Any]:
     return _ler("segmentos.yml")
+
+
+@functools.cache
+def fontes_complementares() -> dict[str, Any]:
+    """Catálogo de candidatas a fonte complementar do PNCP.
+
+    Arquivo de perguntas, não de fatos: cada entrada só vira conclusão depois
+    que `python -m licita fontes` a executa e registra o código HTTP obtido.
+    """
+    return _ler("fontes_complementares.yml")

@@ -10,7 +10,10 @@ http:
   max_tentativas: 5
   backoff_base_s: 2.0        # espera = backoff_base * 2**(tentativa-1), com jitter
   backoff_teto_s: 60.0
-  pausa_entre_chamadas_s: 0.35   # rate limit cooperativo
+  retry_after_teto_s: 120.0  # teto para o Retry-After enviado pelo servidor
+  pausa_entre_chamadas_s: 0.35   # piso do ritmo; o freio adaptativo só sobe daqui
+  pausa_teto_s: 8.0          # até onde o freio pode subir depois de 429 seguidos
+  sucessos_para_afrouxar: 20 # sucessos seguidos antes de aliviar o freio
   user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
   cache_ttl_h: 12            # respostas ficam em cache local por este período
 
@@ -22,12 +25,40 @@ http:
 # erro. Com o perfil generoso, UMA requisição travada custa 5x45s de timeout
 # mais 30s de backoff: 4,2 minutos. Dez delas consomem 42 minutos.
 # Aqui, requisição lenta é falha: registra no relatório e segue.
+# O PNCP NÃO documenta rate limit — nem o Manual das APIs de Consultas nem o
+# Manual de Integração citam limite ou HTTP 429. O que existe é medição: a
+# varredura de 2026-08-24 usou 0,35s de pausa e tomou 103 respostas
+# "Limite de requisições excedido" em 29 municípios. O valor abaixo é provisório
+# até a sonda `medir_ritmo` reportar a pausa sustentável medida; a única
+# recomendação pública encontrada fala em ao menos 1s entre chamadas.
 http_massa:
   timeout_s: 15
   max_tentativas: 3
   backoff_base_s: 1.5
   backoff_teto_s: 10.0
-  pausa_entre_chamadas_s: 0.35
+  retry_after_teto_s: 120.0
+  pausa_entre_chamadas_s: 1.0
+  pausa_teto_s: 8.0
+  sucessos_para_afrouxar: 30
+  user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
+  cache_ttl_h: 12
+
+# Sondagem de fonte candidata (`python -m licita fontes`). Orçamento próprio
+# porque o cálculo aqui é outro: são 14 checagens contra hosts que podem
+# simplesmente não existir. Com o perfil `http`, uma checagem contra host morto
+# custa 5x45s de timeout mais backoff — quase 5 minutos cada, quase uma hora no
+# total, para descobrir o que 2 tentativas já dizem. Host que não responde em
+# duas tentativas entra no relatório como INCONCLUSIVO, e o relatório manda
+# repetir a medição em vez de tratar isso como veredito sobre a fonte.
+http_sonda:
+  timeout_s: 20
+  max_tentativas: 2
+  backoff_base_s: 2.0
+  backoff_teto_s: 8.0
+  retry_after_teto_s: 60.0
+  pausa_entre_chamadas_s: 1.0
+  pausa_teto_s: 8.0
+  sucessos_para_afrouxar: 10
   user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
   cache_ttl_h: 12
 
@@ -53,7 +84,11 @@ pncp:
   # `tamanhoPagina` tem limite POR ENDPOINT, não um valor único — foi o que
   # quebrou a primeira varredura real: 500 aplicado a /contratacoes/publicacao
   # devolve HTTP 422, e as 851 requisições voltaram vazias.
-  # Fonte: Manual das APIs de Consultas do PNCP. Mínimo 10 em todos.
+  # DIVERGÊNCIA REGISTRADA: o Manual das APIs de Consultas v1.0 dá 500 como
+  # máximo para TODOS os endpoints. A sonda `descobrir_tamanho_pagina`, contra a
+  # API viva em 2026-08-24, mediu HTTP 400 para 100 e para 500 em
+  # /contratacoes/publicacao. Vale a medição, não o manual — mas as duas ficam
+  # registradas aqui para que ninguém "corrija" isto de volta lendo só a doc.
   tamanho_pagina:
     contratacoes_publicacao: 50
     contratacoes_proposta: 50

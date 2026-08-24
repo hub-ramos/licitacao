@@ -48,6 +48,11 @@ class Sonda:
     campos: list[str] = field(default_factory=list)
     erro: str | None = None
     observacao: str = ""
+    # Nem toda resposta não-ok é veredito sobre a fonte. Bloqueio por excesso de
+    # requisições e timeout dizem que a pergunta não foi respondida, não que a
+    # resposta é não. Confundir os dois foi o que fez o relatório de 24/08
+    # publicar "nenhuma janela de datas aceita" quando só houvera 429.
+    inconclusivo: bool = False
 
     @property
     def veredito(self) -> str:
@@ -55,6 +60,8 @@ class Sonda:
             return "OK"
         if self.ok:
             return "VAZIO"
+        if self.inconclusivo:
+            return "INCONCLUSIVO"
         return "FALHA"
 
 
@@ -413,6 +420,7 @@ class Probe:
         fim = date.today()
         ini = fim - timedelta(days=89)
         tentados: dict[int, str] = {}
+        bloqueados: list[int] = []
         maior = 0
 
         for tamanho in (10, 50, 100, 500):
@@ -423,17 +431,26 @@ class Probe:
             })
             n, _ = _campos_do_primeiro(resp.dados)
             tentados[tamanho] = f"HTTP {resp.status}·{n if n is not None else '—'}"
-            if resp.ok and n:
+            # Aceito é qualquer resposta 2xx: página válida e vazia é resposta da
+            # API, não recusa do parâmetro. Exigir `n` truthy confundia período
+            # sem contratação com tamanhoPagina rejeitado.
+            if resp.ok or resp.status == 204:
                 maior = tamanho
+            elif resp.status in (None, 429):
+                bloqueados.append(tamanho)
 
         detalhe = " | ".join(f"{k}: {v}" for k, v in tentados.items())
         sonda = Sonda(
             nome="PNCP · maior tamanhoPagina aceito",
             url=url, status=200, ok=bool(maior), registros=maior,
+            inconclusivo=bool(bloqueados) and not maior,
             erro=None if maior else f"nenhum tamanho aceito. {detalhe}",
             observacao=(
                 f"Maior aceito: **{maior}**. `tamanho_pagina` está em "
-                f"{cfg['tamanho_pagina']}. {detalhe}" if maior else detalhe
+                f"{cfg['tamanho_pagina']}. {detalhe}"
+                + (f" Sem veredito para {bloqueados}: bloqueio ou timeout, não recusa."
+                   if bloqueados else "")
+                if maior else detalhe
             ),
         )
         self.sondas.append(sonda)
@@ -451,6 +468,8 @@ class Probe:
         url = cfg["consulta_base"] + cfg["contratacoes_publicacao"]
         fim = date.today()
         aceitos: list[int] = []
+        bloqueados: list[int] = []
+        tentados: dict[int, str] = {}
 
         for dias in (90, 180, 365):
             resp = self.http_massa.obter(url, {
@@ -459,21 +478,105 @@ class Probe:
                 "codigoModalidadeContratacao": 6,
                 "uf": "SP", "pagina": 1, "tamanhoPagina": 10,
             })
+            tentados[dias] = f"HTTP {resp.status if resp.status is not None else 'sem resposta'}"
             if resp.ok or resp.status == 204:
                 aceitos.append(dias)
-            else:
+            elif resp.status in (400, 422):
+                # Recusa de verdade: a API avaliou o parâmetro e disse não.
+                # Janelas maiores também serão recusadas, então para aqui.
                 break
+            else:
+                # 429, 5xx ou timeout: a pergunta não foi respondida. Segue
+                # tentando as outras janelas em vez de declarar recusa.
+                bloqueados.append(dias)
 
         maior = max(aceitos) if aceitos else 0
+        detalhe = " | ".join(f"{k}d: {v}" for k, v in tentados.items())
         sonda = Sonda(
             nome="PNCP · maior janela de datas aceita",
             url=url, status=200 if maior else None, ok=bool(maior),
             registros=maior,
+            inconclusivo=bool(bloqueados) and not maior,
             observacao=(
                 f"A API aceitou janela de {maior} dias. `janela_dias` está em "
-                f"{cfg['janela_dias']}; ajustar reduz as requisições na proporção."
+                f"{cfg['janela_dias']}; ajustar reduz as requisições na proporção. "
+                + detalhe
                 if maior else
-                "Nenhuma janela testada foi aceita — verificar os parâmetros."
+                (f"Sem veredito: as janelas {bloqueados} não foram avaliadas pela API "
+                 f"(bloqueio ou timeout). {detalhe}" if bloqueados else
+                 f"A API recusou a menor janela testada. {detalhe}")
+            ),
+        )
+        self.sondas.append(sonda)
+        return sonda
+
+    def medir_ritmo(self) -> Sonda:
+        """Mede a pausa entre chamadas que o PNCP sustenta sem devolver 429.
+
+        Nem o Manual das APIs de Consultas nem o Manual de Integração do PNCP
+        documentam limite de requisições — mas a API devolve
+        "Limite de requisições excedido" com status 429, e a varredura de
+        2026-08-24 tomou 103 delas usando pausa de 0,35s. Sem número documentado,
+        a saída é medir: séries curtas com pausas decrescentes, relatando em qual
+        delas o bloqueio começa. `pausa_entre_chamadas_s` sai de chute e vira
+        valor medido, como já acontece com `tamanhoPagina`.
+
+        Usa cliente próprio, sem cache: cache aqui mediria o disco, não a API.
+        """
+        cfg = fontes()["pncp"]
+        url = cfg["consulta_base"] + cfg["contratacoes_publicacao"]
+        fim = date.today()
+        por_serie = 8
+        resultados: dict[float, str] = {}
+        sustentavel: float | None = None
+
+        for pausa in (2.0, 1.0, 0.5, 0.25):
+            sonda_http = Cliente(usar_cache=False, perfil="http_massa")
+            # Piso e teto no mesmo valor: trava o ritmo para que o freio
+            # adaptativo não interfira na medição.
+            sonda_http.pausa = pausa
+            sonda_http.pausa_teto = pausa
+            sonda_http._pausa_atual = pausa
+
+            excessos = outras = 0
+            for i in range(por_serie):
+                # Janela distinta a cada chamada: evita que um proxy responda de
+                # cache e a série meça a rede em vez do limite do servidor.
+                resp = sonda_http.obter(url, {
+                    "dataInicial": _aaaammdd(fim - timedelta(days=30 + i)),
+                    "dataFinal": _aaaammdd(fim - timedelta(days=i)),
+                    "codigoModalidadeContratacao": 6,
+                    "uf": "SP", "pagina": 1, "tamanhoPagina": 10,
+                })
+                if resp.status == 429:
+                    excessos += 1
+                elif not (resp.ok or resp.status == 204):
+                    outras += 1
+
+            resultados[pausa] = (
+                f"{por_serie - excessos - outras}/{por_serie} ok"
+                + (f", {excessos}x429" if excessos else "")
+                + (f", {outras} outras falhas" if outras else "")
+            )
+            if excessos == 0 and sustentavel is None:
+                sustentavel = pausa
+            if excessos:
+                # A partir daqui só piora; poupa requisições e poupa o servidor.
+                break
+
+        detalhe = " | ".join(f"pausa {k}s: {v}" for k, v in resultados.items())
+        atual = fontes()["http_massa"]["pausa_entre_chamadas_s"]
+        sonda = Sonda(
+            nome="PNCP · ritmo sustentável (pausa entre chamadas)",
+            url=url, status=200, ok=sustentavel is not None,
+            registros=int((sustentavel or 0) * 1000),
+            inconclusivo=sustentavel is None,
+            erro=None if sustentavel is not None else f"toda série tomou 429. {detalhe}",
+            observacao=(
+                f"Menor pausa sem 429 nesta medição: **{sustentavel}s**. "
+                f"`http_massa.pausa_entre_chamadas_s` está em {atual}s. {detalhe}"
+                if sustentavel is not None else
+                f"Nenhuma pausa testada ficou livre de 429. {detalhe}"
             ),
         )
         self.sondas.append(sonda)
@@ -489,6 +592,7 @@ class Probe:
         self.sondar_filtro_municipio()
         self.descobrir_tamanho_pagina()
         self.descobrir_janela()
+        self.medir_ritmo()
         if completo:
             self.varrer(anos=anos)
 
