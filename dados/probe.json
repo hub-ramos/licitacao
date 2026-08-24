@@ -20,7 +20,7 @@
       "nome": "PNCP · contratações por publicação",
       "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
       "params": {
-        "dataInicial": "20260526",
+        "dataInicial": "20250824",
         "dataFinal": "20260824",
         "codigoModalidadeContratacao": 7,
         "uf": "SP",
@@ -127,7 +127,7 @@
       "nome": "PNCP · atas de registro de preço",
       "url": "https://pncp.gov.br/api/consulta/v1/atas",
       "params": {
-        "dataInicial": "20260526",
+        "dataInicial": "20250824",
         "dataFinal": "20260824",
         "pagina": 1,
         "tamanhoPagina": 10
@@ -168,7 +168,7 @@
       "nome": "PNCP · contratos",
       "url": "https://pncp.gov.br/api/consulta/v1/contratos",
       "params": {
-        "dataInicial": "20260526",
+        "dataInicial": "20250824",
         "dataFinal": "20260824",
         "pagina": 1,
         "tamanhoPagina": 10
@@ -244,15 +244,26 @@
       "observacao": "Variante que funciona: **codigoMunicipioIbge só**. codigoMunicipioIbge só: HTTP 200 · 10 registros | codigoMunicipioIbge + uf: HTTP 200 · 10 registros | codigoMunicipioIbge como int: HTTP 200 · 10 registros | codigoUnidadeAdministrativa: HTTP 422 · — registros | uf só (controle): HTTP 200 · 10 registros"
     },
     {
-      "nome": "PNCP · maior janela de datas aceita",
+      "nome": "PNCP · maior tamanhoPagina aceito",
       "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
       "params": {},
       "status": 200,
       "ok": true,
-      "registros": 365,
+      "registros": 50,
       "campos": [],
       "erro": null,
-      "observacao": "A API aceitou janela de 365 dias. `janela_dias` está em 90; ajustar reduz as requisições na proporção."
+      "observacao": "Maior aceito: **50**. `tamanho_pagina` está em {'contratacoes_publicacao': 50, 'contratacoes_proposta': 50, 'atas': 500, 'contratos': 500, 'padrao': 50}. 10: HTTP None·— | 50: HTTP 200·50 | 100: HTTP 400·— | 500: HTTP 400·—"
+    },
+    {
+      "nome": "PNCP · maior janela de datas aceita",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "params": {},
+      "status": null,
+      "ok": false,
+      "registros": 0,
+      "campos": [],
+      "erro": null,
+      "observacao": "Nenhuma janela testada foi aceita — verificar os parâmetros."
     }
   ],
   "caso_ancora": {
@@ -271,8 +282,586 @@
       "licitantes_presentes": 1
     }
   },
-  "cobertura": [],
-  "mercado_servico": [],
+  "cobertura": [
+    {
+      "municipio": "Jales",
+      "codigo_ibge": "3524808",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 59,
+      "valor_estimado": 56855380.28
+    },
+    {
+      "municipio": "Jales",
+      "codigo_ibge": "3524808",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 2,
+      "valor_estimado": 8674142.13
+    },
+    {
+      "municipio": "Jales",
+      "codigo_ibge": "3524808",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 21,
+      "valor_estimado": 5508450.84
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "codigo_ibge": "3546603",
+      "ano": 2026,
+      "modalidade": 5,
+      "contratacoes": 2,
+      "valor_estimado": 1214818.44
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "codigo_ibge": "3546603",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 45,
+      "valor_estimado": 50114775.43999999
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "codigo_ibge": "3546603",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 1,
+      "valor_estimado": 3689520.0
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "codigo_ibge": "3546603",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 400,
+      "valor_estimado": 3318492.2400000007
+    },
+    {
+      "municipio": "Aparecida d'Oeste",
+      "codigo_ibge": "3502606",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 5,
+      "valor_estimado": 193166.65
+    },
+    {
+      "municipio": "Aspásia",
+      "codigo_ibge": "3503950",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 15,
+      "valor_estimado": 4456614.9799999995
+    },
+    {
+      "municipio": "Aspásia",
+      "codigo_ibge": "3503950",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 1,
+      "valor_estimado": 12779.75
+    },
+    {
+      "municipio": "Aspásia",
+      "codigo_ibge": "3503950",
+      "ano": 2026,
+      "modalidade": 12,
+      "contratacoes": 1,
+      "valor_estimado": 4750.0
+    },
+    {
+      "municipio": "General Salgado",
+      "codigo_ibge": "3516903",
+      "ano": 2026,
+      "modalidade": 12,
+      "contratacoes": 1,
+      "valor_estimado": 0.0
+    },
+    {
+      "municipio": "Guarani d'Oeste",
+      "codigo_ibge": "3518008",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 3,
+      "valor_estimado": 668271.9299999999
+    },
+    {
+      "municipio": "Guarani d'Oeste",
+      "codigo_ibge": "3518008",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 7,
+      "valor_estimado": 268964.89
+    },
+    {
+      "municipio": "Meridiano",
+      "codigo_ibge": "3529609",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 4,
+      "valor_estimado": 1952191.1099999999
+    },
+    {
+      "municipio": "Meridiano",
+      "codigo_ibge": "3529609",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 10,
+      "valor_estimado": 622838.5
+    },
+    {
+      "municipio": "Mesópolis",
+      "codigo_ibge": "3529658",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 2,
+      "valor_estimado": 60847.22
+    },
+    {
+      "municipio": "Mira Estrela",
+      "codigo_ibge": "3530003",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 2,
+      "valor_estimado": 2879158.5
+    },
+    {
+      "municipio": "Mira Estrela",
+      "codigo_ibge": "3530003",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 23,
+      "valor_estimado": 748398.0299999999
+    },
+    {
+      "municipio": "Mira Estrela",
+      "codigo_ibge": "3530003",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 10,
+      "valor_estimado": 1455861.6
+    },
+    {
+      "municipio": "Nova Canaã Paulista",
+      "codigo_ibge": "3532843",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 12,
+      "valor_estimado": 2183281.44
+    },
+    {
+      "municipio": "Paranapuã",
+      "codigo_ibge": "3535903",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 2,
+      "valor_estimado": 2502687.0
+    },
+    {
+      "municipio": "Pedranópolis",
+      "codigo_ibge": "3536901",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 2,
+      "valor_estimado": 1017913.3300000001
+    },
+    {
+      "municipio": "Pedranópolis",
+      "codigo_ibge": "3536901",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 2,
+      "valor_estimado": 165233.78999999998
+    },
+    {
+      "municipio": "Populina",
+      "codigo_ibge": "3540408",
+      "ano": 2026,
+      "modalidade": 5,
+      "contratacoes": 2,
+      "valor_estimado": 3640716.29
+    },
+    {
+      "municipio": "Populina",
+      "codigo_ibge": "3540408",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 1,
+      "valor_estimado": 509580.48
+    },
+    {
+      "municipio": "Populina",
+      "codigo_ibge": "3540408",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 2,
+      "valor_estimado": 598000.0
+    },
+    {
+      "municipio": "Rubinéia",
+      "codigo_ibge": "3544509",
+      "ano": 2026,
+      "modalidade": 5,
+      "contratacoes": 2,
+      "valor_estimado": 5371578.74
+    },
+    {
+      "municipio": "Rubinéia",
+      "codigo_ibge": "3544509",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 11,
+      "valor_estimado": 10251058.969999999
+    },
+    {
+      "municipio": "Rubinéia",
+      "codigo_ibge": "3544509",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 6,
+      "valor_estimado": 862830.1
+    },
+    {
+      "municipio": "Rubinéia",
+      "codigo_ibge": "3544509",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 22,
+      "valor_estimado": 1502318.1199999999
+    },
+    {
+      "municipio": "Santa Salete",
+      "codigo_ibge": "3547650",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 21,
+      "valor_estimado": 13914555.350000001
+    },
+    {
+      "municipio": "Santa Salete",
+      "codigo_ibge": "3547650",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 22,
+      "valor_estimado": 907570.2900000002
+    },
+    {
+      "municipio": "Santa Salete",
+      "codigo_ibge": "3547650",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 7,
+      "valor_estimado": 474138.8
+    },
+    {
+      "municipio": "Santana da Ponte Pensa",
+      "codigo_ibge": "3547205",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 8,
+      "valor_estimado": 65352.86
+    },
+    {
+      "municipio": "São Francisco",
+      "codigo_ibge": "3549003",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 15,
+      "valor_estimado": 3456712.9500000007
+    },
+    {
+      "municipio": "São Francisco",
+      "codigo_ibge": "3549003",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 12,
+      "valor_estimado": 4370569.24
+    },
+    {
+      "municipio": "São Francisco",
+      "codigo_ibge": "3549003",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 10,
+      "valor_estimado": 1463199.03
+    },
+    {
+      "municipio": "São Francisco",
+      "codigo_ibge": "3549003",
+      "ano": 2026,
+      "modalidade": 9,
+      "contratacoes": 5,
+      "valor_estimado": 184000.0
+    },
+    {
+      "municipio": "São João das Duas Pontes",
+      "codigo_ibge": "3549201",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 20,
+      "valor_estimado": 13232635.530000005
+    },
+    {
+      "municipio": "São João das Duas Pontes",
+      "codigo_ibge": "3549201",
+      "ano": 2026,
+      "modalidade": 7,
+      "contratacoes": 2,
+      "valor_estimado": 259264.62
+    },
+    {
+      "municipio": "São João das Duas Pontes",
+      "codigo_ibge": "3549201",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 5,
+      "valor_estimado": 206500.0
+    },
+    {
+      "municipio": "Três Fronteiras",
+      "codigo_ibge": "3554904",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 1,
+      "valor_estimado": 371276147.04
+    },
+    {
+      "municipio": "Turmalina",
+      "codigo_ibge": "3555307",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 13,
+      "valor_estimado": 12365405.229999999
+    },
+    {
+      "municipio": "Urânia",
+      "codigo_ibge": "3555802",
+      "ano": 2026,
+      "modalidade": 6,
+      "contratacoes": 19,
+      "valor_estimado": 16313469.640000004
+    },
+    {
+      "municipio": "Urânia",
+      "codigo_ibge": "3555802",
+      "ano": 2026,
+      "modalidade": 8,
+      "contratacoes": 8,
+      "valor_estimado": 338957.33999999997
+    }
+  ],
+  "mercado_servico": [
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa especializada no fornecimento de licença de uso de  sistema/software para orçamentação eletrônica de peças de motocicletas, veículos automotivos, maquinas pesadas e implementos ",
+      "valor_estimado": 34402.0,
+      "data": "2026-03-31T14:04:12"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa especializada na prestação de serviços de capacitação e treinamento de profissionais no curso In-Company de Gestão Patrimonial - Reconhecimento, Controle e Desfazimento de Bens,",
+      "valor_estimado": 4000.0,
+      "data": "2026-05-27T09:44:14"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "O Registro de Preço para eventual aquisição de (munição operacional de treinamento para uso institucional atendendo às necessidades da Guarda Civil Municipal), objeto deste Estudo Técnico Preliminar, ",
+      "valor_estimado": 1013775.0,
+      "data": "2026-06-16T14:18:33"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa especializada para prestação de serviços de capacitação e treinamento de profissionais no SEMINÁRIO EMPRETEC, por tempo determinado.",
+      "valor_estimado": 38500.0,
+      "data": "2026-06-24T09:21:41"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa especializada para prestação de serviços de capacitação e treinamento de profissionais no 11° Congresso Internacional de Educação do Noroeste Paulista, com entrega integral, por",
+      "valor_estimado": 10400.0,
+      "data": "2026-07-02T13:59:43"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa para prestação de serviços de capacitação e treinamento de profissionais no evento Expoeducare 2026- com o tema Escola e Familia: uma parceria que precisa dar certo, que acontec",
+      "valor_estimado": 1999.5,
+      "data": "2026-07-02T16:30:04"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa para prestação de serviços de capacitação e treinamento de profissionais na Capacitação em Processos Administrativos (IEG-M), por tempo determinado.",
+      "valor_estimado": 6490.0,
+      "data": "2026-07-02T16:30:44"
+    },
+    {
+      "municipio": "Jales",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa para prestação de serviços de capacitação e treinamento de profissionais no curso de Acompanhamento Familiar em Grupo no SUAS e Coordenação de CRAS e CREAS, por tempo determinad",
+      "valor_estimado": 10973.34,
+      "data": "2026-07-03T10:27:34"
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "modalidade": 8,
+      "segmento": "servico_saude_digital",
+      "objeto": "Contratação de hospedagem VPS para hospedagem do sistema e-SUS",
+      "valor_estimado": 3567.22,
+      "data": "2026-02-06T14:19:04"
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Prestação de serviços, visando ministrar assessoria e capacitação presencial para servidor lotado junto ao Setor de Contabilidade do SantaFePrev para fechamento de balanço contábil do exercício de 202",
+      "valor_estimado": 5675.0,
+      "data": "2026-02-12T17:19:41"
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa especializada para prestação de serviços de treinamento e capacitação em Língua Brasileira de Sinais (Libras), a ser realizado na Casa da Juventude, conforme condições, especifi",
+      "valor_estimado": 10400.0,
+      "data": "2026-04-07T10:16:47"
+    },
+    {
+      "municipio": "Santa Fé do Sul",
+      "modalidade": 8,
+      "segmento": "servico_saude_digital",
+      "objeto": "Contratação de serviço para UPGRADE de disco 50GB para o Sistema eSUS",
+      "valor_estimado": 210.0,
+      "data": "2026-04-22T16:25:27"
+    },
+    {
+      "municipio": "Guarani d'Oeste",
+      "modalidade": 8,
+      "segmento": "servico_vigilancia_saude",
+      "objeto": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA PRESTAÇÃO DE SERVIÇOS DE TERMONEBULIZAÇÃO EM VIAS PÚBLICAS, COM UTILIZAÇÃO DE EQUIPAMENTOS HOMOLOGADOS E PRODUTOS INSETICIDAS DEVIDAMENTE REGISTRADOS PELA ANV",
+      "valor_estimado": 51666.66,
+      "data": "2026-04-01T11:04:46"
+    },
+    {
+      "municipio": "Meridiano",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "CONTRATAÇÃO DE SERVIÇOS TÉCNICOS ESPECIALIZADOS DE NATUREZA PREDOMINANTEMENTE INTELECTUAL PARA A REALIZAÇÃO DE CAPACITAÇÃO E TREINAMENTO PRESENCIAL SOBRE A ELABORAÇÃO E EXECUÇÃO DA LEI ORÇAMENTÁRIA AN",
+      "valor_estimado": 16840.0,
+      "data": "2026-08-14T10:20:26"
+    },
+    {
+      "municipio": "Mira Estrela",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "“CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA MINISTRAR CURSO DE FORMAÇÃO E CAPACITAÇÃO DE PROFISSIONAIS PARA ATUAÇÃO NO CONTEXTO DA EDUCAÇÃO ESPECIAL INCLUSIVA, CONTEMPLANDO CONHECIMENTOS TEÓRICOS E PRÁ",
+      "valor_estimado": 17250.0,
+      "data": "2026-03-31T14:05:30"
+    },
+    {
+      "municipio": "Mira Estrela",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "“AQUISIÇÃO DE MATERIAIS ESPORTIVOS destinados à Secretaria Municipal de Esportes e Lazer do Município de Mira Estrela/SP, com a finalidade de atender às demandas decorrentes da execução de programas, ",
+      "valor_estimado": 29471.6,
+      "data": "2026-03-31T14:55:08"
+    },
+    {
+      "municipio": "Mira Estrela",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA, CAPACITAÇÃO, TREINAMENTO, ORIENTAÇÕES E APOIO TÉCNICO ESPECIALIZADO AOS SERVIDORES DO DEPARTAMENTO DE FINANÇAS DO MUNICÍP",
+      "valor_estimado": 60000.0,
+      "data": "2026-05-07T09:21:03"
+    },
+    {
+      "municipio": "Mira Estrela",
+      "modalidade": 8,
+      "segmento": "servico_laboratorial",
+      "objeto": "“Contratação de empresa para prestação de serviços de COLETA DE EXAMES E ANÁLISES CLÍNICAS LABORATORIAIS em caráter EMERGENCIAL para Unidade Básica de Saúde de Mira estrela – SP, durante 03 (três) mes",
+      "valor_estimado": 14203.74,
+      "data": "2026-05-19T15:33:05"
+    },
+    {
+      "municipio": "Rubinéia",
+      "modalidade": 8,
+      "segmento": "servico_saude_assistencial",
+      "objeto": "PRESTAÇÃO DE SERVIÇOS POR TERCEIROS (SERVIÇOS MÉDICOS)",
+      "valor_estimado": 323820.0,
+      "data": "2026-01-19T16:47:23"
+    },
+    {
+      "municipio": "Rubinéia",
+      "modalidade": 8,
+      "segmento": "servico_indicadores_bi",
+      "objeto": "PRESTAÇÃO DE SERVIÇOS TÉCNICOS ESPECIALIZADOS, NA ÁREA DE ENGENHARIA, ATRAVÉS DO GEOPROCESSAMENTO DE DADOS VETORIAIS, ANÁLISE E EMISSÃO DE PARECERES TÉCNICOS COM ART ANEXAS, EM SUPORTE TÉCNICO NA TOMA",
+      "valor_estimado": 62000.04,
+      "data": "2026-05-18T15:30:55"
+    },
+    {
+      "municipio": "Santa Salete",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA FORNECIMENTO DE LICENÇA DE SISTEMA INFORMATIZADO NA MODALIDADE SAAS (SOFTWARE AS A SERVICE) PARA BUSCA DE PREÇOS ATRAVÉS DE INTEGRAÇÃO OU DE DADOS INDEXADOS Q",
+      "valor_estimado": 25988.16,
+      "data": "2026-04-28T14:11:03"
+    },
+    {
+      "municipio": "Santa Salete",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA LOCAÇÃO DE SISTEMA INFORMATIZADO DE GESTÃO E CONTROLE DE FREQUÊNCIA DE SERVIDORES, EM PLATAFORMA WEB, INCLUINDO IMPLANTAÇÃO, TREINAMENTO, SUPORTE TÉCNICO, MAN",
+      "valor_estimado": 46080.0,
+      "data": "2026-07-14T09:59:20"
+    },
+    {
+      "municipio": "Santa Salete",
+      "modalidade": 8,
+      "segmento": "servico_vigilancia_saude",
+      "objeto": "CONTRATAÇÃO DE EMPRESA ESPECIALIZADA PARA PRESTAÇÃO DE SERVIÇOS VETERINÁRIOS AO SETOR DE VIGILÂNCIA EM SAÚDE E ZOONOSES DO MUNICÍPIO DE SANTA SALETE/SP",
+      "valor_estimado": 54900.0,
+      "data": "2026-07-28T08:06:03"
+    },
+    {
+      "municipio": "Santa Salete",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa com notória especialização para realização de curso preparatório de capacitação para obtenção da Cerificação Profissional RPPS na modalidade a distância para atender as necessid",
+      "valor_estimado": 7000.0,
+      "data": "2026-03-18T17:12:39"
+    },
+    {
+      "municipio": "Santa Salete",
+      "modalidade": 9,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Inscrição para participação de 01 (um) servidor do Instituto de Previdência Municipal de Santa Salete – IPREM no evento de capacitação presencial \"RH 360 – 4ª Edição – Encontro Nacional dos Profission",
+      "valor_estimado": 2038.8,
+      "data": "2026-06-20T20:50:34"
+    },
+    {
+      "municipio": "Santana da Ponte Pensa",
+      "modalidade": 8,
+      "segmento": "servico_capacitacao_saude",
+      "objeto": "Contratação de empresa para fornecimento de licenciamento de uso de softwares nas áreas  de recursos humanos/folha de pagamento, pelo prazo de 12(doze) meses, incluindo os serviços de conversão de dad",
+      "valor_estimado": 7522.2,
+      "data": "2026-02-09T12:01:43"
+    }
+  ],
   "municipios": [
     {
       "codigo_ibge": "3524808",
@@ -615,6 +1204,644 @@
       "regiao_intermediaria": "São José do Rio Preto",
       "motivo_inclusao": "regiao_imediata",
       "prioritario": false
+    }
+  ],
+  "falhas_coleta": [
+    {
+      "contexto": "contratacoes 3524808 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "status": null,
+      "erro": "ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=15)"
+    },
+    {
+      "contexto": "contratacoes 3546603 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3546603&tamanhoPagina=50&pagina=9",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546603 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3546603&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546603 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3546603&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3502606 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3502606&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3502606 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3502606&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3513850 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3513850&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3513850 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3513850&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3513850 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3513850&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3513850 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3513850&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3513850 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3513850&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3514205 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3514205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515202 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3515202&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3515509 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3515509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3516903 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3516903&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3516903 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3516903&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3516903 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3516903&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3516903 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3516903&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3518008 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3518008&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3520707 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3520707&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3528205 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3528205&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529104 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3529104&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529104 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3529104&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529104 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3529104&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529104 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3529104&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529609 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3529609&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529609 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3529609&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3529609 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "status": null,
+      "erro": "ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=15)"
+    },
+    {
+      "contexto": "contratacoes 3530003 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3530003&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3532843 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3532843&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3532843 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3532843&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3534757 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3534757&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535200 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3535200&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3535903 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3535903&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3536901 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3536901&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3536901 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3536901&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3540259 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3540259&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3544509 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3544509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3544509 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3544509&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3545704 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3545704&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3546108 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3546108&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547403 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547650 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3547650&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3547205 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "status": null,
+      "erro": "ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=15)"
+    },
+    {
+      "contexto": "contratacoes 3549250 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3549250&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3555802 mod=12 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=12&codigoMunicipioIbge=3555802&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3556958 mod=5 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=5&codigoMunicipioIbge=3556958&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3556958 mod=6 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=6&codigoMunicipioIbge=3556958&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3556958 mod=7 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=7&codigoMunicipioIbge=3556958&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3556958 mod=8 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=8&codigoMunicipioIbge=3556958&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
+    },
+    {
+      "contexto": "contratacoes 3556958 mod=9 2026-01-01..2026-08-24",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20260824&codigoModalidadeContratacao=9&codigoMunicipioIbge=3556958&tamanhoPagina=50&pagina=1",
+      "status": 429,
+      "erro": "HTTP 429: <html>\n<head>\n    <meta charset=\"UTF-8\">\n    <title>Limite de RequisiÃ§Ãµes Excedido</title>\n</head>\n<body>\n    <h2>Limite de requisiÃ§Ãµes excedido</h2>\n\n    <p>\n        O limite de requisiÃ§Ãµes foi excedido. Aguarde alguns instantes antes de realizar uma nova requisiÃ§Ã£o.\n    </p>\n\n    <p>\n     "
     }
   ]
 }
