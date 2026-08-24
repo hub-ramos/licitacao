@@ -285,6 +285,7 @@ function tabelaDeItens(itens, vazioMsg){
       <td>${esc(it.unidade_medida ?? NADA)}</td>
       <td class="num">${nums(it.quantidade)}</td>
       <td class="num">${brl(it.valor_unitario_estimado)}</td>
+      <td class="num">${brl(it.valor_unitario_homologado)}</td>
       <td class="num">${brl(it.valor_total_homologado_ajustado ?? it.valor_total_homologado)}</td>
       <td>${esc(it.situacao_item_nome ?? NADA)}</td>
       <td>${esc(it.nome_fornecedor ?? NADA)}</td>
@@ -293,11 +294,14 @@ function tabelaDeItens(itens, vazioMsg){
     </tr>`).join("");
   const tituloEstimado = GLOSSARIO.valor_unitario_estimado
     ? ` title="${esc(GLOSSARIO.valor_unitario_estimado.explicacao)}"` : "";
+  const tituloUnitHomologado = GLOSSARIO.valor_unitario_homologado
+    ? ` title="${esc(GLOSSARIO.valor_unitario_homologado.explicacao)}"` : "";
   const tituloTotal = GLOSSARIO.valor_total_homologado_ajustado
     ? ` title="${esc(GLOSSARIO.valor_total_homologado_ajustado.explicacao)}"` : "";
   return `<table class="detalhe"><thead><tr>
       <th>Nº</th><th>Descrição</th><th>Un.</th><th>Qtde</th>
       <th${tituloEstimado}>Unit. estimado${termoAjudaHtml("valor_unitario_estimado")}</th>
+      <th${tituloUnitHomologado}>Unit. homologado${termoAjudaHtml("valor_unitario_homologado")}</th>
       <th${tituloTotal}>Total homologado${termoAjudaHtml("valor_total_homologado_ajustado")}</th>
       <th>Situação</th><th>Vencedor</th><th>Link</th>
     </tr></thead><tbody>${linhas}</tbody></table>`;
@@ -566,9 +570,27 @@ const AGRUPAMENTOS_VENCEDOR = [
 /* Soma no cliente: um item ganho por linha em VENCEDOR_RAW vira um bucket por
    fornecedor + a dimensão escolhida. As contagens de segmentos/municípios
    distintos saem de Sets acumulados durante a soma, não de outra consulta. */
-function agruparVencedores(modo){
+/* Filtros preAgregacao (segmento/ano/__item) atuam linha a linha sobre
+   VENCEDOR_RAW, antes da soma — a mesma semântica de busca textual do
+   aplicar() genérico (todos os termos, separados por espaço, precisam bater),
+   mais igualdade simples para os selects. */
+function passaFiltrosPreAgregacao(linha, filtros, valores){
+  return filtros.every(filtro => {
+    if (!filtro.preAgregacao) return true;
+    const escolhido = valores[filtro.campo];
+    if (escolhido === undefined || escolhido === "" || escolhido === null) return true;
+    if (filtro.tipo === "texto"){
+      const alvo = filtro.alvo.map(c => String(linha[c] ?? "")).join(" ").toLowerCase();
+      return String(escolhido).toLowerCase().split(/\s+/).every(t => alvo.includes(t));
+    }
+    return String(linha[filtro.campo] ?? "") === String(escolhido);
+  });
+}
+
+function agruparVencedores(modo, filtros, valores){
   const buckets = new Map();
   VENCEDOR_RAW.forEach(r => {
+    if (!passaFiltrosPreAgregacao(r, filtros, valores)) return;
     const dim = modo === "segmento" ? (r.segmento ?? NADA)
               : modo === "mes" ? `${r.ano ?? NADA}-${String(r.mes ?? 0).padStart(2, "0")}`
               : modo === "municipio" ? (r.municipio ?? NADA)
@@ -628,13 +650,22 @@ function colunasVencedores(modo){
 }
 
 function filtrosVencedores(modo){
+  // segmento/ano/__item são preAgregacao: agem sobre VENCEDOR_RAW antes da
+  // soma, não sobre o bucket já somado. Um bucket só carrega o campo da
+  // dimensão escolhida no agrupamento (ver agruparVencedores) — filtrar por
+  // segmento="laticinios" enquanto agrupa "por município", por exemplo, exige
+  // cortar a linha crua antes dela entrar num bucket, senão o total somaria
+  // queijo e iogurte junto com o leite.
   const f = [
     {campo:"__agrupar", rotulo:"Agrupar por", tipo:"agrupar"},
-    {campo:"__busca", rotulo:"Buscar fornecedor", tipo:"texto", alvo:["nome_fornecedor"]},
-    {campo:"porte_fornecedor", rotulo:"Porte"}
+    {campo:"__busca", rotulo:"Buscar fornecedor (nome ou CNPJ)", tipo:"texto",
+     alvo:["nome_fornecedor", "ni_fornecedor"]},
+    {campo:"__item", rotulo:"Buscar item (descrição)", tipo:"texto",
+     alvo:["descricao"], preAgregacao:true},
+    {campo:"porte_fornecedor", rotulo:"Porte"},
+    {campo:"segmento", rotulo:"Segmento", preAgregacao:true, opcoesDe:() => VENCEDOR_RAW},
+    {campo:"ano", rotulo:"Ano", preAgregacao:true, opcoesDe:() => VENCEDOR_RAW}
   ];
-  if (modo === "segmento") f.push({campo:"segmento", rotulo:"Segmento"});
-  if (modo === "mes") f.push({campo:"ano", rotulo:"Ano"});
   if (modo === "municipio") f.push({campo:"municipio", rotulo:"Município"});
   return f;
 }
@@ -642,9 +673,11 @@ function filtrosVencedores(modo){
 function sincronizarVencedores(){
   const modo = (estado.vencedores && estado.vencedores.__agrupar) || "geral";
   const cfg = ABAS.vencedores;
-  cfg.dados = agruparVencedores(modo);
-  cfg.colunas = colunasVencedores(modo);
+  // Ordem importa: agruparVencedores() agora consome a lista de filtros para
+  // decidir o que entra na soma, então os filtros têm que existir primeiro.
   cfg.filtros = filtrosVencedores(modo);
+  cfg.dados = agruparVencedores(modo, cfg.filtros, estado.vencedores || {});
+  cfg.colunas = colunasVencedores(modo);
 }
 
 /* --------------------------------------------------------------- estado */
@@ -669,6 +702,11 @@ function aplicar(aba){
     // "agrupar" já reformou cfg.dados inteiro (ver sincronizarVencedores); não
     // é um predicado por linha, filtrar por ele aqui zeraria a tabela.
     if (filtro.tipo === "agrupar") return true;
+    // preAgregacao (segmento/ano/__item) já filtrou VENCEDOR_RAW dentro de
+    // agruparVencedores; reaplicar aqui sobre o bucket não funcionaria — o
+    // bucket não carrega esses campos fora do modo que os agrupa (segmento,
+    // por exemplo, só existe no bucket quando modo==="segmento").
+    if (filtro.preAgregacao) return true;
     if (filtro.tipo === "texto"){
       const alvo = filtro.alvo.map(c => String(linha[c] ?? "")).join(" ").toLowerCase();
       return escolhido.toLowerCase().split(/\s+/).every(t => alvo.includes(t));
@@ -732,8 +770,13 @@ function desenharFiltros(){
       campo = `<select id="${id}">` + AGRUPAMENTOS_VENCEDOR.map(([v,r]) =>
         `<option value="${v}"${v === sel ? " selected" : ""}>${r}</option>`).join("") + `</select>`;
     } else {
+      // opcoesDe existe só em filtros preAgregacao (segmento/ano): sem ele o
+      // <select> populava de cfg.dados (os buckets já somados), onde o campo
+      // só existe quando o modo de agrupamento bate com a dimensão — nos
+      // outros modos as opções ficariam vazias.
+      const origemOpcoes = filtro.opcoesDe ? filtro.opcoesDe() : cfg.dados;
       const vistos = new Map();
-      cfg.dados.forEach(l => {
+      origemOpcoes.forEach(l => {
         const v = l[filtro.campo];
         if (v === null || v === undefined || v === "") return;
         vistos.set(String(v), (vistos.get(String(v)) || 0) + 1);
@@ -756,9 +799,10 @@ function desenharFiltros(){
     const evento = (filtro.tipo === "texto" || filtro.tipo === "minimo") ? "input" : "change";
     elemento.addEventListener(evento, e => {
       estado[abaAtual][filtro.campo] = e.target.value;
-      // Mudar o agrupamento reformula cfg.dados/colunas antes de desenhar —
-      // sem isto a tabela mostraria colunas de um modo com dados de outro.
-      if (filtro.tipo === "agrupar" && cfg.aoAgrupar) cfg.aoAgrupar();
+      // Mudar o agrupamento ou um filtro preAgregacao (segmento/ano/busca de
+      // item) reformula cfg.dados/colunas antes de desenhar — sem isto a
+      // tabela mostraria buckets somados sem o corte pedido.
+      if ((filtro.tipo === "agrupar" || filtro.preAgregacao) && cfg.aoAgrupar) cfg.aoAgrupar();
       desenharTabela();
       if (evento === "change") desenharFiltros();
     });
