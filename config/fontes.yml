@@ -60,9 +60,10 @@ pncp:
     - 8    # Dispensa de Licitação
     - 9    # Inexigibilidade
     - 12   # Credenciamento
-  # Tamanho da janela de datas por requisição. A API impõe limite não documentado
-  # com clareza; 90 dias é conservador e o probe testa se janelas maiores passam.
-  janela_dias: 90
+  # Tamanho da janela de datas por requisição.
+  # Medido pela sonda `descobrir_janela` em 2026-08-24: a API aceitou 365 dias.
+  # Era 90 por precaução, o que quadruplicava o número de requisições.
+  janela_dias: 365
 
 coleta:
   # Backfill histórico: quantos anos para trás varrer na primeira execução.

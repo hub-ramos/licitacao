@@ -112,10 +112,45 @@ def _secao_ancora(p: "Probe") -> list[str]:
     return linhas
 
 
+def _secao_falhas(p: "Probe") -> list[str]:
+    """Falhas de coleta.
+
+    Esta seção existe porque a primeira execução real varreu 37 municípios,
+    voltou com zero contratações e o relatório apenas disse "nenhuma contratação
+    encontrada" — quando a informação decisiva era que as requisições haviam
+    falhado. Coleta vazia e coleta quebrada são coisas diferentes e o relatório
+    tem que distingui-las.
+    """
+    falhas = list(getattr(p.pncp, "falhas", []))
+    if not falhas:
+        return []
+
+    por_status: dict[object, int] = {}
+    for f in falhas:
+        por_status[f.status] = por_status.get(f.status, 0) + 1
+
+    linhas = [
+        f"> **{len(falhas)} requisições de coleta falharam.** "
+        "Cobertura vazia abaixo pode ser efeito disto, não ausência de licitações.",
+        "",
+        "| HTTP | Ocorrências |",
+        "|---|---:|",
+    ]
+    for status, qtd in sorted(por_status.items(), key=lambda kv: -kv[1]):
+        linhas.append(f"| {status if status is not None else 'sem resposta'} | {qtd} |")
+    linhas += ["", "Exemplos:", ""]
+    for f in falhas[:5]:
+        linhas.append(f"- `{f.contexto}` → {f.status}: {str(f.erro or '')[:160]}")
+    linhas.append("")
+    return linhas
+
+
 def _secao_cobertura(p: "Probe") -> list[str]:
-    linhas = ["## 3. Cobertura por município", ""]
+    linhas = ["## 3. Cobertura por município", ""] + _secao_falhas(p)
     if not p.cobertura:
-        return linhas + ["Nenhuma contratação encontrada. Verifique a seção 1.", ""]
+        return linhas + [
+            "Nenhuma contratação encontrada. Se houver falhas acima, a causa é "
+            "essa; caso contrário, verifique a seção 1.", ""]
 
     por_municipio: dict[str, dict] = defaultdict(
         lambda: {"total": 0, "valor": 0.0, "modalidades": defaultdict(int), "anos": set()}

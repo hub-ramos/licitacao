@@ -399,6 +399,46 @@ class Probe:
         self.sondas.append(sonda)
         return sonda
 
+    def descobrir_tamanho_pagina(self) -> Sonda:
+        """Descobre o maior `tamanhoPagina` que a API aceita.
+
+        A primeira varredura real usou 500 (valor que a documentação dá como
+        máximo) e voltou vazia nos 37 municípios, enquanto as sondas — que usam
+        10 — traziam registros. Como a API responde 422 a parâmetro inválido,
+        um `tamanhoPagina` recusado explica as 851 requisições sem resultado.
+        Descobrir o teto real vale mais que confiar no número documentado.
+        """
+        cfg = fontes()["pncp"]
+        url = cfg["consulta_base"] + cfg["contratacoes_publicacao"]
+        fim = date.today()
+        ini = fim - timedelta(days=89)
+        tentados: dict[int, str] = {}
+        maior = 0
+
+        for tamanho in (10, 50, 100, 500):
+            resp = self.http_massa.obter(url, {
+                "dataInicial": _aaaammdd(ini), "dataFinal": _aaaammdd(fim),
+                "codigoModalidadeContratacao": 6, "uf": "SP",
+                "pagina": 1, "tamanhoPagina": tamanho,
+            })
+            n, _ = _campos_do_primeiro(resp.dados)
+            tentados[tamanho] = f"HTTP {resp.status}·{n if n is not None else '—'}"
+            if resp.ok and n:
+                maior = tamanho
+
+        detalhe = " | ".join(f"{k}: {v}" for k, v in tentados.items())
+        sonda = Sonda(
+            nome="PNCP · maior tamanhoPagina aceito",
+            url=url, status=200, ok=bool(maior), registros=maior,
+            erro=None if maior else f"nenhum tamanho aceito. {detalhe}",
+            observacao=(
+                f"Maior aceito: **{maior}**. `tamanho_pagina` está em "
+                f"{cfg['tamanho_pagina']}. {detalhe}" if maior else detalhe
+            ),
+        )
+        self.sondas.append(sonda)
+        return sonda
+
     def descobrir_janela(self) -> Sonda:
         """Descobre o maior intervalo de datas que a API aceita numa requisição.
 
@@ -447,6 +487,7 @@ class Probe:
         self.testar_caso_ancora()
         self.sondar_endpoints()
         self.sondar_filtro_municipio()
+        self.descobrir_tamanho_pagina()
         self.descobrir_janela()
         if completo:
             self.varrer(anos=anos)
@@ -463,6 +504,7 @@ class Probe:
                     "cobertura": self.cobertura,
                     "mercado_servico": self.mercado_servico,
                     "municipios": [vars(m) for m in self.municipios],
+                    "falhas_coleta": [vars(f) for f in self.pncp.falhas],
                 },
                 ensure_ascii=False, indent=2, default=str,
             ) + "\n",
