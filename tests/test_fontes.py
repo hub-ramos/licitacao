@@ -105,6 +105,19 @@ class Resumo(unittest.TestCase):
         self.assertIn("tipo_conteudo=text/yaml", campos)
         self.assertIn("openapi", amostra)
 
+    def test_envelope_ckan_do_tesouro(self) -> None:
+        """CKAN aninha os recursos; a URL do XLSX da CAPAG está em result.resources."""
+        n, campos, amostra = _resumir({
+            "success": True,
+            "result": {"name": "capag-municipios", "resources": [
+                {"format": "XLSX", "url": "https://x/capag.xlsx",
+                 "last_modified": "2026-03-01"},
+            ]},
+        })
+        self.assertEqual(n, 1)
+        self.assertIn("last_modified", campos)
+        self.assertIn("XLSX", amostra)
+
     def test_vazio_nao_vira_none(self) -> None:
         self.assertEqual(_resumir({"data": []})[0], 0)
 

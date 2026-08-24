@@ -79,10 +79,18 @@ def _resumir(dados: Any) -> tuple[int | None, list[str], str]:
 
     registros: Any = None
     if isinstance(dados, dict):
-        for chave in ("data", "gazettes", "result", "cities", "items"):
-            if isinstance(dados.get(chave), list):
-                registros = dados[chave]
-                break
+        # CKAN aninha o que interessa: package_show devolve
+        # {"success": true, "result": {..., "resources": [...]}}, e é em
+        # resources[] que está a URL do XLSX. Sem este caso, o resumo mostraria
+        # apenas as três chaves do envelope e a checagem não responderia nada.
+        resultado = dados.get("result")
+        if isinstance(resultado, dict) and isinstance(resultado.get("resources"), list):
+            registros = resultado["resources"]
+        else:
+            for chave in ("data", "gazettes", "result", "cities", "items"):
+                if isinstance(dados.get(chave), list):
+                    registros = dados[chave]
+                    break
         if registros is None:
             return (1, sorted(dados)[:30], json.dumps(dados, ensure_ascii=False)[:280])
     elif isinstance(dados, list):

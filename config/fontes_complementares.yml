@@ -31,6 +31,10 @@ lacunas:
   compra_prospectiva: >-
     Tudo que a base vê é passado. O Plano de Contratações Anual mostra o que o
     município pretende comprar antes de publicar edital.
+  risco_de_recebimento: >-
+    A base mede onde há pouca concorrência, e não se o município paga. São
+    perguntas independentes, e é o cruzamento que decide: vácuo competitivo com
+    pagador ruim explica o vácuo; vácuo com pagador bom é oportunidade limpa.
 
 candidatos:
 
@@ -161,6 +165,48 @@ candidatos:
       - nome: MinhaReceita
         url: https://minhareceita.org/{cnpj_teste}
         responde: Alternativa caso a BrasilAPI limite ou saia do ar.
+
+  - chave: capag_tesouro
+    nome: CAPAG — Capacidade de Pagamento (Tesouro Nacional)
+    lacuna: risco_de_recebimento
+    documentacao:
+      - https://www.tesourotransparente.gov.br/temas/estados-e-municipios/capacidade-de-pagamento-capag
+      - https://www.tesourotransparente.gov.br/ckan/dataset/capag-municipios
+      - https://apidatalake.tesouro.gov.br/docs/siconfi/
+    natureza: >-
+      Único indicador público oficial em escala A-D aplicado a todos os ~5.570
+      municípios (Portaria MF 501/2017, Portaria STN 882/2018 e Portaria STN/MF
+      1.583/2023, que criou A+ e B+). Composto por endividamento, poupança
+      corrente e liquidez.
+
+      Duas ressalvas que precisam viajar junto com o dado, sob pena de leitura
+      errada: (1) a CAPAG mede risco de crédito para garantia da União em
+      operação de crédito, NÃO pontualidade de pagamento a fornecedor — um
+      município B pode atrasar contrato e um C pode pagar em dia; (2) a nota
+      divulgada usa o exercício anterior como ano-base, então a defasagem tem de
+      ser exibida junto da nota.
+
+      Não existe endpoint de CAPAG na API do Siconfi: lá estão apenas os dados
+      brutos que alimentam o cálculo. A CAPAG sai por XLSX no CKAN do Tesouro
+      Transparente, e a URL do arquivo muda a cada publicação — por isso a
+      checagem é do `package_show`, nunca de link direto.
+
+      Levantamento completo em docs/handoffs/CAPAG_MUNICIPIOS_2026-08-24.md.
+      PENDENTE: nada disto está implementado.
+    checagens:
+      - nome: catálogo CKAN do dataset capag-municipios
+        url: https://www.tesourotransparente.gov.br/ckan/api/3/action/package_show
+        params: {id: capag-municipios}
+        responde: >-
+          O package_show responde e traz result.resources[] com formato, url e
+          last_modified? É por aqui que se resolve o XLSX mais recente.
+      - nome: Siconfi — lista de entes
+        url: https://apidatalake.tesouro.gov.br/ords/siconfi/tt/entes
+        params: {id_ente: "{ibge_ancora}"}
+        responde: >-
+          A API do Siconfi aceita o código IBGE como id_ente? É a chave de
+          cruzamento com a base, e confirma o caminho dos indicadores
+          complementares (restos a pagar, disponibilidade de caixa).
 
 # CNPJ usado nas checagens de enriquecimento: Banco do Brasil S.A., matriz.
 # Público, estável e sem relação com nenhum fornecedor da base.

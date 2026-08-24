@@ -202,6 +202,7 @@ Ficam registradas onde afetam a coleta, com as duas versões, para que ninguém
 | `contrato` sem vínculo com a contratação | `src/licita/coleta.py` | `numeroControlePncpCompra` vem no retorno e não é gravado. É o caminho alternativo para saber quem ganhou quando as rotas de detalhe falham |
 | Outlier de Três Fronteiras | `dados/relatorio_cobertura.md` | 1 contratação, R$ 371.276.147,04, município de ~6 mil habitantes. Erro de digitação na fonte ou contrato atípico — não investigado |
 | Atas e contratos varridos por CNPJ | `src/licita/coleta.py` | Uma requisição por órgão por janela, onde uma por janela com filtro local resolveria |
+| Backfill de 3 anos não cabe no workflow | `.github/workflows/historico.yml` | Com a latência de 2,2s medida no runner e a pausa de 1,0s, 3 anos custam ~10,4 h contra timeout de 5,5 h. A primeira coleta real vai com `anos=1` (~4 h); o histórico completo precisa ser fatiado |
 
 ## O que esta base ainda não faz
 
@@ -209,6 +210,7 @@ Ficam registradas onde afetam a coleta, com as duas versões, para que ninguém
 |---|---|---|
 | Contagem real de licitantes | Não existe na API; só no PDF da ata | Parser best-effort sobre `arquivo.url`. Os proxies já respondem a pergunta de negócio |
 | AUDESP Fase IV (TCE-SP) | Cubos são arquivos para download, não REST | Licitações de todos os municípios paulistas desde 2018, por obrigação legal, **independente de publicação no PNCP**. Pode resolver a cobertura do presencial — e talvez traga contagem de participantes |
+| **CAPAG do município** | Levantado, não implementado | Nota A–D de capacidade de pagamento, do Tesouro Nacional. Responde a outra pergunta que não a desta base: **se o município paga**. Levantamento em [`docs/handoffs/CAPAG_MUNICIPIOS_2026-08-24.md`](docs/handoffs/CAPAG_MUNICIPIOS_2026-08-24.md); inscrita na sonda como lacuna `risco_de_recebimento` |
 | Sanções CEIS/CNEP | Não implementado | Portal da Transparência federal, chave gratuita. Due diligence de concorrente e fornecedor |
 | Lado da demanda em saúde | Não implementado | CNES, SIOPS e população para detectar município que compra abaixo do porte |
 | Antecipação epidemiológica | Não implementado | SINAN/InfoDengue: curva de arbovirose sobe antes de o edital sair |
