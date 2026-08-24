@@ -1,0 +1,17 @@
+﻿codigo_ibge;segmento;ano;tipo_segmento;contratacoes;itens;itens_homologados;itens_desertos;itens_fracassados;valor_estimado;valor_homologado;desagio_medio;taxa_desercao;fornecedores_distintos;hhi;indice_oportunidade;calculado_em;municipio
+3546603;generos_alimenticios;2026;produto;5;7;5;0;0;300357.5495;92687974.25;-463.3952;0.0;4;1.0;61.11;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;papelaria_expediente;2026;produto;1;4;4;0;0;3670.0;3670.0;0.0;0.0;1;1.0;61.11;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;panificacao;2026;produto;6;6;5;0;0;23122.52;21364.59;0.0;0.0;2;0.9955;60.99;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;textil_uniforme;2026;produto;3;8;8;0;0;45445.9;45445.9;0.0;0.0;3;0.9739;60.39;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;carnes;2026;produto;2;18;9;0;0;400464.76;199520.12;0.006;0.0;2;0.6969;51.36;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;insumos_laboratoriais;2026;produto;2;2;2;0;0;1250.0;1250.0;0.0;0.0;2;0.52;47.78;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;calcados;2026;produto;2;13;13;0;0;6133.03;6133.03;0.0;0.0;2;0.5052;47.37;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;madeira_construcao;2026;produto;2;2;2;0;0;10900.0;10900.0;0.0;0.0;2;0.5034;47.32;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;informatica;2026;produto;7;17;17;0;0;5418.0;5418.0;0.0;0.0;4;0.3635;43.43;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;medicamentos;2026;produto;10;58;32;0;0;151690.75;6194.58;0.0;0.0;4;0.3181;42.17;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;limpeza_higiene;2026;produto;1;1;1;0;0;29.42;26.5;0.0993;0.0;1;1.0;39.04;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;nao_classificado;2026;indefinido;67;196;166;0;0;537156.95;288662.58;0.0;0.0;53;0.0949;35.97;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;copa_cozinha;2026;produto;1;1;1;0;0;110.3505;74.85;0.3217;0.0;1;1.0;27.78;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;laticinios;2026;produto;1;1;0;0;0;448445.12;0.0;;0.0;0;;0.0;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;combustivel;2026;produto;1;2;0;0;0;424124.66;0.0;;0.0;0;;0.0;2026-08-24T12:16:37+00:00;Santa Fé do Sul
+3546603;servico_vigilancia_saude;2026;servico;1;8;0;0;0;10645.56;0.0;;0.0;0;;0.0;2026-08-24T12:16:37+00:00;Santa Fé do Sul

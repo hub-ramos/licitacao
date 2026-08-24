@@ -1,0 +1,39 @@
+﻿codigo_ibge;nome;uf;regiao_imediata;regiao_intermediaria;motivo_inclusao;prioritario
+3524808;Jales;SP;Jales;São José do Rio Preto;regiao_imediata;1
+3532868;Nova Castilho;SP;Araçatuba;Araçatuba;extra;1
+3546603;Santa Fé do Sul;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;1
+3502606;Aparecida d'Oeste;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3503950;Aspásia;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3513850;Dirce Reis;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3514205;Dolcinópolis;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3515202;Estrela d'Oeste;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3515509;Fernandópolis;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3516903;General Salgado;SP;Araçatuba;Araçatuba;extra;0
+3518008;Guarani d'Oeste;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3520707;Indiaporã;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3528205;Macedônia;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3529104;Marinópolis;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3529609;Meridiano;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3529658;Mesópolis;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3530003;Mira Estrela;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3532843;Nova Canaã Paulista;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3534757;Ouroeste;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3535200;Palmeira d'Oeste;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3535903;Paranapuã;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3536901;Pedranópolis;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3540259;Pontalinda;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3540408;Populina;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3544509;Rubinéia;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3545704;Santa Albertina;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3546108;Santa Clara d'Oeste;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3547403;Santa Rita d'Oeste;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3547650;Santa Salete;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3547205;Santana da Ponte Pensa;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3552551;Suzanápolis;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3549003;São Francisco;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3549201;São João das Duas Pontes;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3549250;São João de Iracema;SP;Fernandópolis;São José do Rio Preto;regiao_imediata;0
+3554904;Três Fronteiras;SP;Santa Fé do Sul;São José do Rio Preto;regiao_imediata;0
+3555307;Turmalina;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3555802;Urânia;SP;Jales;São José do Rio Preto;regiao_imediata;0
+3556958;Vitória Brasil;SP;Jales;São José do Rio Preto;regiao_imediata;0
