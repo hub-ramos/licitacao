@@ -23,6 +23,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
+from .config import fontes
 from .db import Base, agora
 
 log = logging.getLogger("licita.metricas")
@@ -41,6 +42,35 @@ PESOS = {
 
 SITUACAO_DESERTO = 4
 SITUACAO_FRACASSADO = 5
+
+
+def desagio_valido(estimado: float | None, homologado: float | None,
+                   quantidade: float | None) -> float | None:
+    """Deságio unitário, ou ``None`` quando o publicado não é comparável.
+
+    Dois casos reais, medidos em Santa Fé do Sul contra a API:
+
+    * **Total no campo unitário.** "Uva Núbia", 2.318 kg, estimado R$ 17,25/kg e
+      "unitário homologado" de R$ 39.985,50 — que é exatamente 2.318 × 17,25.
+      O órgão publicou o valor total no campo do unitário. Sem tratamento, isso
+      vira deságio de −231.700% e arrasta a média do segmento para −46.339%.
+      Quando a assinatura bate, o unitário real é o próprio estimado: deságio 0.
+    * **Qualquer outro absurdo.** Homologado acima do dobro do estimado é erro
+      de publicação, não compra cara. Deságio abaixo de −100% sai como ausência
+      de dado, não como medida.
+
+    Deságio negativo moderado é preservado: comprar acima da estimativa acontece
+    e é informativo.
+    """
+    if not estimado or estimado <= 0 or homologado is None:
+        return None
+    if quantidade and quantidade > 1:
+        total = estimado * quantidade
+        # Tolerância de um centavo: o total costuma vir arredondado.
+        if abs(homologado - total) < 0.01:
+            return 0.0
+    bruto = (estimado - homologado) / estimado
+    return bruto if bruto >= -1.0 else None
 
 
 @dataclass
@@ -115,6 +145,10 @@ def calcular(base: Base) -> int:
         )
     }
 
+    # A lista vem de config/fontes.yml; interpolar inteiros validados é seguro e
+    # evita um IN de tamanho variável em parâmetro ligado.
+    concluidas = ",".join(str(int(x)) for x in
+                          fontes().get("situacoes_item_concluidas", [2, 4, 5]))
     agregados = base.consultar(
         """
         SELECT
@@ -127,12 +161,13 @@ def calcular(base: Base) -> int:
             SUM(CASE WHEN i.situacao_item_id = 2 THEN 1 ELSE 0 END) AS homologados,
             SUM(CASE WHEN i.situacao_item_id = ? THEN 1 ELSE 0 END) AS desertos,
             SUM(CASE WHEN i.situacao_item_id = ? THEN 1 ELSE 0 END) AS fracassados,
+            SUM(CASE WHEN i.situacao_item_id IN ({concluidas}) THEN 1 ELSE 0 END) AS concluidos,
             COALESCE(SUM(i.valor_total_estimado), 0) AS valor_estimado
           FROM item i
           JOIN contratacao c ON c.numero_controle_pncp = i.numero_controle_pncp
          WHERE c.codigo_ibge IS NOT NULL AND c.ano IS NOT NULL AND i.segmento IS NOT NULL
          GROUP BY c.codigo_ibge, i.segmento, c.ano, i.tipo_segmento
-        """,
+        """.format(concluidas=concluidas),
         (SITUACAO_DESERTO, SITUACAO_FRACASSADO),
     )
 
@@ -146,8 +181,13 @@ def calcular(base: Base) -> int:
         fracassados = linha["fracassados"] or 0
 
         comp = Componentes()
-        if itens:
-            comp.desercao = round((desertos + fracassados) / itens, 4)
+        # Deserção só se mede sobre item com desfecho. Item "Em Andamento" não é
+        # prova de que ninguém apareceu — contá-lo como não-deserto dava
+        # deserção 0,0 e, sem os outros componentes, índice 0,0, que se lê como
+        # "sem oportunidade" quando significa "ainda sem medida".
+        concluidos = linha["concluidos"] or 0
+        if concluidos:
+            comp.desercao = round((desertos + fracassados) / concluidos, 4)
         if detalhe["desagio_medio"] is not None:
             comp.sem_desagio = round(
                 1 - min(max(detalhe["desagio_medio"], 0.0) / DESAGIO_SAUDAVEL, 1.0), 4
@@ -185,12 +225,15 @@ def calcular(base: Base) -> int:
 
 def _detalhar(base: Base, codigo_ibge: str, segmento: str, ano: int) -> dict:
     """Deságio médio, valor homologado, fornecedores distintos e HHI de um recorte."""
+    com_disputa = set(fontes().get("modalidades_com_disputa", []))
     linhas = base.consultar(
         """
         SELECT r.ni_fornecedor,
                r.valor_total_homologado,
                i.valor_unitario_estimado,
-               r.valor_unitario_homologado
+               r.valor_unitario_homologado,
+               i.quantidade,
+               c.modalidade_id
           FROM item i
           JOIN contratacao c ON c.numero_controle_pncp = i.numero_controle_pncp
           JOIN resultado r
@@ -206,12 +249,15 @@ def _detalhar(base: Base, codigo_ibge: str, segmento: str, ano: int) -> dict:
     total_homologado = 0.0
 
     for l in linhas:
-        estimado = l["valor_unitario_estimado"]
-        homologado = l["valor_unitario_homologado"]
-        if estimado and estimado > 0 and homologado is not None:
-            # Deságio negativo (homologado acima do estimado) é possível e informativo;
-            # preservado como está para não mascarar compra acima da estimativa.
-            desagios.append((estimado - homologado) / estimado)
+        # Deságio só entra no índice onde houve disputa de preço. Em dispensa e
+        # inexigibilidade o "estimado" publicado É o contratado, então o deságio
+        # é zero por construção — creditar isso como vácuo competitivo faria o
+        # índice medir quanto o município usa dispensa, não onde há vácuo.
+        if l["modalidade_id"] in com_disputa:
+            d = desagio_valido(l["valor_unitario_estimado"],
+                               l["valor_unitario_homologado"], l["quantidade"])
+            if d is not None:
+                desagios.append(d)
 
         valor = l["valor_total_homologado"] or 0.0
         total_homologado += valor

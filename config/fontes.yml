@@ -149,3 +149,32 @@ modalidades_presenciais: [5, 7, 13]
 
 # Modalidades que costumam abrigar serviço técnico especializado.
 modalidades_servico_tecnico: [8, 9, 12]
+
+# Modalidades em que existe DISPUTA DE PREÇO entre licitantes.
+#
+# Medido em Santa Fé do Sul, 25/07 a 24/08/2026, contra a API real: em dispensa,
+# 271 de 275 itens têm deságio EXATAMENTE zero, e em inexigibilidade 2 de 2.
+# Não é vácuo competitivo — é que não houve disputa nenhuma. Nessas modalidades
+# o "valor estimado" publicado no PNCP é o próprio valor contratado.
+#
+# Importa porque "ausência de deságio" pesa 30% do Índice de Oportunidade. Sem
+# esta separação, toda dispensa recebia nota máxima nesse componente, e como
+# dispensa é 90% do volume da região, o índice inteiro viraria um medidor de
+# "quanto o município usa dispensa" — que não é a pergunta do projeto.
+modalidades_com_disputa: [1, 2, 3, 4, 5, 6, 7, 13]
+
+# Situações de item que dizem algo sobre CONCORRÊNCIA. Só estas três:
+#   2 homologado -> alguém apareceu e venceu
+#   4 deserto    -> ninguém apareceu
+#   5 fracassado -> apareceram e todos foram inabilitados
+#
+# Ficam de fora, e o motivo é o mesmo nos dois casos — ausência de medida sendo
+# lida como medida de ausência:
+#   1 Em Andamento -> ainda em curso; não é prova de que ninguém apareceu
+#   3 Anulado/Revogado/Cancelado -> o processo morreu antes do desfecho
+#
+# Medido em Santa Fé do Sul: combustível e laticínios só tinham item em
+# andamento, e vigilância em saúde só tinha item cancelado. Os três recebiam
+# deserção 0,0 e, sem nenhum outro componente, índice 0,0 — que se lê como
+# "sem oportunidade" quando significa "ainda sem medida".
+situacoes_item_concluidas: [2, 4, 5]

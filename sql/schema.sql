@@ -222,8 +222,14 @@ CREATE TABLE IF NOT EXISTS coleta_log (
 
 -- ------------------------------------------------------------------ visões
 
+-- Visões são recriadas a cada abertura da base. `CREATE VIEW IF NOT EXISTS`
+-- sobre base já existente ignora a mudança em silêncio, e uma correção de
+-- fórmula que nunca chega ao painel é pior que nenhuma correção. Visão não
+-- guarda dado: derrubar e recriar não custa nada.
+DROP VIEW IF EXISTS v_item_completo;
+
 -- Item com tudo que o painel precisa, já desnormalizado.
-CREATE VIEW IF NOT EXISTS v_item_completo AS
+CREATE VIEW v_item_completo AS
 SELECT
     i.numero_controle_pncp,
     i.numero_item,
@@ -260,12 +266,30 @@ SELECT
     r.porte_fornecedor,
     r.valor_unitario_homologado,
     r.valor_total_homologado,
+    -- Deságio, com as duas defesas que o dado real exigiu (ver
+    -- src/licita/metricas.py:desagio_valido, que aplica as mesmas regras):
+    --   1. órgão que publica o valor TOTAL no campo do unitário. A assinatura é
+    --      homologado = quantidade x estimado. Medido: "Uva Núbia", 2.318 kg,
+    --      R$ 17,25/kg, "unitário" homologado de R$ 39.985,50. Sem isto vira
+    --      deságio de -231.700%.
+    --   2. homologado acima do dobro do estimado é erro de publicação, não
+    --      compra cara: sai como ausência de dado.
+    -- Deságio negativo moderado fica: comprar acima da estimativa acontece.
     CASE
         WHEN i.valor_unitario_estimado IS NULL OR i.valor_unitario_estimado <= 0
              OR r.valor_unitario_homologado IS NULL THEN NULL
+        WHEN i.quantidade > 1
+             AND ABS(r.valor_unitario_homologado
+                     - i.valor_unitario_estimado * i.quantidade) < 0.01 THEN 0.0
+        WHEN (i.valor_unitario_estimado - r.valor_unitario_homologado)
+             / i.valor_unitario_estimado < -1.0 THEN NULL
         ELSE (i.valor_unitario_estimado - r.valor_unitario_homologado)
              / i.valor_unitario_estimado
-    END                             AS desagio
+    END                             AS desagio,
+    -- Marca se a modalidade admite disputa de preço. Sem isto, o deságio zero
+    -- estrutural da dispensa se confunde com deságio zero por falta de
+    -- concorrência, que é justamente o que o projeto procura.
+    CASE WHEN c.modalidade_id IN (1,2,3,4,5,6,7,13) THEN 1 ELSE 0 END AS com_disputa
 FROM item i
 JOIN contratacao c ON c.numero_controle_pncp = i.numero_controle_pncp
 LEFT JOIN municipio m ON m.codigo_ibge = c.codigo_ibge
@@ -274,8 +298,10 @@ LEFT JOIN resultado r
        ON r.numero_controle_pncp = i.numero_controle_pncp
       AND r.numero_item = i.numero_item;
 
+DROP VIEW IF EXISTS v_radar;
+
 -- Oportunidades com proposta ainda em aberto.
-CREATE VIEW IF NOT EXISTS v_radar AS
+CREATE VIEW v_radar AS
 SELECT
     c.numero_controle_pncp,
     m.nome                AS municipio,

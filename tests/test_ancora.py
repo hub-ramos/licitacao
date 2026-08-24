@@ -18,7 +18,9 @@ from fixtures import (  # noqa: E402
 from licita.coleta import Coletor  # noqa: E402
 from licita.db import Base  # noqa: E402
 from licita.ibge import Municipio  # noqa: E402
-from licita.metricas import Componentes, DESAGIO_SAUDAVEL, calcular, hhi  # noqa: E402
+from licita.metricas import (  # noqa: E402
+    Componentes, DESAGIO_SAUDAVEL, calcular, desagio_valido, hhi,
+)
 
 NOVA_CASTILHO = Municipio(
     codigo_ibge=IBGE_NOVA_CASTILHO, nome="Nova Castilho", uf="SP",
@@ -180,6 +182,138 @@ class ComponentesDoIndice(unittest.TestCase):
         self.assertAlmostEqual(hhi([20760.0, 27680.0, 96880.0]), 0.5, places=1)
         self.assertEqual(hhi([VALOR_TOTAL_ARP]), 1.0)
         self.assertIsNone(hhi([]), "sem resultado homologado não há concentração a medir")
+
+
+class DesagioPublicadoErrado(unittest.TestCase):
+    """Defesas que o dado real de Santa Fé do Sul obrigou a existir."""
+
+    def test_total_no_campo_do_unitario_vira_desagio_zero(self) -> None:
+        """Caso medido: "Uva Núbia", 2.318 kg a R$ 17,25, e o "unitário"
+        homologado publicado foi R$ 39.985,50 — exatamente 2.318 x 17,25.
+
+        Sem tratamento isso vira deságio de -231.700% e arrasta a média do
+        segmento para -46.339%. Se o total bate com quantidade x estimado, o
+        unitário real é o próprio estimado: deságio zero.
+        """
+        self.assertEqual(desagio_valido(17.25, 39985.50, 2318), 0.0)
+
+    def test_homologado_absurdo_sai_como_ausencia_de_dado(self) -> None:
+        # Acima do dobro do estimado é erro de publicação, não compra cara.
+        self.assertIsNone(desagio_valido(10.0, 25.0, 1))
+        self.assertIsNone(desagio_valido(10.0, 1000.0, None))
+
+    def test_desagio_negativo_moderado_e_preservado(self) -> None:
+        """Comprar acima da estimativa acontece e é informativo — mascarar
+        isso esconderia justamente a compra cara."""
+        self.assertAlmostEqual(desagio_valido(10.0, 12.0, 1), -0.2, places=6)
+
+    def test_desagio_normal_passa_intacto(self) -> None:
+        self.assertAlmostEqual(desagio_valido(7.01, 6.92, 21000), 0.012839, places=5)
+
+    def test_sem_estimativa_nao_ha_desagio(self) -> None:
+        for est, hom in ((None, 5.0), (0.0, 5.0), (5.0, None)):
+            with self.subTest(est=est, hom=hom):
+                self.assertIsNone(desagio_valido(est, hom, 1))
+
+
+class SemMedidaNaoEZero(unittest.TestCase):
+    """Ausência de medida não pode ser lida como medida de ausência."""
+
+    def _base_com(self, situacao: int, modalidade: int = 8) -> Base:
+        base = Base(":memory:")
+        base.upsert("municipio", {"codigo_ibge": "3546603", "nome": "Santa Fé do Sul",
+                                  "uf": "SP", "prioritario": 1})
+        base.upsert("contratacao", {
+            "numero_controle_pncp": "X-1-1/2026", "codigo_ibge": "3546603",
+            "ano": 2026, "modalidade_id": modalidade, "coletado_em": "2026-08-24"})
+        base.upsert("item", {
+            "numero_controle_pncp": "X-1-1/2026", "numero_item": 1,
+            "situacao_item_id": situacao, "segmento": "combustivel",
+            "tipo_segmento": "produto", "valor_total_estimado": 1000.0,
+            "coletado_em": "2026-08-24"})
+        return base
+
+    def test_item_em_andamento_nao_gera_indice(self) -> None:
+        """Medido: combustível e laticínios só tinham item em andamento e
+        recebiam índice 0,0 — que se lê como 'sem oportunidade'."""
+        base = self._base_com(situacao=1)
+        try:
+            calcular(base)
+            linha = base.consultar("SELECT * FROM metrica_mun_seg_ano")[0]
+            self.assertIsNone(linha["indice_oportunidade"])
+            self.assertIsNone(linha["taxa_desercao"])
+        finally:
+            base.fechar()
+
+    def test_item_cancelado_nao_gera_indice(self) -> None:
+        """Medido: vigilância em saúde, 8 itens anulados/revogados/cancelados.
+        Processo que morreu antes do desfecho não diz nada sobre concorrência."""
+        base = self._base_com(situacao=3)
+        try:
+            calcular(base)
+            self.assertIsNone(
+                base.consultar("SELECT * FROM metrica_mun_seg_ano")[0]["indice_oportunidade"])
+        finally:
+            base.fechar()
+
+    def test_item_deserto_gera_desercao_total(self) -> None:
+        base = self._base_com(situacao=4)
+        try:
+            calcular(base)
+            linha = base.consultar("SELECT * FROM metrica_mun_seg_ano")[0]
+            self.assertAlmostEqual(linha["taxa_desercao"], 1.0, places=6)
+            self.assertAlmostEqual(linha["indice_oportunidade"], 100.0, places=1)
+        finally:
+            base.fechar()
+
+
+class DesagioSoOndeHouveDisputa(unittest.TestCase):
+    """Em dispensa o 'estimado' publicado É o contratado: deságio zero por
+    construção. Medido: 271 de 275 itens de dispensa com deságio exato zero.
+
+    Creditar isso como vácuo competitivo faria o índice medir quanto o
+    município usa dispensa, não onde há pouca concorrência.
+    """
+
+    def _com_modalidade(self, modalidade: int) -> dict:
+        base = Base(":memory:")
+        try:
+            base.upsert("municipio", {"codigo_ibge": "3546603", "nome": "Santa Fé do Sul",
+                                      "uf": "SP", "prioritario": 1})
+            base.upsert("contratacao", {
+                "numero_controle_pncp": "X-1-1/2026", "codigo_ibge": "3546603",
+                "ano": 2026, "modalidade_id": modalidade, "coletado_em": "2026-08-24"})
+            base.upsert("item", {
+                "numero_controle_pncp": "X-1-1/2026", "numero_item": 1,
+                "situacao_item_id": 2, "segmento": "papelaria_expediente",
+                "tipo_segmento": "produto", "quantidade": 100.0,
+                "valor_unitario_estimado": 10.0, "valor_total_estimado": 1000.0,
+                "coletado_em": "2026-08-24"})
+            base.upsert("fornecedor", {"ni": "00000000000191", "nome": "F", "porte": "ME"})
+            base.upsert("resultado", {
+                "numero_controle_pncp": "X-1-1/2026", "numero_item": 1,
+                "sequencial_resultado": 1, "ni_fornecedor": "00000000000191",
+                "valor_unitario_homologado": 10.0,     # deságio zero
+                "valor_total_homologado": 1000.0, "coletado_em": "2026-08-24"})
+            calcular(base)
+            return base.consultar("SELECT * FROM metrica_mun_seg_ano")[0]
+        finally:
+            base.fechar()
+
+    def test_dispensa_nao_pontua_por_ausencia_de_desagio(self) -> None:
+        linha = self._com_modalidade(8)
+        self.assertIsNone(linha["desagio_medio"],
+                          "dispensa não tem deságio a medir")
+        # Sobram deserção (0) e concentração (1,0): 100 x 0,25/0,60 = 41,67
+        self.assertAlmostEqual(linha["indice_oportunidade"], 41.67, places=1)
+
+    def test_pregao_com_desagio_zero_pontua(self) -> None:
+        """No pregão, deságio zero é o sinal que o projeto procura: houve
+        disputa possível e o preço não caiu."""
+        linha = self._com_modalidade(6)
+        self.assertAlmostEqual(linha["desagio_medio"], 0.0, places=6)
+        self.assertGreater(linha["indice_oportunidade"],
+                           self._com_modalidade(8)["indice_oportunidade"])
 
 
 class Idempotencia(unittest.TestCase):
