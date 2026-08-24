@@ -1,6 +1,6 @@
 # Relatório de cobertura — Fase 0
 
-Gerado em 2026-08-24 00:43 UTC · 37 municípios-alvo
+Gerado em 2026-08-24 00:55 UTC · 38 municípios-alvo
 
 Este relatório é a primeira coisa a ler no projeto. Ele valida se as fontes existem e se contêm o que a análise precisa. Nada nas fases seguintes deve ser considerado confiável antes de as seções 1 e 2 saírem limpas.
 
@@ -16,7 +16,8 @@ Este relatório é a primeira coisa a ler no projeto. Ele valida se as fontes ex
 | PNCP · atas de registro de preço | **OK** | 200 | 10 |  |
 | PNCP · contratos | **OK** | 200 | 10 | Traz niFornecedor e valorGlobal: é a fonte de quem ganha o quê. |
 | PNCP · rotas de detalhe (itens/resultados/arquivos) | **FALHA** | — | — | não testadas: o caso-âncora não foi localizado na API de consulta |
-| PNCP · maior janela de datas aceita | **FALHA** | — | 0 | Nenhuma janela testada foi aceita — verificar os parâmetros. |
+| PNCP · filtro por município (testado em Jales) | **OK** | 200 | 1 | Variante que funciona: **codigoMunicipioIbge só**. codigoMunicipioIbge só: HTTP 200 · 10 registros | codigoMunicipioIbge + uf: HTTP 200 · 10 registros | codigoMunicipioIbge como int: HTTP 200 · 10 registros | codigoUnidadeAdministrativa: HTTP 422 · — registros | uf só (controle): HTTP 200 · 10 registros |
+| PNCP · maior janela de datas aceita | **OK** | 200 | 365 | A API aceitou janela de 365 dias. `janela_dias` está em 90; ajustar reduz as requisições na proporção. |
 
 <details><summary>Campos observados em cada retorno</summary>
 
@@ -42,7 +43,7 @@ Este relatório é a primeira coisa a ler no projeto. Ele valida se as fontes ex
 
 </details>
 
-> **Atenção:** 2 de 7 endpoints não responderam como esperado. Os módulos que dependem deles degradam em vez de quebrar, mas a base ficará incompleta até que sejam corrigidos.
+> **Atenção:** 1 de 8 endpoints não responderam como esperado. Os módulos que dependem deles degradam em vez de quebrar, mas a base ficará incompleta até que sejam corrigidos.
 
 ---
 

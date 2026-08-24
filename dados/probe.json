@@ -233,15 +233,26 @@
       "observacao": "Sem o sequencial da contratação não há como montar a URL."
     },
     {
+      "nome": "PNCP · filtro por município (testado em Jales)",
+      "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
+      "params": {},
+      "status": 200,
+      "ok": true,
+      "registros": 1,
+      "campos": [],
+      "erro": null,
+      "observacao": "Variante que funciona: **codigoMunicipioIbge só**. codigoMunicipioIbge só: HTTP 200 · 10 registros | codigoMunicipioIbge + uf: HTTP 200 · 10 registros | codigoMunicipioIbge como int: HTTP 200 · 10 registros | codigoUnidadeAdministrativa: HTTP 422 · — registros | uf só (controle): HTTP 200 · 10 registros"
+    },
+    {
       "nome": "PNCP · maior janela de datas aceita",
       "url": "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao",
       "params": {},
-      "status": null,
-      "ok": false,
-      "registros": 0,
+      "status": 200,
+      "ok": true,
+      "registros": 365,
       "campos": [],
       "erro": null,
-      "observacao": "Nenhuma janela testada foi aceita — verificar os parâmetros."
+      "observacao": "A API aceitou janela de 365 dias. `janela_dias` está em 90; ajustar reduz as requisições na proporção."
     }
   ],
   "caso_ancora": {
@@ -270,6 +281,15 @@
       "regiao_imediata": "Jales",
       "regiao_intermediaria": "São José do Rio Preto",
       "motivo_inclusao": "regiao_imediata",
+      "prioritario": true
+    },
+    {
+      "codigo_ibge": "3532868",
+      "nome": "Nova Castilho",
+      "uf": "SP",
+      "regiao_imediata": "Araçatuba",
+      "regiao_intermediaria": "Araçatuba",
+      "motivo_inclusao": "extra",
       "prioritario": true
     },
     {

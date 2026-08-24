@@ -9,6 +9,15 @@
     "prioritario": true
   },
   {
+    "codigo_ibge": "3532868",
+    "nome": "Nova Castilho",
+    "uf": "SP",
+    "regiao_imediata": "Araçatuba",
+    "regiao_intermediaria": "Araçatuba",
+    "motivo_inclusao": "extra",
+    "prioritario": true
+  },
+  {
     "codigo_ibge": "3546603",
     "nome": "Santa Fé do Sul",
     "uf": "SP",
