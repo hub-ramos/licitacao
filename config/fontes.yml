@@ -14,6 +14,23 @@ http:
   user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
   cache_ttl_h: 12            # respostas ficam em cache local por este período
 
+# Orçamento de retry para varredura em massa e sondas de diagnóstico.
+# O perfil acima é generoso porque uma sonda de endpoint precisa de veredito
+# confiável: declarar endpoint quebrado por causa de uma lentidão passageira é
+# falso negativo na pergunta mais importante da Fase 0.
+# Numa varredura de centenas de requisições a lógica se inverte — insistir é o
+# erro. Com o perfil generoso, UMA requisição travada custa 5x45s de timeout
+# mais 30s de backoff: 4,2 minutos. Dez delas consomem 42 minutos.
+# Aqui, requisição lenta é falha: registra no relatório e segue.
+http_massa:
+  timeout_s: 15
+  max_tentativas: 3
+  backoff_base_s: 1.5
+  backoff_teto_s: 10.0
+  pausa_entre_chamadas_s: 0.35
+  user_agent: "base-licitacoes-jales/0.1 (pesquisa de mercado; contato via repositorio)"
+  cache_ttl_h: 12
+
 ibge:
   base: "https://servicodados.ibge.gov.br/api/v1/localidades"
   municipios_por_uf: "/estados/{uf}/municipios"

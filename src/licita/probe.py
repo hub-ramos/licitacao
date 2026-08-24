@@ -78,7 +78,7 @@ class Probe:
         # justamente a falha que se quer detectar. As varreduras em massa, ao
         # contrário, usam cache: reexecutar o probe no mesmo dia fica barato.
         self.http = Cliente(usar_cache=False)
-        self.http_massa = Cliente(usar_cache=True)
+        self.http_massa = Cliente(usar_cache=True, perfil="http_massa")
         self.pncp = ClientePNCP(self.http_massa)
         self.sondas: list[Sonda] = []
         self.municipios: list[Municipio] = []
@@ -212,11 +212,21 @@ class Probe:
             },
         }
 
+        ibge = self._ibge_ancora()
+        if not ibge:
+            resultado["erro"] = (
+                f"{cfg['municipio']} não está entre os municípios-alvo, então o "
+                "teste de aceitação não pôde ser executado. Acrescente-o a "
+                "`municipios_extras` em config/municipios.yml."
+            )
+            self.ancora.update(resultado)
+            return resultado
+
         # Varre o ano inteiro do caso, em todas as modalidades configuradas: o
         # município pode ter publicado sob modalidade diferente da esperada.
         for modalidade in fontes()["pncp"]["modalidades"]:
             achados = self.pncp.contratacoes_publicadas(
-                self._ibge_ancora(), modalidade, date(ano, 1, 1), date(ano, 12, 31)
+                ibge, modalidade, date(ano, 1, 1), date(ano, 12, 31)
             )
             for bruto in achados:
                 numero = normalizar(bruto.get("numeroCompra"))
@@ -248,6 +258,13 @@ class Probe:
         return resultado
 
     def _ibge_ancora(self) -> str:
+        """Código IBGE do município do caso-âncora, ou "" se ele não for alvo.
+
+        Devolver "" silenciosamente fazia a consulta seguir com o filtro de
+        município em branco e voltar vazia — o relatório então dizia "caso-âncora
+        NÃO ENCONTRADO" quando na verdade ele nunca fora procurado. Um teste de
+        aceitação que falha por não ter rodado é pior que não ter teste.
+        """
         alvo = normalizar(cfg_municipios()["caso_ancora"]["municipio"])
         for m in self.municipios:
             if normalizar(m.nome) == alvo:
@@ -315,6 +332,73 @@ class Probe:
                 "data": bruto.get("dataPublicacaoPncp"),
             })
 
+    def sondar_filtro_municipio(self) -> Sonda:
+        """Descobre como filtrar contratações por município.
+
+        A primeira execução da Fase 0 varreu 37 municípios e voltou com zero
+        contratações em todos, enquanto as sondas com `uf=SP` traziam registros
+        normalmente. Ou seja: `codigoMunicipioIbge` é aceito pela API mas não
+        casa nada da forma como estava sendo enviado — 851 requisições gastas
+        para não descobrir nada.
+
+        Em vez de adivinhar a forma correta, esta sonda testa as variantes
+        plausíveis contra um município que sabidamente compra (Jales, o maior da
+        região) e relata qual devolve dados. O resultado orienta `pncp.py`.
+        """
+        cfg = fontes()["pncp"]
+        url = cfg["consulta_base"] + cfg["contratacoes_publicacao"]
+        fim = date.today()
+        ini = fim - timedelta(days=cfg["janela_dias"] - 1)
+
+        alvo = next(
+            (m for m in self.municipios if normalizar(m.nome) == "jales"),
+            self.municipios[0] if self.municipios else None,
+        )
+        if alvo is None:
+            sonda = Sonda(nome="PNCP · filtro por município", url=url,
+                          erro="nenhum município resolvido para testar")
+            self.sondas.append(sonda)
+            return sonda
+
+        base = {
+            "dataInicial": _aaaammdd(ini), "dataFinal": _aaaammdd(fim),
+            "codigoModalidadeContratacao": 6, "pagina": 1, "tamanhoPagina": 10,
+        }
+        variantes = {
+            "codigoMunicipioIbge só": {**base, "codigoMunicipioIbge": alvo.codigo_ibge},
+            "codigoMunicipioIbge + uf": {**base, "codigoMunicipioIbge": alvo.codigo_ibge, "uf": alvo.uf},
+            "codigoMunicipioIbge como int": {**base, "codigoMunicipioIbge": int(alvo.codigo_ibge)},
+            "codigoUnidadeAdministrativa": {**base, "codigoUnidadeAdministrativa": alvo.codigo_ibge},
+            "uf só (controle)": {**base, "uf": alvo.uf},
+        }
+
+        achados: dict[str, str] = {}
+        vencedora = ""
+        for rotulo, params in variantes.items():
+            resp = self.http_massa.obter(url, params)
+            n, _campos = _campos_do_primeiro(resp.dados)
+            achados[rotulo] = f"HTTP {resp.status} · {n if n is not None else '—'} registros"
+            if resp.ok and n:
+                # "uf só" traz o estado inteiro; não serve como filtro de município.
+                if not vencedora and rotulo != "uf só (controle)":
+                    vencedora = rotulo
+
+        detalhe = " | ".join(f"{k}: {v}" for k, v in achados.items())
+        sonda = Sonda(
+            nome=f"PNCP · filtro por município (testado em {alvo.nome})",
+            url=url, status=200, ok=bool(vencedora),
+            registros=1 if vencedora else 0,
+            erro=None if vencedora else f"nenhuma variante filtrou por município. {detalhe}",
+            observacao=(
+                f"Variante que funciona: **{vencedora}**. {detalhe}" if vencedora
+                else "Sem forma conhecida de filtrar por município: a coleta terá "
+                     "de buscar por UF e filtrar localmente pelo código IBGE da "
+                     "unidade do órgão. " + detalhe
+            ),
+        )
+        self.sondas.append(sonda)
+        return sonda
+
     def descobrir_janela(self) -> Sonda:
         """Descobre o maior intervalo de datas que a API aceita numa requisição.
 
@@ -329,11 +413,11 @@ class Probe:
         aceitos: list[int] = []
 
         for dias in (90, 180, 365):
-            resp = self.http.obter(url, {
+            resp = self.http_massa.obter(url, {
                 "dataInicial": _aaaammdd(fim - timedelta(days=dias - 1)),
                 "dataFinal": _aaaammdd(fim),
                 "codigoModalidadeContratacao": 6,
-                "uf": "SP", "pagina": 1, "tamanhoPagina": 1,
+                "uf": "SP", "pagina": 1, "tamanhoPagina": 10,
             })
             if resp.ok or resp.status == 204:
                 aceitos.append(dias)
@@ -362,6 +446,7 @@ class Probe:
         log.info("municípios-alvo resolvidos: %d", len(self.municipios))
         self.testar_caso_ancora()
         self.sondar_endpoints()
+        self.sondar_filtro_municipio()
         self.descobrir_janela()
         if completo:
             self.varrer(anos=anos)

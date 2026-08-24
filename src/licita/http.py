@@ -64,11 +64,12 @@ class Cliente:
     """Sessão HTTP com retry exponencial, rate limit e cache em disco."""
 
     usar_cache: bool = True
+    perfil: str = "http"          # seção de config: "http" ou "http_massa"
     _sessao: requests.Session = field(default_factory=requests.Session, repr=False)
     _ultimo_envio: float = field(default=0.0, repr=False)
 
     def __post_init__(self) -> None:
-        cfg = fontes()["http"]
+        cfg = fontes()[self.perfil]
         self.timeout = cfg["timeout_s"]
         self.max_tentativas = cfg["max_tentativas"]
         self.backoff_base = cfg["backoff_base_s"]

@@ -23,6 +23,10 @@ regioes_imediatas:
 # vizinho relevante que fica fora das regiões imediatas acima.
 municipios_extras:
   - General Salgado
+  # Nova Castilho pertence à Região Imediata de Araçatuba, não às três acima.
+  # É o caso-âncora do projeto: precisa estar na coleta para o teste de
+  # aceitação da Fase 0 poder ser executado.
+  - Nova Castilho
 
 # Municípios que recebem atenção prioritária nos relatórios e no painel.
 # Não alteram a coleta — apenas a ordenação e o destaque.
