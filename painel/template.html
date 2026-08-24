@@ -71,6 +71,23 @@ td.larga{white-space:normal;min-width:290px;max-width:430px}
 .etq.saude{color:var(--acento);border-color:var(--acento)}
 .barra{display:inline-block;height:7px;border-radius:4px;background:var(--acento);vertical-align:middle}
 .vazio{padding:40px;text-align:center;color:var(--suave)}
+/* Linha expansível: um mecanismo, dois usos (itens da contratação no Radar,
+   itens do segmento×município×ano no Mapa de concorrência). O indicador vai
+   na primeira célula porque é onde o olho já pousa ao ler a linha. */
+tr.expansivel{cursor:pointer}
+tr.expansivel td:first-child{position:relative;padding-left:20px}
+tr.expansivel td:first-child::before{content:"▸";position:absolute;left:6px;
+  color:var(--suave);font-size:10px}
+tr.expansivel.aberta td:first-child::before{content:"▾";color:var(--acento)}
+tr.expansivel.aberta{background:var(--acento-fraco)}
+.linha-detalhe td{padding:10px 14px;background:var(--fundo)}
+table.detalhe{width:100%;font-size:12.5px;border-collapse:collapse}
+table.detalhe th{position:static;background:transparent;padding:5px 8px;
+  text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.3px;
+  color:var(--suave);white-space:nowrap}
+table.detalhe td{padding:5px 8px;white-space:normal;border-bottom:1px solid var(--borda)}
+table.detalhe tr:last-child td{border-bottom:none}
+.vazio-detalhe{padding:6px 8px;color:var(--suave);font-size:12.5px}
 .aviso{background:var(--acento-fraco);border-left:3px solid var(--acento);
   padding:10px 12px;border-radius:0 6px 6px 0;font-size:13px;margin-bottom:14px;color:var(--texto)}
 a{color:var(--acento)}
@@ -149,6 +166,45 @@ function etqIndice(v){
        + `<span class="etq ${classe}">${n.toFixed(0)}</span>`;
 }
 
+/* ------------------------------------------------------- índice de itens */
+/* Montado uma vez na carga, não a cada clique: EXPORTS["itens"] já traz tudo,
+   nenhum dado novo precisa ser embarcado para a linha expansível funcionar. */
+const ITENS = D.itens || [];
+const IDX_POR_CONTRATACAO = new Map();
+const IDX_POR_SEG_MUN_ANO = new Map();
+ITENS.forEach(it => {
+  const porContratacao = it.numero_controle_pncp;
+  if (!IDX_POR_CONTRATACAO.has(porContratacao)) IDX_POR_CONTRATACAO.set(porContratacao, []);
+  IDX_POR_CONTRATACAO.get(porContratacao).push(it);
+
+  const porSegMunAno = `${it.codigo_ibge}|${it.segmento}|${it.ano}`;
+  if (!IDX_POR_SEG_MUN_ANO.has(porSegMunAno)) IDX_POR_SEG_MUN_ANO.set(porSegMunAno, []);
+  IDX_POR_SEG_MUN_ANO.get(porSegMunAno).push(it);
+});
+
+/* Tabela de itens que abre sob a linha clicada, com o vencedor e o link do
+   PNCP daquele item — os três pedidos que motivaram a linha expansível. */
+function tabelaDeItens(itens){
+  if (!itens || !itens.length) return `<div class="vazio-detalhe">Sem itens detalhados.</div>`;
+  const linhas = itens.map(it => `<tr>
+      <td class="num">${nums(it.numero_item)}</td>
+      <td>${esc(it.descricao ?? NADA)}</td>
+      <td>${esc(it.unidade_medida ?? NADA)}</td>
+      <td class="num">${nums(it.quantidade)}</td>
+      <td class="num">${brl(it.valor_unitario_estimado)}</td>
+      <td class="num">${brl(it.valor_total_homologado_ajustado ?? it.valor_total_homologado)}</td>
+      <td>${esc(it.situacao_item_nome ?? NADA)}</td>
+      <td>${esc(it.nome_fornecedor ?? NADA)}</td>
+      <td>${it.link_pncp
+        ? `<a href="${esc(it.link_pncp)}" target="_blank" rel="noopener">edital</a>` : NADA}</td>
+    </tr>`).join("");
+  return `<table class="detalhe"><thead><tr>
+      <th>Nº</th><th>Descrição</th><th>Un.</th><th>Qtde</th>
+      <th>Unit. estimado</th><th>Total homologado</th><th>Situação</th>
+      <th>Vencedor</th><th>Link</th>
+    </tr></thead><tbody>${linhas}</tbody></table>`;
+}
+
 /* ----------------------------------------------------------------- abas */
 const ABAS = {
   radar: {
@@ -182,7 +238,13 @@ const ABAS = {
        render:r => r.link_sistema_origem
          ? `<a href="${esc(r.link_sistema_origem)}" target="_blank" rel="noopener">abrir</a>` : NADA}
     ],
-    ordem: {campo:"__prazo_dias", desc:false}
+    ordem: {campo:"__prazo_dias", desc:false},
+    // Clicar na linha abre os itens daquela contratação — o mesmo detalhamento
+    // que o ComprasNet mostra e que faltava aqui.
+    expandir: {
+      chave: r => r.numero_controle_pncp,
+      itens: r => IDX_POR_CONTRATACAO.get(r.numero_controle_pncp) || []
+    }
   },
 
   itens: {
@@ -259,7 +321,13 @@ const ABAS = {
       {campo:"valor_estimado", rotulo:"Valor estimado", classe:"num",
        render:r => brl(r.valor_estimado)}
     ],
-    ordem: {campo:"indice_oportunidade", desc:true}
+    ordem: {campo:"indice_oportunidade", desc:true},
+    // Clicar na linha abre os itens daquele segmento × município × ano — o
+    // "laticínios, 1 item" que não dizia qual item passa a dizer.
+    expandir: {
+      chave: r => `${r.codigo_ibge}|${r.segmento}|${r.ano}`,
+      itens: r => IDX_POR_SEG_MUN_ANO.get(`${r.codigo_ibge}|${r.segmento}|${r.ano}`) || []
+    }
   }
 };
 
@@ -267,8 +335,11 @@ const ABAS = {
 let abaAtual = "radar";
 let estado = {};                       // filtros por aba: {aba: {campo: valor}}
 let ordem = {};                        // ordenação por aba
+let expandidos = {};                   // linhas abertas por aba: {aba: Set(chave)}
 
-Object.keys(ABAS).forEach(k => { estado[k] = {}; ordem[k] = {...ABAS[k].ordem}; });
+Object.keys(ABAS).forEach(k => {
+  estado[k] = {}; ordem[k] = {...ABAS[k].ordem}; expandidos[k] = new Set();
+});
 
 const valorDe = (linha, coluna) => coluna.valor ? coluna.valor(linha) : linha[coluna.campo];
 
@@ -386,12 +457,35 @@ function desenharTabela(){
     });
   });
 
-  document.getElementById("corpo").innerHTML = linhas.map(l =>
-    "<tr>" + cfg.colunas.map(c => {
-      const conteudo = c.render ? c.render(l) : esc(l[c.campo] ?? NADA);
-      return `<td class="${c.classe || ""}">${conteudo}</td>`;
-    }).join("") + "</tr>"
-  ).join("");
+  const exp = cfg.expandir;
+  const abertos = expandidos[abaAtual];
+
+  document.getElementById("corpo").innerHTML = linhas.map(l => {
+    const chave = exp ? String(exp.chave(l)) : null;
+    const aberta = exp && abertos.has(chave);
+    const classes = [exp ? "expansivel" : "", aberta ? "aberta" : ""].filter(Boolean).join(" ");
+    const principal = `<tr${classes ? ` class="${classes}"` : ""}${chave ? ` data-chave="${esc(chave)}"` : ""}>`
+      + cfg.colunas.map(c => {
+          const conteudo = c.render ? c.render(l) : esc(l[c.campo] ?? NADA);
+          return `<td class="${c.classe || ""}">${conteudo}</td>`;
+        }).join("")
+      + "</tr>";
+    if (!aberta) return principal;
+    return principal
+      + `<tr class="linha-detalhe"><td colspan="${cfg.colunas.length}">`
+      + tabelaDeItens(exp.itens(l)) + "</td></tr>";
+  }).join("");
+
+  if (exp){
+    document.querySelectorAll("#corpo tr.expansivel").forEach(tr => {
+      tr.addEventListener("click", e => {
+        if (e.target.closest("a")) return;   // clique num link não alterna a linha
+        const chave = tr.dataset.chave;
+        if (abertos.has(chave)) abertos.delete(chave); else abertos.add(chave);
+        desenharTabela();
+      });
+    });
+  }
 
   document.getElementById("vazio").hidden = linhas.length > 0;
   document.getElementById("contagem").textContent =
