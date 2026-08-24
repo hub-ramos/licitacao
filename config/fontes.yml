@@ -94,6 +94,11 @@ pncp:
     contratacoes_proposta: 50
     atas: 500
     contratos: 500
+    # Começo conservador: a distribuição de itens por contratação secava em 10
+    # porque a coleta nem paginava (ver src/licita/pncp.py:itens). Nenhuma
+    # sonda mediu o teto real de /itens ainda — 50 é o mesmo piso usado nas
+    # rotas de consulta antes de a sonda de 2026-08-24 medir o teto delas.
+    itens: 50
     padrao: 50               # usado por endpoint sem limite conhecido
   # A modalidade é parâmetro obrigatório em /contratacoes/publicacao, por isso a
   # coleta itera sobre esta lista. Ver tabela de domínio abaixo.

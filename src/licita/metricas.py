@@ -44,33 +44,93 @@ SITUACAO_DESERTO = 4
 SITUACAO_FRACASSADO = 5
 
 
+def total_no_campo_unitario(estimado: float | None, homologado: float | None,
+                            quantidade: float | None) -> bool:
+    """Assinatura do erro de publicação mais comum: ``homologado ≈ qtd × estimado``.
+
+    Caso real, medido em Santa Fé do Sul: "Uva Núbia", 2.318 kg, estimado
+    R$ 17,25/kg e "unitário homologado" de R$ 39.985,50 — que é exatamente
+    2.318 × 17,25. O órgão publicou o valor total no campo do unitário.
+
+    O reconhecimento é conservador de propósito: exige quantidade maior que 1
+    (com quantidade 1 total e unitário coincidem legitimamente) e tolerância de
+    um centavo, porque o total costuma vir arredondado.
+    """
+    if not estimado or estimado <= 0 or homologado is None:
+        return False
+    if not quantidade or quantidade <= 1:
+        return False
+    return abs(homologado - estimado * quantidade) < 0.01
+
+
+def unitario_confiavel(estimado: float | None, homologado: float | None,
+                       quantidade: float | None) -> bool:
+    """Diz se ``homologado`` pode ser lido como preço unitário de verdade.
+
+    Duas recusas, ambas medidas no dado real:
+
+    * **Total no campo unitário** — ver :func:`total_no_campo_unitario`.
+    * **Absurdo sem assinatura** — homologado acima do dobro do estimado é erro
+      de publicação, não compra cara.
+
+    Existe separada de :func:`desagio_valido` porque o mesmo juízo vale para o
+    valor do vencedor: multiplicar um "unitário" que já é total pela quantidade
+    produziu, no ranking de fornecedores, um item de R$ 92.686.389,00
+    (= 2.318 × 39.985,50) para uma compra de R$ 39.985,50.
+    """
+    if not estimado or estimado <= 0 or homologado is None:
+        return False
+    if total_no_campo_unitario(estimado, homologado, quantidade):
+        return False
+    return (estimado - homologado) / estimado >= -1.0
+
+
 def desagio_valido(estimado: float | None, homologado: float | None,
                    quantidade: float | None) -> float | None:
     """Deságio unitário, ou ``None`` quando o publicado não é comparável.
 
-    Dois casos reais, medidos em Santa Fé do Sul contra a API:
-
-    * **Total no campo unitário.** "Uva Núbia", 2.318 kg, estimado R$ 17,25/kg e
-      "unitário homologado" de R$ 39.985,50 — que é exatamente 2.318 × 17,25.
-      O órgão publicou o valor total no campo do unitário. Sem tratamento, isso
-      vira deságio de −231.700% e arrasta a média do segmento para −46.339%.
-      Quando a assinatura bate, o unitário real é o próprio estimado: deságio 0.
-    * **Qualquer outro absurdo.** Homologado acima do dobro do estimado é erro
-      de publicação, não compra cara. Deságio abaixo de −100% sai como ausência
-      de dado, não como medida.
+    Quando a assinatura de total-no-campo-unitário bate, o unitário real é o
+    próprio estimado e o deságio é zero — não ``None``: sabe-se que não houve
+    desconto, o que é justamente o sinal que o projeto procura. Sem tratamento
+    isso viraria deságio de −231.700% e arrastaria a média do segmento para
+    −46.339%.
 
     Deságio negativo moderado é preservado: comprar acima da estimativa acontece
     e é informativo.
     """
     if not estimado or estimado <= 0 or homologado is None:
         return None
-    if quantidade and quantidade > 1:
-        total = estimado * quantidade
-        # Tolerância de um centavo: o total costuma vir arredondado.
-        if abs(homologado - total) < 0.01:
-            return 0.0
-    bruto = (estimado - homologado) / estimado
-    return bruto if bruto >= -1.0 else None
+    if total_no_campo_unitario(estimado, homologado, quantidade):
+        return 0.0
+    if not unitario_confiavel(estimado, homologado, quantidade):
+        return None
+    return (estimado - homologado) / estimado
+
+
+def total_homologado_ajustado(estimado: float | None, unitario_homologado: float | None,
+                              quantidade: float | None,
+                              total_publicado: float | None) -> float | None:
+    """Valor total do item corrigido, quando o publicado é reconhecidamente errado.
+
+    O órgão que publica o total no campo do unitário publica, junto, um
+    ``valorTotalHomologado`` de quantidade × aquele número — que é a quantidade
+    ao quadrado vezes o preço. É esse valor que colocou "1 item, R$ 92.686.389,00"
+    no topo do ranking de vencedores. Quando a assinatura bate, o total correto é
+    o próprio campo do unitário.
+
+    O valor cru continua gravado ao lado, intacto: o ajuste só é auditável se o
+    publicado puder ser conferido contra ele.
+    """
+    if total_no_campo_unitario(estimado, unitario_homologado, quantidade):
+        return unitario_homologado
+    if total_publicado is not None:
+        return total_publicado
+    if unitario_homologado is None or not quantidade:
+        return None
+    # Sem total publicado, reconstruir só quando o unitário resiste ao exame.
+    if not unitario_confiavel(estimado, unitario_homologado, quantidade):
+        return None
+    return round(unitario_homologado * quantidade, 2)
 
 
 @dataclass

@@ -17,10 +17,13 @@ from fixtures import (  # noqa: E402
 )
 from licita.coleta import Coletor  # noqa: E402
 from licita.db import Base  # noqa: E402
+from licita.http import Cliente  # noqa: E402
 from licita.ibge import Municipio  # noqa: E402
 from licita.metricas import (  # noqa: E402
     Componentes, DESAGIO_SAUDAVEL, calcular, desagio_valido, hhi,
+    total_homologado_ajustado, unitario_confiavel,
 )
+from licita.pncp import link_pncp  # noqa: E402
 
 NOVA_CASTILHO = Municipio(
     codigo_ibge=IBGE_NOVA_CASTILHO, nome="Nova Castilho", uf="SP",
@@ -216,6 +219,105 @@ class DesagioPublicadoErrado(unittest.TestCase):
                 self.assertIsNone(desagio_valido(est, hom, 1))
 
 
+class ValorDoVencedorAjustado(unittest.TestCase):
+    """A mesma assinatura de total-no-campo-unitário, aplicada ao ranking de
+    vencedores. Caso real: "JOÃO CARLOS DOS SANTOS, 1 item, R$ 92.686.389,00"
+    era 2.318 x 39.985,50, onde 39.985,50 já era o total da Uva Núbia."""
+
+    def test_unitario_confiavel_rejeita_total_no_campo_do_unitario(self) -> None:
+        self.assertFalse(unitario_confiavel(17.25, 39985.50, 2318))
+
+    def test_unitario_confiavel_rejeita_o_outlier_de_92_milhoes(self) -> None:
+        # 2.318 x 39.985,50 = 92.686.389,00: o valor que estourou o ranking.
+        self.assertFalse(unitario_confiavel(17.25, 92686389.00, 2318))
+
+    def test_unitario_confiavel_aceita_desagio_normal(self) -> None:
+        self.assertTrue(unitario_confiavel(7.01, 6.92, 21000))
+
+    def test_total_ajustado_troca_o_total_bruto_pelo_unitario_publicado(self) -> None:
+        # O total bruto publicado (quantidade x unitário-que-era-total) é o que
+        # produziria os R$ 92.686.389,00; o total ajustado é o unitário em si.
+        self.assertEqual(
+            total_homologado_ajustado(17.25, 39985.50, 2318, 92686389.00), 39985.50
+        )
+
+    def test_total_ajustado_preserva_o_publicado_quando_confiavel(self) -> None:
+        self.assertEqual(
+            total_homologado_ajustado(7.01, 6.92, 21000, 145320.00), 145320.00
+        )
+
+    def test_total_ajustado_sem_total_publicado_reconstroi_do_unitario(self) -> None:
+        self.assertAlmostEqual(
+            total_homologado_ajustado(7.01, 6.92, 21000, None), 6.92 * 21000, places=2
+        )
+
+
+class LinkPncp(unittest.TestCase):
+    """URL canônica do PNCP, montada a partir do número de controle — presente
+    em 100% das contratações, ao contrário de linkSistemaOrigem (8 de 102)."""
+
+    def test_link_do_srp_de_santa_fe_do_sul(self) -> None:
+        self.assertEqual(
+            link_pncp("45138070000149-1-000762/2026"),
+            "https://pncp.gov.br/app/editais/45138070000149/2026/762",
+        )
+
+    def test_sem_numero_de_controle_nao_ha_link(self) -> None:
+        self.assertIsNone(link_pncp(None))
+        self.assertIsNone(link_pncp("numero-invalido"))
+
+
+class PaginacaoDeItens(unittest.TestCase):
+    """`/itens` devolve lista crua, sem envelope — a distribuição de itens por
+    contratação secava em 10 porque a coleta não paginava."""
+
+    def test_devolve_mais_de_10_quando_ha_mais_de_10(self) -> None:
+        chamadas: list[dict] = []
+
+        class SessaoFalsa:
+            def get(self, url, params=None, timeout=None):
+                chamadas.append(dict(params or {}))
+                pagina = params["pagina"]
+                tamanho = params["tamanhoPagina"]
+                # Dublê com 23 itens reais, servidos em páginas de `tamanho`.
+                total_itens = 23
+                inicio = (pagina - 1) * tamanho
+                fim = min(inicio + tamanho, total_itens)
+                corpo = [{"numeroItem": i + 1} for i in range(inicio, fim)]
+                return _RespostaFalsa(corpo)
+
+        http = Cliente(usar_cache=False)
+        http._sessao = SessaoFalsa()
+        registros = []
+        for pagina_registros, _resp in http.paginar(
+            "https://pncp.gov.br/api/pncp/v1/orgaos/x/compras/2026/762/itens",
+            {"tamanhoPagina": 10},
+        ):
+            registros.extend(pagina_registros)
+
+        self.assertEqual(len(registros), 23)
+        # Três páginas: 10 + 10 + 3, a última mais curta que o tamanho pedido —
+        # é essa condição que encerra a paginação numa rota sem `totalPaginas`.
+        self.assertEqual(len(chamadas), 3)
+        self.assertEqual([c["pagina"] for c in chamadas], [1, 2, 3])
+
+
+class _RespostaFalsa:
+    """Simula ``requests.Response`` o suficiente para ``Cliente.obter``."""
+
+    def __init__(self, corpo) -> None:
+        import json as _json
+        self.status_code = 200
+        self.ok = True
+        self._corpo = corpo
+        self.content = _json.dumps(corpo).encode("utf-8")
+        self.headers: dict = {}
+        self.url = "https://pncp.gov.br/api/pncp/v1/fake"
+
+    def json(self):
+        return self._corpo
+
+
 class SemMedidaNaoEZero(unittest.TestCase):
     """Ausência de medida não pode ser lida como medida de ausência."""
 
@@ -314,6 +416,71 @@ class DesagioSoOndeHouveDisputa(unittest.TestCase):
         self.assertAlmostEqual(linha["desagio_medio"], 0.0, places=6)
         self.assertGreater(linha["indice_oportunidade"],
                            self._com_modalidade(8)["indice_oportunidade"])
+
+
+class MigracaoDeColunaAditiva(unittest.TestCase):
+    """Base já existente, criada antes de `link_pncp` existir, tem que ganhar
+    a coluna sem perder dado — `CREATE TABLE IF NOT EXISTS` não altera tabela
+    já criada, e a base de Santa Fé do Sul já está commitada sem ela."""
+
+    def test_base_antiga_ganha_a_coluna_sem_perder_linha(self) -> None:
+        import sqlite3
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            caminho = Path(tmp) / "antiga.db"
+            # Simula o schema anterior: a tabela `contratacao` real, mas sem a
+            # coluna `link_pncp` — como a base commitada de Santa Fé do Sul.
+            con = sqlite3.connect(str(caminho))
+            con.execute("""
+                CREATE TABLE contratacao (
+                    numero_controle_pncp        TEXT PRIMARY KEY,
+                    cnpj_orgao                  TEXT,
+                    codigo_ibge                 TEXT,
+                    ano                         INTEGER,
+                    sequencial                  TEXT,
+                    numero_compra               TEXT,
+                    processo                    TEXT,
+                    modalidade_id               INTEGER,
+                    modalidade_nome             TEXT,
+                    presencial                  INTEGER NOT NULL DEFAULT 0,
+                    modo_disputa_id             INTEGER,
+                    modo_disputa_nome           TEXT,
+                    situacao_id                 INTEGER,
+                    situacao_nome               TEXT,
+                    srp                         INTEGER NOT NULL DEFAULT 0,
+                    objeto                      TEXT,
+                    valor_total_estimado        REAL,
+                    valor_total_homologado      REAL,
+                    data_publicacao             TEXT,
+                    data_abertura_proposta      TEXT,
+                    data_encerramento_proposta  TEXT,
+                    unidade_nome                TEXT,
+                    unidade_codigo               TEXT,
+                    orgao_de_saude              INTEGER NOT NULL DEFAULT 0,
+                    amparo_legal                TEXT,
+                    link_sistema_origem         TEXT,
+                    coletado_em                 TEXT NOT NULL
+                )
+            """)
+            valores = {"numero_controle_pncp": "X-1-1/2026", "codigo_ibge": "3546603",
+                       "ano": 2026, "coletado_em": "2026-08-24"}
+            con.execute(
+                f"INSERT INTO contratacao ({','.join(valores)}) "
+                f"VALUES ({','.join('?' * len(valores))})",
+                list(valores.values()),
+            )
+            con.commit()
+            con.close()
+
+            base = Base(caminho)
+            try:
+                cols = {r["name"] for r in base.con.execute("PRAGMA table_info(contratacao)")}
+                self.assertIn("link_pncp", cols)
+                self.assertEqual(base.contar("contratacao"), 1)
+            finally:
+                base.fechar()
 
 
 class Idempotencia(unittest.TestCase):

@@ -271,9 +271,17 @@ class Cliente:
     def paginar(self, url: str, params: dict, limite_paginas: int = 200):
         """Itera páginas de um endpoint paginado do PNCP.
 
-        Encerra ao ver página vazia, ao atingir ``totalPaginas`` ou ao receber erro.
-        Devolve tuplas ``(registros, resposta)`` para que quem chama possa registrar
-        falhas parciais sem perder o que já foi coletado.
+        Dois formatos de corpo convivem nas rotas do PNCP: a API de consulta
+        envelopa em ``{"data": [...], "totalPaginas": N, ...}``; a API de
+        detalhe (``/itens``, por exemplo) devolve a lista crua, sem envelope
+        e sem contagem de páginas. Para o envelope, a parada usa
+        ``totalPaginas``/``paginasRestantes``. Para lista crua, não há como
+        saber o total de antemão — a parada é por página vazia ou por página
+        mais curta que o ``tamanhoPagina`` pedido, sinal de que é a última.
+
+        Encerra ao ver página vazia, ao atingir o fim conhecido ou ao receber
+        erro. Devolve tuplas ``(registros, resposta)`` para que quem chama
+        possa registrar falhas parciais sem perder o que já foi coletado.
         """
         pagina = 1
         while pagina <= limite_paginas:
@@ -298,5 +306,9 @@ class Cliente:
                 if isinstance(total, int) and pagina >= total:
                     return
                 if corpo.get("paginasRestantes") == 0:
+                    return
+            else:
+                tamanho_pedido = atual.get("tamanhoPagina")
+                if isinstance(tamanho_pedido, int) and len(registros) < tamanho_pedido:
                     return
             pagina += 1

@@ -32,6 +32,16 @@ CHAVES: dict[str, tuple[str, ...]] = {
     "cobertura": ("codigo_ibge", "ano", "modalidade_id"),
 }
 
+# Colunas aditivas introduzidas depois que `dados/licitacoes.db` já estava
+# commitado. `CREATE TABLE IF NOT EXISTS` não adiciona coluna a uma tabela
+# existente — sem isto, uma base antiga reaberta ficaria sem a coluna e o
+# upsert falharia com "no such column". A regra do projeto é que coluna nova
+# é sempre aditiva e nunca remove ou renomeia uma existente; isto é a
+# contrapartida em runtime dessa regra.
+MIGRACOES: tuple[tuple[str, str, str], ...] = (
+    ("contratacao", "link_pncp", "TEXT"),
+)
+
 
 def agora() -> str:
     """Carimbo UTC em ISO-8601, usado em todas as colunas ``*_em``."""
@@ -50,7 +60,15 @@ class Base:
 
     def _criar_esquema(self) -> None:
         self.con.executescript(ESQUEMA.read_text(encoding="utf-8"))
+        self._migrar()
         self.con.commit()
+
+    def _migrar(self) -> None:
+        """Aplica colunas aditivas que a base já existente ainda não tem."""
+        for tabela, coluna, tipo in MIGRACOES:
+            existentes = {r[1] for r in self.con.execute(f"PRAGMA table_info({tabela})")}
+            if coluna not in existentes:
+                self.con.execute(f"ALTER TABLE {tabela} ADD COLUMN {coluna} {tipo}")
 
     # ------------------------------------------------------------- escrita
 

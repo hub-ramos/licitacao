@@ -63,6 +63,11 @@ CREATE TABLE IF NOT EXISTS contratacao (
     orgao_de_saude              INTEGER NOT NULL DEFAULT 0,
     amparo_legal                TEXT,
     link_sistema_origem         TEXT,
+    -- URL canônica do PNCP, montada na coleta a partir do próprio número de
+    -- controle (ver src/licita/pncp.py:partes_controle_pncp). Existe em 100%
+    -- das contratações, ao contrário de link_sistema_origem, que o órgão só
+    -- publica às vezes (8 de 102 no recorte de Santa Fé do Sul).
+    link_pncp                   TEXT,
     coletado_em                 TEXT NOT NULL
 );
 
@@ -289,7 +294,24 @@ SELECT
     -- Marca se a modalidade admite disputa de preço. Sem isto, o deságio zero
     -- estrutural da dispensa se confunde com deságio zero por falta de
     -- concorrência, que é justamente o que o projeto procura.
-    CASE WHEN c.modalidade_id IN (1,2,3,4,5,6,7,13) THEN 1 ELSE 0 END AS com_disputa
+    CASE WHEN c.modalidade_id IN (1,2,3,4,5,6,7,13) THEN 1 ELSE 0 END AS com_disputa,
+    -- Valor total corrigido pela mesma assinatura (ver
+    -- src/licita/metricas.py:total_homologado_ajustado). Quando o órgão publica
+    -- o total no campo do unitário, o `valor_total_homologado` cru sai como
+    -- quantidade² × preço — foi essa conta que produziu "1 item,
+    -- R$ 92.686.389,00" no ranking de vencedores para uma compra de
+    -- R$ 39.985,50. A coluna crua acima fica intacta: o ajuste só é auditável
+    -- se o publicado puder ser conferido contra ele.
+    CASE
+        WHEN i.quantidade > 1
+             AND r.valor_unitario_homologado IS NOT NULL
+             AND i.valor_unitario_estimado > 0
+             AND ABS(r.valor_unitario_homologado
+                     - i.valor_unitario_estimado * i.quantidade) < 0.01
+            THEN r.valor_unitario_homologado
+        ELSE r.valor_total_homologado
+    END                             AS valor_total_homologado_ajustado,
+    c.link_pncp
 FROM item i
 JOIN contratacao c ON c.numero_controle_pncp = i.numero_controle_pncp
 LEFT JOIN municipio m ON m.codigo_ibge = c.codigo_ibge
@@ -315,6 +337,7 @@ SELECT
     c.data_encerramento_proposta,
     c.orgao_de_saude,
     c.link_sistema_origem,
+    c.link_pncp,
     o.razao_social        AS orgao
 FROM contratacao c
 LEFT JOIN municipio m ON m.codigo_ibge = c.codigo_ibge

@@ -456,6 +456,54 @@ class Probe:
         self.sondas.append(sonda)
         return sonda
 
+    def descobrir_tamanho_pagina_itens(self) -> Sonda:
+        """Descobre o maior `tamanhoPagina` que `/itens` aceita.
+
+        `/itens` é a API de detalhe, não a de consulta — não há garantia de que
+        o mesmo teto medido em `descobrir_tamanho_pagina` valha aqui. O alvo é o
+        SRP `45138070000149-1-000762/2026` (Pregão Eletrônico 11/2026, Santa Fé
+        do Sul), a mesma contratação que a coleta sem paginação truncava em 10
+        itens — se ela devolver mais de 10 com paginação, a correção funcionou;
+        o valor de `tentados` diz até onde o `tamanhoPagina` foi aceito.
+        """
+        cfg = fontes()["pncp"]
+        cnpj, ano, sequencial = "45138070000149", 2026, "762"
+        url = cfg["detalhe_base"] + cfg["itens"].format(
+            cnpj=cnpj, ano=ano, sequencial=sequencial
+        )
+        tentados: dict[int, str] = {}
+        bloqueados: list[int] = []
+        maior = 0
+        maior_contagem = 0
+
+        for tamanho in (10, 50, 100, 500):
+            resp = self.http_massa.obter(url, {"pagina": 1, "tamanhoPagina": tamanho})
+            n, _ = _campos_do_primeiro(resp.dados)
+            tentados[tamanho] = f"HTTP {resp.status}·{n if n is not None else '—'}"
+            if resp.ok or resp.status == 204:
+                maior = tamanho
+                maior_contagem = max(maior_contagem, n or 0)
+            elif resp.status in (None, 429):
+                bloqueados.append(tamanho)
+
+        detalhe = " | ".join(f"{k}: {v}" for k, v in tentados.items())
+        sonda = Sonda(
+            nome="PNCP · maior tamanhoPagina aceito em /itens",
+            url=url, status=200, ok=bool(maior), registros=maior_contagem,
+            inconclusivo=bool(bloqueados) and not maior,
+            erro=None if maior else f"nenhum tamanho aceito. {detalhe}",
+            observacao=(
+                f"Maior aceito: **{maior}**, {maior_contagem} itens devolvidos no SRP "
+                f"de referência. `pncp.tamanho_pagina.itens` está em "
+                f"{cfg['tamanho_pagina'].get('itens')}. {detalhe}"
+                + (f" Sem veredito para {bloqueados}: bloqueio ou timeout, não recusa."
+                   if bloqueados else "")
+                if maior else detalhe
+            ),
+        )
+        self.sondas.append(sonda)
+        return sonda
+
     def descobrir_janela(self) -> Sonda:
         """Descobre o maior intervalo de datas que a API aceita numa requisição.
 
@@ -591,6 +639,7 @@ class Probe:
         self.sondar_endpoints()
         self.sondar_filtro_municipio()
         self.descobrir_tamanho_pagina()
+        self.descobrir_tamanho_pagina_itens()
         self.descobrir_janela()
         self.medir_ritmo()
         if completo:

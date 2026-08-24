@@ -16,7 +16,7 @@ from typing import Any, Iterable
 from .config import fontes, municipios as cfg_municipios
 from .db import Base, agora
 from .ibge import Municipio
-from .pncp import ClientePNCP, num, partes_controle_pncp
+from .pncp import ClientePNCP, link_pncp, num, partes_controle_pncp
 from .segmentar import Classificador, orgao_de_saude
 from .texto import apenas_digitos
 
@@ -169,6 +169,7 @@ class Coletor:
             "orgao_de_saude": int(de_saude),
             "amparo_legal": pega(bruto, "amparoLegal.descricao", "amparoLegal.nome"),
             "link_sistema_origem": pega(bruto, "linkSistemaOrigem"),
+            "link_pncp": link_pncp(controle),
             "coletado_em": agora(),
         }
 

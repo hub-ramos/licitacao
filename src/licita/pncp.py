@@ -57,6 +57,22 @@ def partes_controle_pncp(numero: str | None) -> tuple[str, str, int] | None:
     return cnpj, sequencial.lstrip("0") or "0", int(ano)
 
 
+def link_pncp(numero: str | None) -> str | None:
+    """URL canônica do PNCP para uma contratação, a partir de ``numeroControlePNCP``.
+
+    Padrão confirmado em editais reais do portal:
+    ``https://pncp.gov.br/app/editais/{cnpj}/{ano}/{sequencial}``.
+    Ao contrário de ``linkSistemaOrigem`` — publicado em só 8 das 102
+    contratações do recorte de Santa Fé do Sul — esta URL existe para 100% das
+    contratações, porque é montada a partir de um campo que a API sempre traz.
+    """
+    partes = partes_controle_pncp(numero)
+    if not partes:
+        return None
+    cnpj, sequencial, ano = partes
+    return f"https://pncp.gov.br/app/editais/{cnpj}/{ano}/{sequencial}"
+
+
 def janelas(inicio: date, fim: date, dias: int) -> Iterator[tuple[date, date]]:
     """Fatia um intervalo em janelas fechadas de no máximo ``dias``."""
     if inicio > fim:
@@ -188,15 +204,20 @@ class ClientePNCP:
     # -------------------------------------------------------- API de detalhe
 
     def itens(self, cnpj: str, ano: int, sequencial: str) -> list[dict]:
-        """Itens de uma contratação. Devolve lista vazia se a rota não responder."""
+        """Itens de uma contratação, paginados.
+
+        A distribuição de itens por contratação secava em 10 — 13 contratações
+        do recorte de Santa Fé do Sul com exatamente 10 itens, nenhuma com
+        mais — porque esta chamada fazia um GET simples sem ``pagina``, embora
+        a rota aceite paginação (Manual de Integração do PNCP). ``/itens``
+        devolve lista crua, não o envelope ``{data:[...]}`` das rotas de
+        consulta; ``Cliente.paginar`` já trata os dois formatos.
+        """
         url = self.detalhe + self.rotas["itens"].format(
             cnpj=apenas_digitos(cnpj), ano=ano, sequencial=sequencial
         )
-        resp = self.http.obter(url)
-        if not resp.ok:
-            self._registrar_falha(f"itens {cnpj}/{ano}/{sequencial}", resp)
-            return []
-        return resp.dados if isinstance(resp.dados, list) else []
+        params = {"tamanhoPagina": self.tamanho_pagina("itens")}
+        return self._coletar(url, params, f"itens {cnpj}/{ano}/{sequencial}")
 
     def resultados(self, cnpj: str, ano: int, sequencial: str, item: int) -> list[dict]:
         """Resultados (vencedores) de um item.
