@@ -109,9 +109,14 @@ jobs:
             dados/licitacoes.xlsx
 
       - name: Commitar base e exports
+        # A coleta pode levar horas (paginação real do PNCP); o branch pode
+        # ter recebido outro commit nesse meio-tempo. `git pull --rebase`
+        # antes do push evita o "rejected (fetch first)" sem reescrever
+        # histórico alheio — só reaplica este commit por cima do que chegou.
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add dados/
           git diff --staged --quiet || git commit -m "histórico: coleta de $(date -u +%Y-%m-%d)"
+          git pull --rebase
           git push
