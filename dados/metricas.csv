@@ -1,19 +1,45 @@
 ﻿codigo_ibge;segmento;ano;tipo_segmento;contratacoes;itens;itens_homologados;itens_desertos;itens_fracassados;valor_estimado;valor_homologado;desagio_medio;taxa_desercao;fornecedores_distintos;hhi;indice_oportunidade;calculado_em;municipio
-3546603;carnes;2026;produto;3;43;19;0;0;818276.46;382724.86;0.0079;0.0;2;0.6483;49.59;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;laticinios;2026;produto;4;22;2;0;2;1153957.59;41498.54;0.1639;0.5;2;0.9048;44.58;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;generos_alimenticios;2026;produto;7;55;8;0;0;2153048.2994999997;93202198.4;0.0773;0.0;6;0.989;43.63;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;papelaria_expediente;2026;produto;1;4;4;0;0;3670.0;3670.0;;0.0;1;1.0;41.67;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;copa_cozinha;2026;produto;1;1;1;0;0;110.3505;74.85;;0.0;1;1.0;41.67;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;limpeza_higiene;2026;produto;1;1;1;0;0;29.42;26.5;;0.0;1;1.0;41.67;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;panificacao;2026;produto;7;11;5;0;0;82965.84;21364.59;;0.0;2;0.9955;41.48;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;textil_uniforme;2026;produto;6;12;11;0;0;58781.729999999996;49975.9;;0.0;4;0.8992;37.47;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;nao_classificado;2026;indefinido;69;399;240;0;0;1238582.11;537606.75;0.0277;0.0;55;0.1104;30.24;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;calcados;2026;produto;2;31;31;0;0;12931.03;12931.03;;0.0;2;0.614;25.58;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;insumos_laboratoriais;2026;produto;2;2;2;0;0;1250.0;1250.0;;0.0;2;0.52;21.67;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;madeira_construcao;2026;produto;3;4;2;0;0;13749.7;10900.0;;0.0;2;0.5034;20.97;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;informatica;2026;produto;7;17;17;0;0;5418.0;5418.0;;0.0;4;0.3635;15.15;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;medicamentos;2026;produto;10;230;37;0;0;2682787.11;6766.58;;0.0;4;0.3202;13.34;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;combustivel;2026;produto;1;2;0;0;0;424124.66;0.0;;;0;;;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;servico_vigilancia_saude;2026;servico;1;89;0;0;0;208674.47;0.0;;;0;;;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;material_medico_hospitalar;2026;produto;1;1;0;0;0;147700.0;0.0;;;0;;;2026-08-24T19:24:04+00:00;Santa Fé do Sul
-3546603;servico_obras_engenharia;2026;servico;1;1;0;0;0;39000.0;0.0;;;0;;;2026-08-24T19:24:04+00:00;Santa Fé do Sul
+3524808;nao_classificado;2026;indefinido;20;103;73;0;0;20247195.86;2151941.41;0.0412;0.0;11;0.9452;50.43;2026-08-24T23:15:11+00:00;Jales
+3546603;carnes;2026;produto;3;43;19;0;0;818276.46;382724.86;0.0079;0.0;2;0.6483;49.59;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;laticinios;2026;produto;4;22;2;0;2;1153957.59;41498.54;0.1639;0.5;2;0.9048;44.58;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;generos_alimenticios;2026;produto;7;55;8;0;0;2153048.2994999997;93202198.4;0.0773;0.0;6;0.989;43.63;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3545704;madeira_construcao;2026;produto;2;12;2;0;0;111141.45;39555.0;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Santa Albertina
+3524808;material_odontologico;2026;produto;1;3;3;0;0;8295.66;8295.66;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Jales
+3524808;medicamentos;2026;produto;1;1;1;0;0;7392.0;7392.0;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Jales
+3546603;papelaria_expediente;2026;produto;1;4;4;0;0;3670.0;3670.0;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;copa_cozinha;2026;produto;1;1;1;0;0;110.3505;74.85;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3524808;limpeza_higiene;2026;produto;2;2;2;0;0;100.0;100.0;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Jales
+3546603;limpeza_higiene;2026;produto;1;1;1;0;0;29.42;26.5;;0.0;1;1.0;41.67;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;panificacao;2026;produto;7;11;5;0;0;82965.84;21364.59;;0.0;2;0.9955;41.48;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;textil_uniforme;2026;produto;6;12;11;0;0;58781.729999999996;49975.9;;0.0;4;0.8992;37.47;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3524808;combustivel;2026;produto;3;15;3;0;0;11056320.0;10860.0;;0.0;2;0.7475;31.15;2026-08-24T23:15:11+00:00;Jales
+3546603;nao_classificado;2026;indefinido;69;399;240;0;0;1238582.11;537606.75;0.0277;0.0;55;0.1104;30.24;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;calcados;2026;produto;2;31;31;0;0;12931.03;12931.03;;0.0;2;0.614;25.58;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3524808;informatica;2026;produto;2;2;2;0;0;20919.4;14759.5;;0.0;2;0.5772;24.05;2026-08-24T23:15:11+00:00;Jales
+3545704;nao_classificado;2026;indefinido;3;209;2;0;0;550579.52;84000.0;;0.0;2;0.5408;22.53;2026-08-24T23:15:11+00:00;Santa Albertina
+3546603;insumos_laboratoriais;2026;produto;2;2;2;0;0;1250.0;1250.0;;0.0;2;0.52;21.67;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;madeira_construcao;2026;produto;3;4;2;0;0;13749.7;10900.0;;0.0;2;0.5034;20.97;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3540259;nao_classificado;2026;indefinido;3;13;12;0;1;131979.43;104777.61;;0.0769;5;0.2699;15.73;2026-08-24T23:15:11+00:00;Pontalinda
+3546603;informatica;2026;produto;7;17;17;0;0;5418.0;5418.0;;0.0;4;0.3635;15.15;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;medicamentos;2026;produto;10;230;37;0;0;2682787.11;6766.58;;0.0;4;0.3202;13.34;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3547650;nao_classificado;2026;indefinido;4;190;0;0;0;3286748.2;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3547650;material_medico_hospitalar;2026;produto;2;52;0;0;0;787558.13;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3503950;nao_classificado;2026;indefinido;2;248;0;0;0;787442.3646;0.0;;;0;;;2026-08-24T23:15:11+00:00;Aspásia
+3547650;combustivel;2026;produto;1;3;0;0;0;732449.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3546603;combustivel;2026;produto;1;2;0;0;0;424124.66;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3547650;testes_rapidos;2026;produto;1;3;0;0;0;257754.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3547650;servico_laboratorial;2026;servico;1;1;0;0;0;222037.4;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3546603;servico_vigilancia_saude;2026;servico;1;89;0;0;0;208674.47;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3546603;material_medico_hospitalar;2026;produto;1;1;0;0;0;147700.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3545704;textil_uniforme;2026;produto;1;2;0;0;0;128052.8;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Albertina
+3547650;informatica;2026;produto;1;8;0;0;0;63881.36;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3503950;medicamentos;2026;produto;1;29;0;0;0;50063.2255;0.0;;;0;;;2026-08-24T23:15:11+00:00;Aspásia
+3546603;servico_obras_engenharia;2026;servico;1;1;0;0;0;39000.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Fé do Sul
+3547650;material_coleta;2026;produto;1;5;0;0;0;28052.4;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3547650;limpeza_higiene;2026;produto;1;3;0;0;0;11374.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3547650;epi_saude;2026;produto;1;1;0;0;0;4539.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3547650;medicamentos;2026;produto;1;1;0;0;0;4173.0;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3545704;calcados;2026;produto;1;3;0;0;0;863.85;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Albertina
+3545704;panificacao;2026;produto;1;2;0;0;0;862.8;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Albertina
+3547650;rede_frio_imunizacao;2026;produto;1;1;0;0;0;803.25;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Salete
+3545704;limpeza_higiene;2026;produto;1;1;0;0;0;787.8;0.0;;;0;;;2026-08-24T23:15:11+00:00;Santa Albertina
