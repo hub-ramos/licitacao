@@ -27,6 +27,14 @@ on:
         description: "Coletar também atas e contratos"
         type: boolean
         default: true
+      recuperar_run_id:
+        description: >-
+          ID de um run anterior cujo artifact 'base-e-exports' ficou preso
+          (ex.: push final rejeitado por fast-forward). Preenchido, pula a
+          coleta inteira e só baixa esse artifact e comita — evita repetir
+          horas de paginação por causa de um commit que chegou no meio.
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -63,7 +71,17 @@ jobs:
       # porque a linha inteira sai com status 1 — daí o `if` explícito. A
       # segunda: valores de entrada chegam por `env`, nunca interpolados dentro
       # do comando, que seria injeção de shell por quem dispara o workflow.
+      - name: Recuperar artifact preso
+        if: inputs.recuperar_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: base-e-exports
+          path: dados/
+          run-id: ${{ inputs.recuperar_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Coletar histórico
+        if: inputs.recuperar_run_id == ''
         env:
           PYTHONPATH: src
           ANOS: ${{ inputs.anos || '3' }}
@@ -79,7 +97,7 @@ jobs:
           python -m licita historico "${args[@]}"
 
       - name: Coletar atas e contratos
-        if: inputs.atas
+        if: inputs.atas && inputs.recuperar_run_id == ''
         env:
           PYTHONPATH: src
           ANOS: ${{ inputs.anos || '3' }}
@@ -94,6 +112,7 @@ jobs:
           python -m licita atas "${args[@]}"
 
       - name: Métricas e exports
+        if: inputs.recuperar_run_id == ''
         env:
           PYTHONPATH: src
         run: |
