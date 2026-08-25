@@ -1,0 +1,38 @@
+name: Recuperar artefato preso
+
+# Uso pontual: quando "Commitar base e exports" falha no fim de uma coleta
+# longa (ex.: push rejeitado por fast-forward), os dados já coletados ficam
+# só no artifact do run, sem chegar ao branch. Este workflow baixa esse
+# artifact — de dentro do Actions, sem depender da rede local — e comita.
+# Apagar depois de usado; não faz parte do pipeline regular.
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "ID do workflow run cujo artifact 'base-e-exports' será recuperado"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  recuperar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: base-e-exports
+          path: dados/
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commitar dados recuperados
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dados/
+          git diff --staged --quiet || git commit -m "histórico: recupera artefato do run ${{ inputs.run_id }}"
+          git pull --rebase
+          git push

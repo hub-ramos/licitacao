@@ -107,6 +107,7 @@ jobs:
             dados/painel.html
             dados/*.csv
             dados/licitacoes.xlsx
+            dados/licitacoes.db
 
       - name: Commitar base e exports
         # A coleta pode levar horas (paginação real do PNCP); o branch pode
