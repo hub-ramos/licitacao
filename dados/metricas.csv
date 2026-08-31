@@ -1,0 +1,48 @@
+﻿codigo_ibge;segmento;ano;tipo_segmento;contratacoes;itens;itens_homologados;itens_desertos;itens_fracassados;valor_estimado;valor_homologado;desagio_medio;taxa_desercao;fornecedores_distintos;hhi;indice_oportunidade;calculado_em;municipio
+3515509;nao_classificado;2025;indefinido;1;1;0;0;0;2436910.8;974764.3;0.8;0.0;2;0.5;22.5;2026-08-31T09:19:50+00:00;Fernandópolis
+3524808;nao_classificado;2025;indefinido;1;8;0;0;0;3028951.2;0.0;;0.0;0;;22.22;2026-08-31T09:19:50+00:00;Jales
+3524808;nao_classificado;2026;indefinido;3;3;0;0;0;1368117.33;0.0;;0.0;0;;22.22;2026-08-31T09:19:50+00:00;Jales
+3515509;nao_classificado;2026;indefinido;3;4;0;0;0;194794.54;0.0;;0.0;0;;22.22;2026-08-31T09:19:50+00:00;Fernandópolis
+3524808;combustivel;2026;produto;1;9;0;0;0;8625450.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Jales
+3524808;servico_saude_assistencial;2025;servico;1;1;0;0;0;2325180.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Jales
+3547650;madeira_construcao;2026;produto;2;12;0;0;0;2093374.76;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Salete
+3540408;nao_classificado;2026;indefinido;1;10;0;0;0;1542987.6;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Populina
+3547650;combustivel;2026;produto;1;3;0;0;0;732449.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Salete
+3534757;servico_laboratorial;2026;servico;1;1;0;0;0;539869.05;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Ouroeste
+3515509;medicamentos;2026;produto;2;6;0;0;0;533161.85;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3544509;nao_classificado;2026;indefinido;2;3;0;0;0;494830.18;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Rubinéia
+3524808;servico_laboratorial;2026;servico;1;1;0;0;0;420000.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Jales
+3546603;generos_alimenticios;2026;produto;1;2;0;0;0;258777.3;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Fé do Sul
+3515509;racao_agropecuaria;2026;produto;2;2;0;0;0;247271.25;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3530003;medicamentos;2026;produto;1;10;0;0;0;234196.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Mira Estrela
+3555802;nao_classificado;2026;indefinido;1;10;0;0;0;233771.69;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Urânia
+3547205;combustivel;2026;produto;1;1;0;0;0;229902.55;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santana da Ponte Pensa
+3547650;servico_laboratorial;2026;servico;1;1;0;0;0;222037.4;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Salete
+3545704;nao_classificado;2026;indefinido;1;10;0;0;0;184288.7;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Albertina
+3503950;madeira_construcao;2026;produto;2;13;0;0;0;179273.9896;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Aspásia
+3515509;material_odontologico;2026;produto;1;8;0;0;0;177981.5;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3546603;racao_agropecuaria;2026;produto;3;16;0;0;0;132873.03;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Fé do Sul
+3515509;madeira_construcao;2026;produto;1;1;0;0;0;124687.32;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3529609;servico_saude_assistencial;2026;servico;1;1;0;0;0;106488.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Meridiano
+3546603;medicamentos;2026;produto;2;11;0;0;0;84072.23;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Fé do Sul
+3556958;nao_classificado;2026;indefinido;1;1;0;0;0;72000.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Vitória Brasil
+3549201;generos_alimenticios;2026;produto;1;6;0;0;0;66575.68;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;São João das Duas Pontes
+3556958;generos_alimenticios;2026;produto;1;10;0;0;0;64978.4;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Vitória Brasil
+3503950;racao_agropecuaria;2026;produto;1;10;0;0;0;61215.9005;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Aspásia
+3555802;servico_capacitacao_saude;2026;servico;1;1;0;0;0;54102.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Urânia
+3515509;servico_manutencao;2026;servico;1;1;0;0;0;54097.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3535200;madeira_construcao;2026;produto;1;7;0;0;0;35480.6;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Palmeira d'Oeste
+3515509;panificacao;2026;produto;1;1;0;0;0;25720.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3535200;nao_classificado;2026;indefinido;1;6;0;0;0;22212.0;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Palmeira d'Oeste
+3535200;racao_agropecuaria;2026;produto;1;2;0;0;0;20623.519999999997;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Palmeira d'Oeste
+3549201;panificacao;2026;produto;1;4;0;0;0;19827.46;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;São João das Duas Pontes
+3535200;equipamento_medico;2026;produto;1;2;0;0;0;17055.29;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Palmeira d'Oeste
+3549003;madeira_construcao;2026;produto;1;1;0;0;0;13564.8;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;São Francisco
+3555802;madeira_construcao;2026;produto;1;10;0;0;0;9411.89;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Urânia
+3515509;servico_capacitacao_saude;2026;servico;1;1;0;0;0;4414.8;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Fernandópolis
+3555307;racao_agropecuaria;2026;produto;1;6;0;0;0;3324.2366;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Turmalina
+3535200;material_medico_hospitalar;2026;produto;1;3;0;0;0;2802.64;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Palmeira d'Oeste
+3524808;madeira_construcao;2026;produto;1;1;0;0;0;2177.64;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Jales
+3555307;panificacao;2026;produto;1;3;0;0;0;2164.0467;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Turmalina
+3546603;panificacao;2026;produto;1;1;0;0;0;1757.93;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Santa Fé do Sul
+3555307;generos_alimenticios;2026;produto;1;1;0;0;0;179.775;0.0;;0.0;0;;11.11;2026-08-31T09:19:50+00:00;Turmalina
