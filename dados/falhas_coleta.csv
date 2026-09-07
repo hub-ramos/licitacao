@@ -1,4 +1,149 @@
 ﻿id;execucao;contexto;url;status;erro;criado_em
+40;2026-09-07T09:37:26+00:00;itens 01611210000189/2026/39;https://pncp.gov.br/api/pncp/v1/orgaos/01611210000189/compras/2026/39/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+39;2026-09-07T09:37:26+00:00;itens 46611117000102/2026/34;https://pncp.gov.br/api/pncp/v1/orgaos/46611117000102/compras/2026/34/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+38;2026-09-07T09:37:26+00:00;itens 46611117000102/2026/36;https://pncp.gov.br/api/pncp/v1/orgaos/46611117000102/compras/2026/36/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+37;2026-09-07T09:37:26+00:00;itens 46611117000102/2026/35;https://pncp.gov.br/api/pncp/v1/orgaos/46611117000102/compras/2026/35/itens;502;"HTTP 502: <html><body><h1>502 Bad Gateway</h1>
+The server returned an invalid or incomplete response.
+</body></html>
+";2026-09-07T09:37:26+00:00
+36;2026-09-07T09:37:26+00:00;itens 45139482000101/2026/13;https://pncp.gov.br/api/pncp/v1/orgaos/45139482000101/compras/2026/13/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+35;2026-09-07T09:37:26+00:00;itens 45116712000109/2026/51;https://pncp.gov.br/api/pncp/v1/orgaos/45116712000109/compras/2026/51/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+34;2026-09-07T09:37:26+00:00;itens 45116712000109/2026/50;https://pncp.gov.br/api/pncp/v1/orgaos/45116712000109/compras/2026/50/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+33;2026-09-07T09:37:26+00:00;itens 45138088000140/2026/5;https://pncp.gov.br/api/pncp/v1/orgaos/45138088000140/compras/2026/5/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+32;2026-09-07T09:37:26+00:00;itens 01611211000123/2026/51;https://pncp.gov.br/api/pncp/v1/orgaos/01611211000123/compras/2026/51/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+31;2026-09-07T09:37:26+00:00;itens 01611211000123/2026/50;https://pncp.gov.br/api/pncp/v1/orgaos/01611211000123/compras/2026/50/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+30;2026-09-07T09:37:26+00:00;itens 01611211000123/2026/49;https://pncp.gov.br/api/pncp/v1/orgaos/01611211000123/compras/2026/49/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+29;2026-09-07T09:37:26+00:00;itens 45135530000185/2026/43;https://pncp.gov.br/api/pncp/v1/orgaos/45135530000185/compras/2026/43/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+28;2026-09-07T09:37:26+00:00;itens 45135043000112/2026/44;https://pncp.gov.br/api/pncp/v1/orgaos/45135043000112/compras/2026/44/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+27;2026-09-07T09:37:26+00:00;itens 51842177000176/2026/9;https://pncp.gov.br/api/pncp/v1/orgaos/51842177000176/compras/2026/9/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+26;2026-09-07T09:37:26+00:00;itens 46609731000130/2026/10;https://pncp.gov.br/api/pncp/v1/orgaos/46609731000130/compras/2026/10/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+25;2026-09-07T09:37:26+00:00;itens 46609731000130/2026/9;https://pncp.gov.br/api/pncp/v1/orgaos/46609731000130/compras/2026/9/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+24;2026-09-07T09:37:26+00:00;itens 45116290000171/2026/71;https://pncp.gov.br/api/pncp/v1/orgaos/45116290000171/compras/2026/71/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+23;2026-09-07T09:37:26+00:00;itens 45115391000128/2026/15;https://pncp.gov.br/api/pncp/v1/orgaos/45115391000128/compras/2026/15/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+22;2026-09-07T09:37:26+00:00;itens 47842836000105/2025/131;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2025/131/itens;;ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'));2026-09-07T09:37:26+00:00
+21;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/162;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/162/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+20;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/161;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/161/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+19;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/160;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/160/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+18;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/159;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/159/itens;502;"HTTP 502: <html><body><h1>502 Bad Gateway</h1>
+The server returned an invalid or incomplete response.
+</body></html>
+";2026-09-07T09:37:26+00:00
+17;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/158;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/158/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+16;2026-09-07T09:37:26+00:00;itens 46377800000127/2026/3566;https://pncp.gov.br/api/pncp/v1/orgaos/46377800000127/compras/2026/3566/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+15;2026-09-07T09:37:26+00:00;itens 46377800000127/2026/3500;https://pncp.gov.br/api/pncp/v1/orgaos/46377800000127/compras/2026/3500/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+14;2026-09-07T09:37:26+00:00;itens 47842836000105/2026/155;https://pncp.gov.br/api/pncp/v1/orgaos/47842836000105/compras/2026/155/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+13;2026-09-07T09:37:26+00:00;itens 65712002000159/2026/27;https://pncp.gov.br/api/pncp/v1/orgaos/65712002000159/compras/2026/27/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+12;2026-09-07T09:37:26+00:00;itens 65712002000159/2026/25;https://pncp.gov.br/api/pncp/v1/orgaos/65712002000159/compras/2026/25/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+11;2026-09-07T09:37:26+00:00;itens 65712002000159/2026/23;https://pncp.gov.br/api/pncp/v1/orgaos/65712002000159/compras/2026/23/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+10;2026-09-07T09:37:26+00:00;itens 45138070000149/2026/808;https://pncp.gov.br/api/pncp/v1/orgaos/45138070000149/compras/2026/808/itens;502;"HTTP 502: <html><body><h1>502 Bad Gateway</h1>
+The server returned an invalid or incomplete response.
+</body></html>
+";2026-09-07T09:37:26+00:00
+9;2026-09-07T09:37:26+00:00;itens 45138070000149/2026/807;https://pncp.gov.br/api/pncp/v1/orgaos/45138070000149/compras/2026/807/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+8;2026-09-07T09:37:26+00:00;itens 45138070000149/2026/806;https://pncp.gov.br/api/pncp/v1/orgaos/45138070000149/compras/2026/806/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+7;2026-09-07T09:37:26+00:00;itens 45138070000149/2026/794;https://pncp.gov.br/api/pncp/v1/orgaos/45138070000149/compras/2026/794/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+6;2026-09-07T09:37:26+00:00;itens 01613202000171/2026/2;https://pncp.gov.br/api/pncp/v1/orgaos/01613202000171/compras/2026/2/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+5;2026-09-07T09:37:26+00:00;itens 45131885000104/2025/139;https://pncp.gov.br/api/pncp/v1/orgaos/45131885000104/compras/2025/139/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
+4;2026-09-07T09:37:26+00:00;itens 45131885000104/2026/450;https://pncp.gov.br/api/pncp/v1/orgaos/45131885000104/compras/2026/450/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
+No server is available to handle this request.
+</body></html>
+";2026-09-07T09:37:26+00:00
 3;2026-09-03T09:26:08+00:00;proposta 3532868 mod=6;https://pncp.gov.br/api/consulta/v1/contratacoes/proposta;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-09-03T09:26:08+00:00
 2;2026-09-02T09:41:05+00:00;proposta 3547205 mod=7;https://pncp.gov.br/api/consulta/v1/contratacoes/proposta?dataFinal=20261101&codigoModalidadeContratacao=7&codigoMunicipioIbge=3547205&tamanhoPagina=50&pagina=1;500;HTTP 500: Erro na comunicação com o banco de dados.;2026-09-02T09:41:05+00:00
 1;2026-09-02T09:41:05+00:00;proposta 3547403 mod=9;https://pncp.gov.br/api/consulta/v1/contratacoes/proposta?dataFinal=20261101&codigoModalidadeContratacao=9&codigoMunicipioIbge=3547403&tamanhoPagina=50&pagina=1;500;HTTP 500: Erro na comunicação com o banco de dados.;2026-09-02T09:41:05+00:00
