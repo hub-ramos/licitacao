@@ -1,4 +1,5 @@
 ﻿id;execucao;contexto;url;status;erro;criado_em
+42;2026-09-10T09:25:33+00:00;proposta 3524808 mod=5;https://pncp.gov.br/api/consulta/v1/contratacoes/proposta;;ReadTimeout: HTTPSConnectionPool(host='pncp.gov.br', port=443): Read timed out. (read timeout=45);2026-09-10T09:25:33+00:00
 41;2026-09-09T09:25:30+00:00;proposta 3532868 mod=5;https://pncp.gov.br/api/consulta/v1/contratacoes/proposta?dataFinal=20261108&codigoModalidadeContratacao=5&codigoMunicipioIbge=3532868&tamanhoPagina=50&pagina=1;500;HTTP 500: Erro na comunicação com o banco de dados.;2026-09-09T09:25:30+00:00
 40;2026-09-07T09:37:26+00:00;itens 01611210000189/2026/39;https://pncp.gov.br/api/pncp/v1/orgaos/01611210000189/compras/2026/39/itens;503;"HTTP 503: <html><body><h1>503 Service Unavailable</h1>
 No server is available to handle this request.
